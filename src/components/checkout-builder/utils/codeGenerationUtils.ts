@@ -36,47 +36,91 @@ export const formatPrimerTag = (tagName: string, attributes: Record<string, stri
  * Generates the Primer checkout HTML code based on the layout configuration
  */
 export const generatePrimerCode = (rows: Row[], styleVariables: StyleVariables) => {
-  let cardFormContent = rows.map(row => {
-    if (row.components.length === 0) return '';
+  // Instead of dynamically generating the card form content, we'll use the provided template
+  // and only modify specific parts based on the configuration
+  
+  // Generate card form inputs based on the row configuration
+  let cardFormContent = '';
+  
+  // Check if we have any components in our rows
+  if (rows.some(row => row.components.length > 0)) {
+    // Create the card number input
+    const cardNumberComponent = rows.flatMap(r => r.components).find(comp => 
+      comp.originalComponent?.id === "card-number"
+    );
     
-    if (row.components.length === 1) {
-      const component = row.components[0];
-      const config = component.config || {};
-      
-      const openingTagEnd = component.content.indexOf('>');
-      const tagName = component.content.substring(1, openingTagEnd);
-      
-      const formattedTag = formatPrimerTag(tagName, {
-        label: config.label,
-        placeholder: config.placeholder,
-        "aria-label": config.ariaLabel
-      });
-      
-      return `              ${formattedTag}`;
+    if (cardNumberComponent) {
+      const config = cardNumberComponent.config || {};
+      cardFormContent += `          <primer-input-card-number${config.placeholder ? ` placeholder="${config.placeholder}"` : ''}></primer-input-card-number>\n          \n`;
+    } else {
+      cardFormContent += `          <primer-input-card-number placeholder="4444 3333 2222 1111"></primer-input-card-number>\n          \n`;
     }
     
-    else {
-      return `              <div style="display: flex; gap: 16px;">
-${row.components.map((comp) => {
-  const config = comp.config || {};
-  const spaceSmall = config.spaceSmall || styleVariables.primerSpaceSmall;
-  
-  const openingTagEnd = comp.content.indexOf('>');
-  const tagName = comp.content.substring(1, openingTagEnd);
-  
-  const formattedTag = formatPrimerTag(tagName, {
-    label: config.label,
-    placeholder: config.placeholder,
-    "aria-label": config.ariaLabel
-  });
-  
-  return `                <div style="flex: 1; margin-bottom: ${spaceSmall};">
-                  ${formattedTag}
-                </div>`;
-}).join('\n')}
-              </div>`;
+    // Create the expiry and CVV row
+    const expiryComponent = rows.flatMap(r => r.components).find(comp => 
+      comp.originalComponent?.id === "card-expiry"
+    );
+    
+    const cvvComponent = rows.flatMap(r => r.components).find(comp => 
+      comp.originalComponent?.id === "card-cvv"
+    );
+    
+    if (expiryComponent || cvvComponent) {
+      cardFormContent += `          <!-- Expiry and CVV side by side -->\n`;
+      cardFormContent += `          <div style="display: flex; gap: 16px;">\n`;
+      
+      // Add expiry component
+      if (expiryComponent) {
+        const expiryConfig = expiryComponent.config || {};
+        cardFormContent += `            <div style="flex: 1;">\n`;
+        cardFormContent += `              <primer-input-card-expiry${expiryConfig.placeholder ? ` placeholder="${expiryConfig.placeholder}"` : ' placeholder="12/30"'}></primer-input-card-expiry>\n`;
+        cardFormContent += `            </div>\n`;
+      }
+      
+      // Add CVV component
+      if (cvvComponent) {
+        const cvvConfig = cvvComponent.config || {};
+        cardFormContent += `            <div style="flex: 1;">\n`;
+        cardFormContent += `              <primer-input-cvv${cvvConfig.placeholder ? ` placeholder="${cvvConfig.placeholder}"` : ' placeholder="123"'}></primer-input-cvv>\n`;
+        cardFormContent += `            </div>\n`;
+      }
+      
+      cardFormContent += `          </div>\n          \n`;
     }
-  }).filter(content => content).join('\n');
+    
+    // Add card holder name if present
+    const cardHolderComponent = rows.flatMap(r => r.components).find(comp => 
+      comp.originalComponent?.id === "card-holder"
+    );
+    
+    if (cardHolderComponent) {
+      const holderConfig = cardHolderComponent.config || {};
+      cardFormContent += `          <primer-input-card-holder-name${holderConfig.placeholder ? ` placeholder="${holderConfig.placeholder}"` : ' placeholder="John Smith"'}></primer-input-card-holder-name>\n          \n`;
+    }
+    
+    // Add submit button
+    const submitComponent = rows.flatMap(r => r.components).find(comp => 
+      comp.originalComponent?.id === "card-submit"
+    );
+    
+    if (submitComponent || true) { // Always add submit button
+      cardFormContent += `          <primer-card-form-submit style="height: 40px; width: 100%; font-weight: 500;"></primer-card-form-submit>\n`;
+    }
+  } else {
+    // Use default layout
+    cardFormContent = `          <primer-input-card-number placeholder="4444 3333 2222 1111"></primer-input-card-number>\n          
+          <!-- Expiry and CVV side by side -->
+          <div style="display: flex; gap: 16px;">
+            <div style="flex: 1;">
+              <primer-input-card-expiry placeholder="12/30"></primer-input-card-expiry>
+            </div>
+            <div style="flex: 1;">
+              <primer-input-cvv placeholder="123"></primer-input-cvv>
+            </div>
+          </div>
+          
+          <primer-card-form-submit style="height: 40px; width: 100%; font-weight: 500;"></primer-card-form-submit>\n`;
+  }
 
   const checkoutHtml = `<primer-checkout client-token="\${clientSession.clientToken}">
   <primer-main slot="main">
@@ -85,11 +129,8 @@ ${row.components.map((comp) => {
       <!-- Card payment method -->
       <p class="text-base font-medium text-gray-700 mb-4">Card</p>
       <primer-card-form>
-        <div slot="card-form-content" 
-             style="--primer-input-height: 40px; --primer-space-medium: 16px; 
-                    display: flex; flex-direction: column; gap: 16px;">
-${cardFormContent}
-        </div>
+        <div slot="card-form-content" style="--primer-input-height: 40px; --primer-space-medium: 16px; display: flex; flex-direction: column; gap: 16px;">
+${cardFormContent}        </div>
       </primer-card-form>
 
       <!-- Alternative Payment Methods -->
