@@ -28,40 +28,48 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
       config.items
     );
     
-    // 2. Import the Primer module dynamically
+    // 2. Load Primer SDK using the correct method from documentation
     const primerModule = await import('@primer-io/checkout-web');
     
-    // 3. Initialize the Universal Checkout with client token
-    // The SDK exports a default object, we need to check what methods are available
-    console.log("Available Primer methods:", Object.keys(primerModule.default));
+    // Check what methods are available on the imported module
+    console.log("Available Primer methods:", Object.keys(primerModule));
     
-    // Properly initialize the checkout with the correct method
-    const checkout = await primerModule.default.init({
-      // Provide the client token
-      clientToken: clientSession.clientToken,
-      
-      // Configure the container where the checkout will be rendered
-      containers: {
-        main: `#${config.containerId}`
-      },
-      
-      // Configure checkout events
-      onCheckoutComplete: (data: any) => {
-        console.log('Checkout completed successfully!', data);
-        if (config.onComplete) {
-          config.onComplete(data.payment);
-        }
-      },
-      
-      onCheckoutFail: (error: any, data: any) => {
-        console.log('Checkout failed:', error, data);
-        if (config.onError) {
-          config.onError(error, data.payment);
-        }
+    // According to the documentation, we need to first load Primer
+    if (typeof primerModule.loadPrimer === 'function') {
+      await primerModule.loadPrimer();
+      console.log("Primer SDK loaded successfully");
+    } else {
+      console.log("loadPrimer method not found, trying alternative approach");
+    }
+    
+    // Create primer-checkout element
+    const checkoutElement = document.createElement('primer-checkout');
+    checkoutElement.setAttribute('client-token', clientSession.clientToken);
+    
+    // Add event listeners for completion and errors
+    checkoutElement.addEventListener('primer-checkout-complete', (event: any) => {
+      console.log('Checkout completed successfully!', event.detail);
+      if (config.onComplete) {
+        config.onComplete(event.detail.payment);
       }
     });
     
-    console.log("Primer checkout initialized successfully", checkout);
+    checkoutElement.addEventListener('primer-checkout-fail', (event: any) => {
+      console.log('Checkout failed:', event.detail);
+      if (config.onError) {
+        config.onError(event.detail.error, event.detail.payment);
+      }
+    });
+    
+    // Append to container
+    const container = document.getElementById(config.containerId);
+    if (container) {
+      container.innerHTML = ''; // Clear container
+      container.appendChild(checkoutElement);
+      console.log("Primer checkout element added to container");
+    } else {
+      throw new Error(`Container with ID '${config.containerId}' not found`);
+    }
     
   } catch (error) {
     console.error("Error initializing Primer checkout:", error);

@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface PaymentSectionProps {
@@ -7,6 +7,22 @@ interface PaymentSectionProps {
 }
 
 const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Add Primer CSS when the component mounts
+  useEffect(() => {
+    if (showPrimerCheckout) {
+      const linkElement = document.createElement('link');
+      linkElement.rel = 'stylesheet';
+      linkElement.href = 'https://sdk.primer.io/web/primer-js/v0-latest/styles.css';
+      document.head.appendChild(linkElement);
+
+      return () => {
+        document.head.removeChild(linkElement);
+      };
+    }
+  }, [showPrimerCheckout]);
+
   return (
     <Card>
       <CardHeader>
@@ -24,9 +40,10 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) =
             </p>
           )}
           
-          {/* Container for Universal Primer checkout */}
+          {/* Container for Primer checkout */}
           <div 
             id="primer-payment-container" 
+            ref={containerRef}
             className="min-h-48 bg-gray-50 rounded-md border border-gray-200 p-4"
           >
             {!showPrimerCheckout && (
