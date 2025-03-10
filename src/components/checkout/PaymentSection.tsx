@@ -12,6 +12,7 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) =
   // Add Primer CSS when the component mounts
   useEffect(() => {
     if (showPrimerCheckout) {
+      // Add the main Primer styles
       const linkElement = document.createElement('link');
       linkElement.rel = 'stylesheet';
       linkElement.href = 'https://sdk.primer.io/web/primer-js/v0-latest/styles.css';
