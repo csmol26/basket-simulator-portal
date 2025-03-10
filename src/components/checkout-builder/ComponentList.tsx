@@ -67,7 +67,7 @@ const ComponentList: React.FC<ComponentListProps> = ({
             variant="outline" 
             className="w-full justify-between"
           >
-            {cardFirst ? "Card → PayPal" : "PayPal → Card"}
+            {cardFirst ? "Card → APM" : "APM → Card"}
             <span className="text-xs text-gray-500">Click to toggle</span>
           </Button>
         </div>

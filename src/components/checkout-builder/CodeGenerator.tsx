@@ -61,10 +61,10 @@ const CodeGenerator: React.FC<CodeGeneratorProps> = ({ rows, styleVariables, car
   </div>
 </primer-card-form>`;
 
-    const paypalHtml = `<div class="mt-8 pt-6 border-t border-gray-200">
+    const apmHtml = `<div class="mt-8 pt-6 border-t border-gray-200">
   <p class="text-base font-medium text-gray-700 mb-4">Alternative Payment Method</p>
   <primer-payment-method type="PAYPAL">
-    <!-- PayPal payment method will be rendered automatically -->
+    <!-- APM will be rendered automatically -->
   </primer-payment-method>
 </div>`;
 
@@ -75,9 +75,9 @@ const CodeGenerator: React.FC<CodeGeneratorProps> = ({ rows, styleVariables, car
           <div slot="payments">
             <!-- Card payment method display 1 -->
             <p class="text-base font-medium text-gray-700 mb-4">Card</p>
-            ${cardFirst ? cardPaymentHtml : paypalHtml}
+            ${cardFirst ? cardPaymentHtml : apmHtml}
             
-            ${cardFirst ? paypalHtml : cardPaymentHtml}
+            ${cardFirst ? apmHtml : cardPaymentHtml}
           </div>
           
           <!-- Custom completion screen -->

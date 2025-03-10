@@ -3,6 +3,8 @@ import React from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Slider } from "@/components/ui/slider";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 // Style variables with default values
 export const initialStyleVariables = {
@@ -38,38 +40,112 @@ export const jsonToCssVariable = {
   primerColorFocus: "--primer-color-focus",
 };
 
+// Font options for the dropdown
+const fontOptions = [
+  { value: "'Poppins', sans-serif", label: "Poppins" },
+  { value: "'Inter', sans-serif", label: "Inter" },
+  { value: "'Roboto', sans-serif", label: "Roboto" },
+  { value: "'Open Sans', sans-serif", label: "Open Sans" },
+  { value: "'Montserrat', sans-serif", label: "Montserrat" },
+  { value: "'Raleway', sans-serif", label: "Raleway" },
+  { value: "'Playfair Display', serif", label: "Playfair Display" },
+  { value: "'Source Sans Pro', sans-serif", label: "Source Sans Pro" },
+];
+
 interface StyleEditorProps {
   styleVariables: typeof initialStyleVariables;
   onStyleChange: (variableName: string, value: string) => void;
 }
 
 const StyleEditor: React.FC<StyleEditorProps> = ({ styleVariables, onStyleChange }) => {
+  // Convert pixel values to numbers for sliders
+  const getSizeValue = (value: string): number => {
+    const numValue = parseInt(value);
+    return isNaN(numValue) ? 0 : Math.min(20, Math.max(0, numValue));
+  };
+
+  // Handle slider changes
+  const handleSliderChange = (variableName: string, value: number[]) => {
+    onStyleChange(variableName, `${value[0]}px`);
+  };
+
   return (
     <Card>
       <CardHeader>
         <CardTitle className="text-lg">Style Variables</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          {Object.entries(styleVariables).map(([key, value]) => (
+        <div className="space-y-6">
+          {/* Color inputs */}
+          {['primerColorBrand', 'primerColorBackground', 'primerColorLoader', 'primerColorFocus'].map((key) => (
             <div key={key} className="space-y-2">
               <Label htmlFor={key} className="text-sm flex justify-between">
                 <span>{jsonToCssVariable[key as keyof typeof jsonToCssVariable]}</span>
-                {key === "primerColorBrand" || key === "primerColorBackground" || key === "primerColorLoader" || key === "primerColorFocus" ? (
-                  <input 
-                    type="color" 
-                    value={value || '#000000'} 
-                    onChange={(e) => onStyleChange(key, e.target.value)}
-                    className="w-8 h-8 p-0 border-0"
-                  />
-                ) : null}
+                <input 
+                  type="color" 
+                  value={styleVariables[key as keyof typeof styleVariables] || '#000000'} 
+                  onChange={(e) => onStyleChange(key, e.target.value)}
+                  className="w-8 h-8 p-0 border-0"
+                />
               </Label>
               <Input 
                 id={key}
-                value={value}
+                value={styleVariables[key as keyof typeof styleVariables]}
                 onChange={(e) => onStyleChange(key, e.target.value)}
                 placeholder={`Enter ${key}`}
               />
+              <p className="text-xs text-gray-500">{variableDescriptions[key as keyof typeof variableDescriptions]}</p>
+            </div>
+          ))}
+
+          {/* Typography dropdown */}
+          <div className="space-y-2">
+            <Label htmlFor="primerTypographyBrand" className="text-sm">
+              {jsonToCssVariable.primerTypographyBrand}
+            </Label>
+            <Select 
+              value={styleVariables.primerTypographyBrand} 
+              onValueChange={(value) => onStyleChange('primerTypographyBrand', value)}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select font" />
+              </SelectTrigger>
+              <SelectContent>
+                {fontOptions.map((font) => (
+                  <SelectItem key={font.value} value={font.value}>
+                    <span style={{ fontFamily: font.value }}>{font.label}</span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-gray-500">{variableDescriptions.primerTypographyBrand}</p>
+          </div>
+
+          {/* Size sliders */}
+          {['primerRadiusBase', 'primerSpaceBase', 'primerSizeBase'].map((key) => (
+            <div key={key} className="space-y-2">
+              <Label htmlFor={key} className="text-sm">
+                {jsonToCssVariable[key as keyof typeof jsonToCssVariable]}
+              </Label>
+              <div className="flex gap-4 items-center">
+                <div className="flex-1">
+                  <Slider
+                    id={key}
+                    min={0}
+                    max={20}
+                    step={1}
+                    value={[getSizeValue(styleVariables[key as keyof typeof styleVariables])]}
+                    onValueChange={(value) => handleSliderChange(key, value)}
+                  />
+                </div>
+                <div className="w-12 text-center">
+                  <Input
+                    value={styleVariables[key as keyof typeof styleVariables]}
+                    onChange={(e) => onStyleChange(key, e.target.value)}
+                    className="text-center p-1 h-8"
+                  />
+                </div>
+              </div>
               <p className="text-xs text-gray-500">{variableDescriptions[key as keyof typeof variableDescriptions]}</p>
             </div>
           ))}
