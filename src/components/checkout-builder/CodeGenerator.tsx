@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -34,48 +33,40 @@ const CodeGenerator: React.FC<CodeGeneratorProps> = ({ rows, styleVariables }) =
       
       if (row.components.length === 1) {
         const component = row.components[0];
-        let configAttributes = '';
+        let config = component.config || {};
         
-        if (component.config) {
-          if (component.config.label) configAttributes += ` label="${component.config.label}"`;
-          if (component.config.placeholder) configAttributes += ` placeholder="${component.config.placeholder}"`;
-          if (component.config.ariaLabel) configAttributes += ` aria-label="${component.config.ariaLabel}"`;
-        }
+        let formattedTag = component.content;
+        const openingTagEnd = formattedTag.indexOf('>');
+        const tagName = formattedTag.substring(1, openingTagEnd);
         
-        return `              ${component.content.replace('></primer', `${configAttributes}></primer`)}`;
+        let attributes = '';
+        if (config.label) attributes += ` label="${config.label}"`;
+        if (config.placeholder) attributes += ` placeholder="${config.placeholder}"`;
+        if (config.ariaLabel) attributes += ` aria-label="${config.ariaLabel}"`;
+        
+        formattedTag = `<${tagName}${attributes}></${tagName}>`;
+        
+        return `              ${formattedTag}`;
       }
       
       else {
-        const componentStyles = row.components.map(comp => {
-          const spaceSmall = comp.config?.spaceSmall || styleVariables.primerSpaceSmall;
-          return `margin-bottom: ${spaceSmall};`;
-        });
-        
         return `<div style="display: flex; gap: 16px;">
   ${row.components.map((comp, index) => {
     const config = comp.config || {};
-    let componentHtml = comp.content;
+    const spaceSmall = config.spaceSmall || styleVariables.primerSpaceSmall;
     
-    if (config.label || config.placeholder || config.ariaLabel) {
-      componentHtml = componentHtml.replace('></primer', ' ');
-      
-      if (config.label) {
-        componentHtml += `label="${config.label}" `;
-      }
-      
-      if (config.placeholder) {
-        componentHtml += `placeholder="${config.placeholder}" `;
-      }
-      
-      if (config.ariaLabel) {
-        componentHtml += `aria-label="${config.ariaLabel}" `;
-      }
-      
-      componentHtml += '></primer';
-    }
+    const openingTagEnd = comp.content.indexOf('>');
+    const tagName = comp.content.substring(1, openingTagEnd);
     
-    return `<div style="flex: 1; ${componentStyles[index]}">
-    ${componentHtml}
+    let attributes = '';
+    if (config.label) attributes += ` label="${config.label}"`;
+    if (config.placeholder) attributes += ` placeholder="${config.placeholder}"`;
+    if (config.ariaLabel) attributes += ` aria-label="${config.ariaLabel}"`;
+    
+    const formattedTag = `<${tagName}${attributes}></${tagName}>`;
+    
+    return `<div style="flex: 1; margin-bottom: ${spaceSmall};">
+    ${formattedTag}
   </div>`;
   }).join('\n  ')}
 </div>`;
@@ -145,7 +136,6 @@ const CodeGenerator: React.FC<CodeGeneratorProps> = ({ rows, styleVariables }) =
     toast.success("Code copied to clipboard!");
   };
 
-  // Custom CSS for syntax highlighting
   const syntaxHighlightingStyles = `
     .code-highlight {
       color: #F6F6F7; /* Light gray for general text */
@@ -165,22 +155,18 @@ const CodeGenerator: React.FC<CodeGeneratorProps> = ({ rows, styleVariables }) =
   `;
 
   const applyHighlighting = (code: string) => {
-    // Replace tags with highlighted versions
     let highlighted = code.replace(/<\/?([a-z-]+)(?:\s|>)/gi, (match) => 
       `<span class="tag">${match}</span>`
     );
     
-    // Replace attribute names
     highlighted = highlighted.replace(/\s([a-z-]+)=/gi, (match) => 
       `<span class="attr-name">${match}</span>`
     );
     
-    // Replace attribute values
     highlighted = highlighted.replace(/"([^"]*)"/g, (match) => 
       `<span class="attr-value">${match}</span>`
     );
     
-    // Replace comments
     highlighted = highlighted.replace(/<!--([\s\S]*?)-->/g, (match) => 
       `<span class="comment">${match}</span>`
     );
