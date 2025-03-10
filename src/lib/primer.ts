@@ -59,29 +59,38 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
     const currentTheme = container.getAttribute('data-theme') || 'default';
 
     // 6. Create the primer checkout element structure with multiple payment methods
+    // Revised HTML structure for better interactivity
     const checkoutHtml = `
       <primer-checkout client-token="${clientSession.clientToken}">
         <primer-main slot="main">
           <!-- Payment methods -->
           <div slot="payments">
-            <!-- Card payment method display 1 -->
+            <!-- Card payment method - improved interactive elements -->
             <p class="text-base font-medium text-gray-700 mb-4">Card</p>
-              <div slot="card-form-content" style="--primer-input-height: 40px; --primer-space-medium: 16px; display: flex; flex-direction: column; gap: 16px;">
-                <primer-input-card-number placeholder="4444 3333 2222 1111"></primer-input-card-number>
+            <div class="space-y-4">
+              <div style="--primer-input-height: 40px; --primer-space-medium: 16px; display: flex; flex-direction: column; gap: 16px;">
+                <div class="w-full">
+                  <primer-input-card-number style="width: 100%"></primer-input-card-number>
+                </div>
                 
                 <!-- Expiry and CVV side by side -->
                 <div style="display: flex; gap: 16px;">
                   <div style="flex: 1;">
-                    <primer-input-card-expiry placeholder="12/30"></primer-input-card-expiry>
+                    <primer-input-card-expiry></primer-input-card-expiry>
                   </div>
                   <div style="flex: 1;">
-                    <primer-input-cvv placeholder="123"></primer-input-cvv>
+                    <primer-input-cvv></primer-input-cvv>
                   </div>
                 </div>
                 
-                <primer-card-form-submit style="height: 40px; width: 100%; font-weight: 500;"></primer-card-form-submit>
+                <button 
+                  id="submit-payment-button" 
+                  class="h-10 w-full bg-primary text-white px-4 rounded-md font-medium hover:bg-primary/90 transition-colors"
+                >
+                  Pay Now
+                </button>
               </div>
-            </primer-card-form>
+            </div>
             
             <!-- Added margin-top to create more space between payment methods -->
             <div class="mt-8 pt-6 border-t border-gray-200">
@@ -110,6 +119,16 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
     // Add event listeners to the checkout element
     checkoutElement.addEventListener('primer-checkout-initialized', () => {
       console.log('Primer checkout initialized');
+      
+      // Add click event listener to the submit button
+      const submitButton = document.getElementById('submit-payment-button');
+      if (submitButton) {
+        submitButton.addEventListener('click', () => {
+          // Trigger submit on the Primer checkout
+          const event = new CustomEvent('primer-checkout-submit');
+          checkoutElement.dispatchEvent(event);
+        });
+      }
     });
     
     checkoutElement.addEventListener('primer-state-changed', (event: any) => {
