@@ -69,7 +69,7 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) =
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-xl font-medium">Payment</CardTitle>
+        <CardTitle className="text-xl font-medium">The Chris' awesome payment form</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
