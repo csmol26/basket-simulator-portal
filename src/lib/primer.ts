@@ -58,12 +58,12 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
     // 5. Create the primer checkout element structure with multiple payment methods
     // Added additional margin and border classes to create separation between card displays
     const checkoutHtml = `
-      <primer-checkout client-token="${clientSession.clientToken}">
+      <primer-checkout client-token="${clientSession.clientToken}" custom-styles='{"primerTypographyBrand":"Poppins","primerTypographyBodyLargeFont":"Poppins","primerTypographyBodyMediumFont":"Poppins","primerTypographyBodySmallFont":"Poppins","primerTypographyTitleLargeFont":"Poppins"}'>
         <primer-main slot="main">
           <!-- Payment methods -->
           <div slot="payments">
             <!-- Card payment method display 1 -->
-            <p class="text-base font-medium text-gray-700 mb-4">Card - Display 1</p>
+            <p class="text-base font-medium text-gray-700 mb-4">Card</p>
             <primer-card-form>
               <div slot="card-form-content">
               <primer-input-card-number placeholder="4444 3333 2222 1111"></primer-input-card-number>

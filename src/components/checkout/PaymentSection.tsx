@@ -18,30 +18,44 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) =
       linkElement.href = 'https://sdk.primer.io/web/primer-js/v0-latest/styles.css';
       document.head.appendChild(linkElement);
 
-      // Add Google Fonts for Caveat
+      // Add Google Fonts for Poppins
       const fontLinkElement = document.createElement('link');
       fontLinkElement.rel = 'stylesheet';
-      fontLinkElement.href = 'https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap';
+      fontLinkElement.href = 'https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap';
       document.head.appendChild(fontLinkElement);
 
-      // Add custom CSS variables globally without blinking animation
+      // Add custom CSS variables globally
       const styleElement = document.createElement('style');
       styleElement.textContent = `
         :root {
-          --primer-typography-brand: Roboto;
+          --primer-typography-brand: 'Poppins', sans-serif;
           --primer-color-brand: #18A94B;
           --primer-color-background: transparent;
           --primer-radius-base: 16px;
           --primer-space-base: 8px;
           --primer-color-text-primary: #4CAF50;
           --primer-color-focus: #DE00D1;
+          
+          /* Typography settings to ensure Poppins is used */
+          --primer-typography-body-large-font: 'Poppins', sans-serif;
+          --primer-typography-body-medium-font: 'Poppins', sans-serif;
+          --primer-typography-body-small-font: 'Poppins', sans-serif;
+          --primer-typography-title-large-font: 'Poppins', sans-serif;
         }
         
-        /* Button styling without blinking effect */
+        /* Card form input styling */
+        #primer-payment-container primer-input-card-number,
+        #primer-payment-container primer-input-card-expiry,
+        #primer-payment-container primer-input-cvv,
+        #primer-payment-container primer-input-card-holder-name {
+          font-family: 'Poppins', sans-serif !important;
+        }
+        
+        /* Button styling with increased spacing and width */
         #primer-payment-container button[type="submit"] {
           width: 100%;
-          padding: 0.75rem;
-          margin-top: 1rem;
+          padding: 0.85rem;
+          margin-top: 2rem;
           border-radius: 6px;
           background: var(--primer-color-brand);
           color: white;
@@ -49,6 +63,7 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) =
           cursor: pointer;
           border: none;
           font-size: 16px;
+          font-family: 'Poppins', sans-serif !important;
         }
       `;
       document.head.appendChild(styleElement);
