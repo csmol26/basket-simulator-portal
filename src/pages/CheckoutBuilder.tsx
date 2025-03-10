@@ -436,7 +436,7 @@ const CheckoutBuilder: React.FC = () => {
                       ))}
                     </div>
                   </DragDropContext>
-                </div>
+                </CardContent>
               </Card>
             </div>
             
