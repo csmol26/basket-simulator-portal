@@ -39,11 +39,13 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
       throw new Error(`Container element with ID '${config.containerId}' not found`);
     }
     
-    // 4. Clear any existing content and create the primer-checkout component
+    // 4. Clear any existing content in the container
     container.innerHTML = '';
     
-    // Create the primer-checkout component
-    const checkoutElement = document.createElement('primer-checkout');
+    // 5. Create the primer-checkout element as a standard HTML element first
+    const checkoutElement = document.createElement('primer-checkout') as HTMLElement;
+    
+    // 6. Set attributes using standard DOM methods
     checkoutElement.setAttribute('client-token', clientSession.clientToken);
     
     // Set options as a JSON string attribute
@@ -57,10 +59,10 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
     };
     checkoutElement.setAttribute('options', JSON.stringify(options));
     
-    // Append the checkout component to the container
+    // 7. Append the checkout element to the container
     container.appendChild(checkoutElement);
     
-    // 5. Add event listeners to the checkout component
+    // 8. Add event listeners to the checkout element
     checkoutElement.addEventListener('primer-checkout-initialized', () => {
       console.log('Primer checkout initialized');
     });
