@@ -41,31 +41,6 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) =
           --primer-color-text-primary: #4CAF50;
         }
         
-        /* Single line styling for card inputs */
-        #primer-payment-container .single-line-card-inputs {
-          display: flex;
-          width: 100%;
-          border: 1px solid #e2e8f0;
-          border-radius: 6px;
-          overflow: hidden;
-          margin-bottom: 16px;
-        }
-        
-        /* Allow inputs to flex and fill the container */
-        #primer-payment-container .single-line-card-inputs > * {
-          flex: 1;
-        }
-        
-        /* Give card number more space */
-        #primer-payment-container .single-line-card-inputs primer-input-card-number {
-          flex: 2;
-        }
-        
-        /* Style dividers between fields */
-        #primer-payment-container .single-line-card-inputs > *:not(:last-child) {
-          border-right: 1px solid #e2e8f0;
-        }
-        
         /* Button styling with blinking effect */
         #primer-payment-container button[type="submit"] {
           width: 100%;
@@ -120,7 +95,7 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) =
             </div>
           )}
           
-          {/* Container for Primer checkout - removed bg-gray-50 class */}
+          {/* Container for Primer checkout */}
           <div 
             id="primer-payment-container" 
             ref={containerRef}
