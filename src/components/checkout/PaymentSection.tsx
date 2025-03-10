@@ -24,10 +24,24 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) =
       fontLinkElement.href = 'https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap';
       document.head.appendChild(fontLinkElement);
 
+      // Add custom CSS variables globally
+      const styleElement = document.createElement('style');
+      styleElement.textContent = `
+        :root {
+          --primer-color-brand: #FFC0CB;
+          --primer-typography-brand: Caveat;
+          --primer-color-background: #FFFF00;
+          --primer-radius-base: 6px;
+          --primer-color-text-primary: #4CAF50;
+        }
+      `;
+      document.head.appendChild(styleElement);
+
       return () => {
         // Clean up styles when component unmounts
         document.head.removeChild(linkElement);
         document.head.removeChild(fontLinkElement);
+        document.head.removeChild(styleElement);
       };
     }
   }, [showPrimerCheckout]);

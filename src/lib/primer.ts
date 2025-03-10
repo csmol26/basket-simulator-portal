@@ -65,15 +65,6 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
     // 6. Set attributes using standard DOM methods
     checkoutElement.setAttribute('client-token', clientSession.clientToken);
     
-    // Custom styling for checkout with fixed brand color
-    const customStyles = {
-      primerColorBrand: '#FFC0CB', // Light Pink
-      primerTypographyBrand: 'Caveat', // Caveat font
-      primerColorBackground: '#FFFF00', // Yellow
-      primerRadiusBase: '6px', // Adjusted base radius
-      primerColorTextPrimary: '#4CAF50', // Keep the green text
-    };
-    
     // Set options as a JSON string attribute with en-GB locale
     const options = {
       locale: "en-GB",
@@ -85,7 +76,6 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
     };
     
     checkoutElement.setAttribute('options', JSON.stringify(options));
-    checkoutElement.setAttribute('customStyles', JSON.stringify(customStyles));
     
     // 7. Configure the component hierarchy
     mainElement.setAttribute('slot', 'main');
