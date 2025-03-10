@@ -37,6 +37,7 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) =
           --primer-typography-brand: Roboto;
           --primer-color-background: transparent;
           --primer-radius-base: 16px;
+          --primer-space-base: 8px;
           --primer-color-text-primary: #4CAF50;
           --primer-color-focus: #DE00D1;
         }
