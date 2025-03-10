@@ -56,25 +56,25 @@ export const generatePrimerCode = (rows: Row[], styleVariables: StyleVariables) 
     }
     
     else {
-      return `<div style="display: flex; gap: 16px;">
-  ${row.components.map((comp) => {
-    const config = comp.config || {};
-    const spaceSmall = config.spaceSmall || styleVariables.primerSpaceSmall;
-    
-    const openingTagEnd = comp.content.indexOf('>');
-    const tagName = comp.content.substring(1, openingTagEnd);
-    
-    const formattedTag = formatPrimerTag(tagName, {
-      label: config.label,
-      placeholder: config.placeholder,
-      "aria-label": config.ariaLabel
-    });
-    
-    return `<div style="flex: 1; margin-bottom: ${spaceSmall};">
-    ${formattedTag}
-  </div>`;
-  }).join('\n  ')}
-</div>`;
+      return `              <div style="display: flex; gap: 16px;">
+${row.components.map((comp) => {
+  const config = comp.config || {};
+  const spaceSmall = config.spaceSmall || styleVariables.primerSpaceSmall;
+  
+  const openingTagEnd = comp.content.indexOf('>');
+  const tagName = comp.content.substring(1, openingTagEnd);
+  
+  const formattedTag = formatPrimerTag(tagName, {
+    label: config.label,
+    placeholder: config.placeholder,
+    "aria-label": config.ariaLabel
+  });
+  
+  return `                <div style="flex: 1; margin-bottom: ${spaceSmall};">
+                  ${formattedTag}
+                </div>`;
+}).join('\n')}
+              </div>`;
     }
   }).filter(content => content).join('\n');
 
@@ -88,7 +88,7 @@ export const generatePrimerCode = (rows: Row[], styleVariables: StyleVariables) 
         <div slot="card-form-content" 
              style="--primer-input-height: 40px; --primer-space-medium: 16px; 
                     display: flex; flex-direction: column; gap: 16px;">
-          ${cardFormContent}
+${cardFormContent}
         </div>
       </primer-card-form>
 
@@ -116,18 +116,22 @@ export const generatePrimerCode = (rows: Row[], styleVariables: StyleVariables) 
  * Apply syntax highlighting to the code
  */
 export const applyHighlighting = (code: string) => {
-  let highlighted = code.replace(/<\/?([a-z-]+)(?:\s|>)/gi, (match) => 
+  // Highlight HTML tags (<tag> and </tag>)
+  let highlighted = code.replace(/<\/?([a-z0-9-]+)(?:\s|>)/gi, (match) => 
     `<span class="tag">${match}</span>`
   );
   
-  highlighted = highlighted.replace(/\s([a-z-]+)=/gi, (match) => 
+  // Highlight attributes (attribute=)
+  highlighted = highlighted.replace(/\s([a-z0-9-]+)=/gi, (match) => 
     `<span class="attr-name">${match}</span>`
   );
   
+  // Highlight attribute values ("value")
   highlighted = highlighted.replace(/"([^"]*)"/g, (match) => 
     `<span class="attr-value">${match}</span>`
   );
   
+  // Highlight comments <!-- comment -->
   highlighted = highlighted.replace(/<!--([\s\S]*?)-->/g, (match) => 
     `<span class="comment">${match}</span>`
   );
