@@ -43,18 +43,26 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) =
           --primer-typography-title-large-font: 'Poppins', sans-serif;
         }
         
-        /* Card form input styling */
+        /* Card form input styling with reduced height */
         #primer-payment-container primer-input-card-number,
         #primer-payment-container primer-input-card-expiry,
         #primer-payment-container primer-input-cvv,
         #primer-payment-container primer-input-card-holder-name {
           font-family: 'Poppins', sans-serif !important;
+          height: 40px !important;
         }
         
-        /* Button styling with increased spacing and width */
+        /* Input field height adjustment */
+        #primer-payment-container input {
+          height: 40px !important;
+          padding-top: 0.5rem !important;
+          padding-bottom: 0.5rem !important;
+        }
+        
+        /* Button styling with reduced height */
         #primer-payment-container button[type="submit"] {
           width: 100%;
-          padding: 0.85rem;
+          padding: 0.6rem;
           margin-top: 2rem;
           border-radius: 6px;
           background: var(--primer-color-brand);
@@ -64,6 +72,7 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) =
           border: none;
           font-size: 16px;
           font-family: 'Poppins', sans-serif !important;
+          height: 44px !important;
         }
       `;
       document.head.appendChild(styleElement);
