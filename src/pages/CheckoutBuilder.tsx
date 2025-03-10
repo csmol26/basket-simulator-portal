@@ -7,6 +7,7 @@ import CodeGenerator from "@/components/checkout-builder/CodeGenerator";
 import Preview from "@/components/checkout-builder/Preview";
 import BuilderTabs from "@/components/checkout-builder/BuilderTabs";
 import { useCheckoutBuilder } from "@/hooks/useCheckoutBuilder";
+import { StyleVariables } from "@/components/checkout-builder/types";
 
 const CheckoutBuilder: React.FC = () => {
   const {

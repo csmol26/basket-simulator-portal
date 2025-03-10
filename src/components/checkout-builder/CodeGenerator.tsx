@@ -6,11 +6,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Copy } from "lucide-react";
 import { toast } from "sonner";
 import { jsonToCssVariable } from "./StyleEditor";
-import { Row } from "./types";
+import { Row, StyleVariables } from "./types";
 
 interface CodeGeneratorProps {
   rows: Row[];
-  styleVariables: Record<string, string>;
+  styleVariables: StyleVariables;
 }
 
 const CodeGenerator: React.FC<CodeGeneratorProps> = ({ rows, styleVariables }) => {
