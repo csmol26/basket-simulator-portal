@@ -35,12 +35,6 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) =
           --primer-space-base: 8px;
           --primer-color-text-primary: #4CAF50;
           --primer-color-focus: #DE00D1;
-          
-          /* Typography settings to ensure Poppins is used */
-          --primer-typography-body-large-font: 'Poppins', sans-serif;
-          --primer-typography-body-medium-font: 'Poppins', sans-serif;
-          --primer-typography-body-small-font: 'Poppins', sans-serif;
-          --primer-typography-title-large-font: 'Poppins', sans-serif;
         }
       `;
       document.head.appendChild(styleElement);
