@@ -85,7 +85,7 @@ const CodeGenerator: React.FC<CodeGeneratorProps> = ({ rows, styleVariables }) =
       componentHtml += '></primer';
     }
     
-    return `  <div style="flex: 1; ${componentStyles[index]}">
+    return `<div style="flex: 1; ${componentStyles[index]}">
     ${componentHtml}
   </div>`;
   }).join('\n  ')}
@@ -96,35 +96,35 @@ const CodeGenerator: React.FC<CodeGeneratorProps> = ({ rows, styleVariables }) =
     const cardPaymentHtml = `<primer-card-form>
   <div slot="card-form-content" style="--primer-input-height: 40px; --primer-space-medium: 16px; display: flex; flex-direction: column; gap: 16px;">
     ${cardFormContent}
+    <primer-card-form-submit style="height: 40px; width: 100%; font-weight: 500;"></primer-card-form-submit>
   </div>
 </primer-card-form>`;
 
-    const checkoutHtml = `
-      <primer-checkout client-token="\${clientSession.clientToken}">
-        <primer-main slot="main">
-          <!-- Payment methods -->
-          <div slot="payments">
-            <!-- Card payment method -->
-            <p class="text-base font-medium text-gray-700 mb-4">Card</p>
-            ${cardPaymentHtml}
-            
-            <!-- Added margin-top to create more space between payment methods -->
-            <div class="mt-8 pt-6 border-t border-gray-200">
-              <p class="text-base font-medium text-gray-700 mb-4">Alternative Payment Method</p>
-              <primer-payment-method type="PAYPAL">
-                <!-- PayPal payment method will be rendered automatically -->
-              </primer-payment-method>
-            </div>
-          </div>
-          
-          <!-- Custom completion screen -->
-          <div slot="checkout-complete">
-            <h2 class="text-xl font-bold text-green-600 text-center my-4">Thank you for your purchase!</h2>
-            <p class="text-center text-gray-600">Your order has been processed successfully.</p>
-          </div>
-        </primer-main>
-      </primer-checkout>
-    `;
+    // Properly indented complete checkout HTML including alternative payment methods and completion screen
+    const checkoutHtml = `<primer-checkout client-token="\${clientSession.clientToken}">
+  <primer-main slot="main">
+    <!-- Payment methods -->
+    <div slot="payments">
+      <!-- Card payment method -->
+      <p class="text-base font-medium text-gray-700 mb-4">Card</p>
+      ${cardPaymentHtml}
+      
+      <!-- Added margin-top to create more space between payment methods -->
+      <div class="mt-8 pt-6 border-t border-gray-200">
+        <p class="text-base font-medium text-gray-700 mb-4">Alternative Payment Method</p>
+        <primer-payment-method type="PAYPAL">
+          <!-- PayPal payment method will be rendered automatically -->
+        </primer-payment-method>
+      </div>
+    </div>
+    
+    <!-- Custom completion screen -->
+    <div slot="checkout-complete">
+      <h2 class="text-xl font-bold text-green-600 text-center my-4">Thank you for your purchase!</h2>
+      <p class="text-center text-gray-600">Your order has been processed successfully.</p>
+    </div>
+  </primer-main>
+</primer-checkout>`;
     
     return checkoutHtml;
   };

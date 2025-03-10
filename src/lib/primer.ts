@@ -55,52 +55,48 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
     // 4. Clear any existing content in the container
     container.innerHTML = '';
 
-    // 5. Get the current theme from the container's data-theme attribute
-    const currentTheme = container.getAttribute('data-theme') || 'default';
-
-    // 6. Create the primer checkout element structure with multiple payment methods
+    // 5. Create the primer checkout element structure with multiple payment methods
     const checkoutHtml = `
-      <primer-checkout client-token="${clientSession.clientToken}">
-        <primer-main slot="main">
-          <!-- Payment methods -->
-          <div slot="payments">
-            <!-- Card payment method display 1 -->
-            <p class="text-base font-medium text-gray-700 mb-4">Card</p>
-            <primer-card-form>
-              <div slot="card-form-content" style="--primer-input-height: 40px; --primer-space-medium: 16px; display: flex; flex-direction: column; gap: 16px;">
-                <primer-input-card-number placeholder="4444 3333 2222 1111"></primer-input-card-number>
-                
-                <!-- Expiry and CVV side by side -->
-                <div style="display: flex; gap: 16px;">
-                  <div style="flex: 1;">
-                    <primer-input-card-expiry placeholder="12/30"></primer-input-card-expiry>
-                  </div>
-                  <div style="flex: 1;">
-                    <primer-input-cvv placeholder="123"></primer-input-cvv>
-                  </div>
-                </div>
-                
-                <primer-card-form-submit style="height: 40px; width: 100%; font-weight: 500;"></primer-card-form-submit>
-              </div>
-            </primer-card-form>
-            
-            <!-- Added margin-top to create more space between payment methods -->
-            <div class="mt-8 pt-6 border-t border-gray-200">
-              <p class="text-base font-medium text-gray-700 mb-4">Alternative Payment Method</p>
-              <primer-payment-method type="PAYPAL">
-                <!-- PayPal payment method will be rendered automatically -->
-              </primer-payment-method>
+<primer-checkout client-token="${clientSession.clientToken}">
+  <primer-main slot="main">
+    <!-- Payment methods -->
+    <div slot="payments">
+      <!-- Card payment method display 1 -->
+      <p class="text-base font-medium text-gray-700 mb-4">Card</p>
+      <primer-card-form>
+        <div slot="card-form-content" style="--primer-input-height: 40px; --primer-space-medium: 16px; display: flex; flex-direction: column; gap: 16px;">
+          <primer-input-card-number placeholder="4444 3333 2222 1111"></primer-input-card-number>
+          
+          <!-- Expiry and CVV side by side -->
+          <div style="display: flex; gap: 16px;">
+            <div style="flex: 1;">
+              <primer-input-card-expiry placeholder="12/30"></primer-input-card-expiry>
+            </div>
+            <div style="flex: 1;">
+              <primer-input-cvv placeholder="123"></primer-input-cvv>
             </div>
           </div>
           
-          <!-- Custom completion screen -->
-          <div slot="checkout-complete">
-            <h2 class="text-xl font-bold text-green-600 text-center my-4">Thank you for your purchase!</h2>
-            <p class="text-center text-gray-600">Your order has been processed successfully.</p>
-          </div>
-        </primer-main>
-      </primer-checkout>
-    `;
+          <primer-card-form-submit style="height: 40px; width: 100%; font-weight: 500;"></primer-card-form-submit>
+        </div>
+      </primer-card-form>
+      
+      <!-- Added margin-top to create more space between payment methods -->
+      <div class="mt-8 pt-6 border-t border-gray-200">
+        <p class="text-base font-medium text-gray-700 mb-4">Alternative Payment Method</p>
+        <primer-payment-method type="PAYPAL">
+          <!-- PayPal payment method will be rendered automatically -->
+        </primer-payment-method>
+      </div>
+    </div>
+    
+    <!-- Custom completion screen -->
+    <div slot="checkout-complete">
+      <h2 class="text-xl font-bold text-green-600 text-center my-4">Thank you for your purchase!</h2>
+      <p class="text-center text-gray-600">Your order has been processed successfully.</p>
+    </div>
+  </primer-main>
+</primer-checkout>`;
     
     // Insert the checkout HTML directly
     container.innerHTML = checkoutHtml;
