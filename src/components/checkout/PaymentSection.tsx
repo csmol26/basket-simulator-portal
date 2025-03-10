@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -80,11 +79,7 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) =
             </p>
           ) : (
             <div className="space-y-4">
-              <p className="text-sm text-gray-500">
-                Please choose your payment method below:
-              </p>
-              
-              {/* Primer logo image */}
+              {/* Primer logo image moved above the "Card" heading */}
               <div className="flex justify-center mb-4">
                 <img 
                   src="https://disruptivetechnews.com/wp-content/uploads/1663672073-primer-io-2x.jpeg" 

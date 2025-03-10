@@ -62,6 +62,8 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
         <primer-main slot="main">
           <!-- Payment methods -->
           <div slot="payments">
+            <!-- Card payment method with updated heading -->
+            <p class="text-base font-medium text-gray-700 mb-4">Card</p>
             <primer-payment-method type="PAYMENT_CARD">
               <primer-card-form>
                 <div slot="card-form-content">
