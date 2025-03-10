@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import Basket from "./pages/Basket";
 import Checkout from "./pages/Checkout";
 import Confirmation from "./pages/Confirmation";
+import CheckoutBuilder from "./pages/CheckoutBuilder";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +26,7 @@ const App = () => (
             <Route path="/basket" element={<Basket />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/confirmation" element={<Confirmation />} />
+            <Route path="/checkout-builder" element={<CheckoutBuilder />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

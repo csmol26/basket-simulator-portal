@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { ShoppingBasket } from "lucide-react";
+import { ShoppingBasket, Settings } from "lucide-react";
 import { useBasket } from "@/context/BasketContext";
 
 const Navbar: React.FC = () => {
@@ -27,6 +27,14 @@ const Navbar: React.FC = () => {
               className="text-gray-700 hover:text-accent transition-colors duration-200"
             >
               Products
+            </Link>
+            
+            <Link 
+              to="/checkout-builder" 
+              className="text-gray-700 hover:text-accent transition-colors duration-200 flex items-center gap-1"
+            >
+              <Settings className="h-4 w-4" />
+              Checkout Builder
             </Link>
             
             <Link 
