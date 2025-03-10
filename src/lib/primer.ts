@@ -2,6 +2,19 @@
 import { createPrimerClientSession } from './api';
 import { loadPrimer } from '@primer-io/primer-js';
 
+// Define interfaces for Primer custom elements to help TypeScript
+interface PrimerCheckoutElement extends HTMLElement {
+  // Add any specific properties/methods of primer-checkout if needed
+}
+
+interface PrimerMainElement extends HTMLElement {
+  // Add any specific properties/methods of primer-main if needed
+}
+
+interface PrimerPaymentMethodElement extends HTMLElement {
+  // Add any specific properties/methods of primer-payment-method if needed
+}
+
 interface PrimerCheckoutConfig {
   amount: number;
   currency: string;
@@ -42,12 +55,12 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
     // 4. Clear any existing content in the container
     container.innerHTML = '';
     
-    // 5. Create the elements as standard HTML elements first
-    // TypeScript doesn't know about these custom elements yet
-    const checkoutElement = document.createElement('primer-checkout') as HTMLElement;
-    const mainElement = document.createElement('primer-main') as HTMLElement;
-    const paymentsDiv = document.createElement('div') as HTMLDivElement;
-    const cardPaymentMethod = document.createElement('primer-payment-method') as HTMLElement;
+    // 5. Create the elements with proper TypeScript casting
+    // Use document.createElement followed by a type assertion (as unknown as Type)
+    const checkoutElement = document.createElement('primer-checkout') as unknown as PrimerCheckoutElement;
+    const mainElement = document.createElement('primer-main') as unknown as PrimerMainElement;
+    const paymentsDiv = document.createElement('div');
+    const cardPaymentMethod = document.createElement('primer-payment-method') as unknown as PrimerPaymentMethodElement;
     
     // 6. Set attributes using standard DOM methods
     checkoutElement.setAttribute('client-token', clientSession.clientToken);
