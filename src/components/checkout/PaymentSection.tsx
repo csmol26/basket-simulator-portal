@@ -152,6 +152,20 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) =
           }
         `;
         break;
+        case 'card-form-builder':
+          themeStyles = `
+            :root {
+            --primer-color-brand: #4b18aa;
+            --primer-typography-brand: 'Playfair Display', serif;
+            --primer-color-background: transparent;
+            --primer-radius-base: 20px;
+            --primer-space-base: 15px;
+            --primer-size-base: 8px;
+            --primer-color-focus: #0038e0;
+            }
+          `;
+          break;
+  
       default: // default theme
         themeStyles = `
           :root {
@@ -216,6 +230,7 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) =
                   <option value="high-contrast">High Contrast</option>
                   <option value="kawaii">Kawaii</option>
                   <option value="retro-90s">Retro 90s</option>
+                  <option value="card-form-builder">Card form builder</option>
                 </select>
               </div>
             </div>
