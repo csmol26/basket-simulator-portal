@@ -56,13 +56,13 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
     container.innerHTML = '';
     
     // 5. Create the primer checkout element structure with multiple payment methods
-    // Added additional margin classes to the PayPal payment method for more spacing
+    // Added additional margin and border classes to create separation between card displays
     const checkoutHtml = `
       <primer-checkout client-token="${clientSession.clientToken}">
         <primer-main slot="main">
           <!-- Payment methods -->
           <div slot="payments">
-            <!-- Card payment method with updated heading -->
+            <!-- Card payment method display 1 -->
             <p class="text-base font-medium text-gray-700 mb-4">Card - Display 1</p>
             <primer-payment-method type="PAYMENT_CARD">
               <primer-card-form>
@@ -75,18 +75,37 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
                 </div>
               </primer-card-form>
             </primer-payment-method>
-            <p class="text-base font-medium text-gray-700 mb-4">Card - Display 2</p>
-            <primer-payment-method type="PAYMENT_CARD">
-              <primer-card-form>
-                <div slot="card-form-content">
-                  <primer-input-card-number placeholder="Card number"></primer-input-card-number>
-                  <primer-input-card-expiry placeholder="MM/YY"></primer-input-card-expiry>
-                  <primer-input-cvv placeholder="CVV"></primer-input-cvv>
-                  <primer-input-card-holder-name placeholder="Name on card"></primer-input-card-holder-name>
-                  <button type="submit">Pay Now with Card</button>
+            
+            <!-- Added border and padding to create separation between card displays -->
+            <div class="mt-8 pt-6 border-t border-gray-200">
+              <p class="text-base font-medium text-gray-700 mb-4">Card - Display 2</p>
+              <!-- Collapsible card form that opens on click -->
+              <div class="collapsible-card-form">
+                <button 
+                  type="button" 
+                  class="w-full py-3 px-4 border border-gray-300 rounded-md bg-white flex justify-between items-center text-left"
+                  id="toggle-card-form-2"
+                >
+                  <span>Click to open card form</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron-down">
+                    <path d="m6 9 6 6 6-6"/>
+                  </svg>
+                </button>
+                <div class="hidden mt-4" id="card-form-2-container">
+                  <primer-payment-method type="PAYMENT_CARD">
+                    <primer-card-form>
+                      <div slot="card-form-content">
+                        <primer-input-card-number placeholder="Card number"></primer-input-card-number>
+                        <primer-input-card-expiry placeholder="MM/YY"></primer-input-card-expiry>
+                        <primer-input-cvv placeholder="CVV"></primer-input-cvv>
+                        <primer-input-card-holder-name placeholder="Name on card"></primer-input-card-holder-name>
+                        <button type="submit">Pay Now with Card</button>
+                      </div>
+                    </primer-card-form>
+                  </primer-payment-method>
                 </div>
-              </primer-card-form>
-            </primer-payment-method>            
+              </div>
+            </div>
             
             <!-- Added margin-top to create more space between payment methods -->
             <div class="mt-8 pt-6 border-t border-gray-200">
@@ -112,7 +131,7 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
     // Get a reference to the checkout element to add event listeners
     const checkoutElement = container.querySelector('primer-checkout') as unknown as PrimerCheckoutElement;
     
-    // 10. Add event listeners to the checkout element
+    // Add event listeners to the checkout element
     checkoutElement.addEventListener('primer-checkout-initialized', () => {
       console.log('Primer checkout initialized');
     });
@@ -131,6 +150,31 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
         config.onError(state.error, state.payment);
       }
     });
+    
+    // Add click event listener for the collapsible card form
+    const toggleButton = container.querySelector('#toggle-card-form-2');
+    const formContainer = container.querySelector('#card-form-2-container');
+    
+    if (toggleButton && formContainer) {
+      toggleButton.addEventListener('click', () => {
+        // Toggle the 'hidden' class to show/hide the form
+        formContainer.classList.toggle('hidden');
+        
+        // Toggle the chevron icon direction
+        const chevron = toggleButton.querySelector('.chevron-down');
+        if (chevron) {
+          if (formContainer.classList.contains('hidden')) {
+            chevron.outerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron-down">
+              <path d="m6 9 6 6 6-6"/>
+            </svg>`;
+          } else {
+            chevron.outerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron-up">
+              <path d="m18 15-6-6-6 6"/>
+            </svg>`;
+          }
+        }
+      });
+    }
     
     console.log("Primer checkout initialized successfully");
     
