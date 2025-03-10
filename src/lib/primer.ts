@@ -64,16 +64,17 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
           <div slot="payments">
             <!-- Card payment method display 1 -->
             <p class="text-base font-medium text-gray-700 mb-4">Card - Display 1</p>
-            <primer-payment-method type="PAYMENT_CARD">
-              <primer-card-form>
-                <div slot="card-form-content">
-                  <primer-input-card-number placeholder="Card number"></primer-input-card-number>
-                  <primer-input-card-expiry placeholder="MM/YY"></primer-input-card-expiry>
-                  <primer-input-cvv placeholder="CVV"></primer-input-cvv>
-                  <primer-input-card-holder-name placeholder="Name on card"></primer-input-card-holder-name>
-                  <button type="submit">Pay Now with Card</button>
+            <primer-card-form>
+              <div slot="card-form-content">
+                <primer-input-card-holder-name></primer-input-card-holder-name>
+                <primer-input-card-number></primer-input-card-number>
+                <div style="display: flex; gap: 8px;">
+                  <primer-input-card-expiry></primer-input-card-expiry>
+                  <primer-input-cvv></primer-input-cvv>
                 </div>
-              </primer-card-form>
+                <button type="submit">Pay Now</button>
+              </div>
+            </primer-card-form>
             </primer-payment-method>
             
             <!-- Added border and padding to create separation between card displays -->
