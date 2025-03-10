@@ -81,7 +81,7 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) =
           ) : (
             <div className="space-y-4">
               <p className="text-sm text-gray-500">
-                Please complete your payment below:
+                Please choose your payment method below:
               </p>
               
               {/* Primer logo image */}

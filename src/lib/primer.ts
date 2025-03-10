@@ -55,52 +55,42 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
     // 4. Clear any existing content in the container
     container.innerHTML = '';
     
-    // 5. Create the elements with proper TypeScript casting
-    const checkoutElement = document.createElement('primer-checkout') as unknown as PrimerCheckoutElement;
-    const mainElement = document.createElement('primer-main') as unknown as PrimerMainElement;
-    const paymentsDiv = document.createElement('div');
-    const cardPaymentMethod = document.createElement('primer-payment-method') as unknown as PrimerPaymentMethodElement;
-    
-    // 6. Set attributes using standard DOM methods
-    checkoutElement.setAttribute('client-token', clientSession.clientToken);
-    
-    // Set options as a JSON string attribute with en-GB locale
-    const options = {
-      locale: "en-GB",
-      card: {
-        cardholderName: {
-          required: true
-        }
-      }
-    };
-    
-    checkoutElement.setAttribute('options', JSON.stringify(options));
-    
-    // 7. Configure the component hierarchy
-    mainElement.setAttribute('slot', 'main');
-    paymentsDiv.setAttribute('slot', 'payments');
-    cardPaymentMethod.setAttribute('type', 'PAYMENT_CARD');
-    
-    // 8. Create default card form layout
-    const cardFormHtml = `
-      <primer-card-form>
-        <div slot="card-form-content">
-          <primer-input-card-number placeholder="Card number"></primer-input-card-number>
-          <primer-input-card-expiry placeholder="MM/YY"></primer-input-card-expiry>
-          <primer-input-cvv placeholder="CVV"></primer-input-cvv>
-          <primer-input-card-holder-name placeholder="Name on card"></primer-input-card-holder-name>
-          <button type="submit">Pay Now</button>
-        </div>
-      </primer-card-form>
+    // 5. Create the primer checkout element structure with multiple payment methods
+    const checkoutHtml = `
+      <primer-checkout client-token="${clientSession.clientToken}">
+        <primer-main slot="main">
+          <!-- Payment methods -->
+          <div slot="payments">
+            <primer-payment-method type="PAYMENT_CARD">
+              <primer-card-form>
+                <div slot="card-form-content">
+                  <primer-input-card-number placeholder="Card number"></primer-input-card-number>
+                  <primer-input-card-expiry placeholder="MM/YY"></primer-input-card-expiry>
+                  <primer-input-cvv placeholder="CVV"></primer-input-cvv>
+                  <primer-input-card-holder-name placeholder="Name on card"></primer-input-card-holder-name>
+                  <button type="submit">Pay Now with Card</button>
+                </div>
+              </primer-card-form>
+            </primer-payment-method>
+            <primer-payment-method type="PAYPAL">
+              <!-- PayPal payment method will be rendered automatically -->
+            </primer-payment-method>
+          </div>
+          
+          <!-- Custom completion screen -->
+          <div slot="checkout-complete">
+            <h2 class="text-xl font-bold text-green-600 text-center my-4">Thank you for your purchase!</h2>
+            <p class="text-center text-gray-600">Your order has been processed successfully.</p>
+          </div>
+        </primer-main>
+      </primer-checkout>
     `;
     
-    cardPaymentMethod.innerHTML = cardFormHtml;
+    // Insert the checkout HTML directly
+    container.innerHTML = checkoutHtml;
     
-    // 9. Assemble the components using DOM methods
-    paymentsDiv.appendChild(cardPaymentMethod);
-    mainElement.appendChild(paymentsDiv);
-    checkoutElement.appendChild(mainElement);
-    container.appendChild(checkoutElement);
+    // Get a reference to the checkout element to add event listeners
+    const checkoutElement = container.querySelector('primer-checkout') as unknown as PrimerCheckoutElement;
     
     // 10. Add event listeners to the checkout element
     checkoutElement.addEventListener('primer-checkout-initialized', () => {
