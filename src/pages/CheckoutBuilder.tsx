@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import Navbar from "@/components/Navbar";
@@ -66,6 +67,7 @@ const CheckoutBuilder: React.FC = () => {
             label: component.defaultLabel,
             placeholder: component.defaultPlaceholder,
             ariaLabel: component.defaultAriaLabel,
+            spaceSmall: styleVariables.primerSpaceSmall,
           }
         };
         
@@ -91,7 +93,7 @@ const CheckoutBuilder: React.FC = () => {
             newRows[destRowIndex].components.splice(destination.index, 0, movedItem);
           }
         } else if (destination.droppableId === "trash") {
-          setRows(newRows);
+          // Item dropped in trash, already removed from source
         }
         
         setRows(newRows);
@@ -130,40 +132,86 @@ const CheckoutBuilder: React.FC = () => {
         );
       }
       
-      return rows.map((row, rowIndex) => {
+      return rows.map((row) => {
         if (row.components.length === 0) return null;
         
         if (row.components.length === 1) {
-          const content = row.components[0].content;
+          const component = row.components[0];
+          const content = component.content;
+          const config = component.config || {};
+          const label = config.label || component.originalComponent?.defaultLabel;
+          const placeholder = config.placeholder || component.originalComponent?.defaultPlaceholder;
+          const spaceSmall = config.spaceSmall || styleVariables.primerSpaceSmall;
           
           return (
-            <div key={row.id} className="mb-4">
+            <div key={row.id} className="mb-4" style={{ marginBottom: spaceSmall }}>
               {content.includes('card-number') && (
-                <div className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3">
-                  <span className="text-gray-400">•••• •••• •••• ••••</span>
+                <div className="mb-2">
+                  {label && <label className="block text-sm mb-1">{label}</label>}
+                  <div 
+                    className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3"
+                    style={{ 
+                      borderRadius: styleVariables.primerRadiusBase,
+                      backgroundColor: styleVariables.primerColorBackground || "white",
+                      marginBottom: spaceSmall
+                    }}
+                  >
+                    <span className="text-gray-400">{placeholder || "•••• •••• •••• ••••"}</span>
+                  </div>
                 </div>
               )}
               {content.includes('card-expiry') && (
-                <div className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3">
-                  <span className="text-gray-400">MM/YY</span>
+                <div className="mb-2">
+                  {label && <label className="block text-sm mb-1">{label}</label>}
+                  <div 
+                    className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3"
+                    style={{ 
+                      borderRadius: styleVariables.primerRadiusBase,
+                      backgroundColor: styleVariables.primerColorBackground || "white",
+                      marginBottom: spaceSmall
+                    }}
+                  >
+                    <span className="text-gray-400">{placeholder || "MM/YY"}</span>
+                  </div>
                 </div>
               )}
               {content.includes('cvv') && (
-                <div className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3">
-                  <span className="text-gray-400">123</span>
+                <div className="mb-2">
+                  {label && <label className="block text-sm mb-1">{label}</label>}
+                  <div 
+                    className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3"
+                    style={{ 
+                      borderRadius: styleVariables.primerRadiusBase,
+                      backgroundColor: styleVariables.primerColorBackground || "white",
+                      marginBottom: spaceSmall
+                    }}
+                  >
+                    <span className="text-gray-400">{placeholder || "123"}</span>
+                  </div>
                 </div>
               )}
               {content.includes('card-holder-name') && (
-                <div className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3">
-                  <span className="text-gray-400">Cardholder Name</span>
+                <div className="mb-2">
+                  {label && <label className="block text-sm mb-1">{label}</label>}
+                  <div 
+                    className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3"
+                    style={{ 
+                      borderRadius: styleVariables.primerRadiusBase,
+                      backgroundColor: styleVariables.primerColorBackground || "white",
+                      marginBottom: spaceSmall
+                    }}
+                  >
+                    <span className="text-gray-400">{placeholder || "Cardholder Name"}</span>
+                  </div>
                 </div>
               )}
               {content.includes('card-form-submit') && (
                 <button 
-                  className="bg-green-600 hover:bg-green-700 text-white rounded-md p-2 h-10 w-full font-medium transition-colors"
+                  className="hover:opacity-90 text-white rounded-md p-2 h-10 w-full font-medium transition-colors"
                   style={{ 
                     backgroundColor: styleVariables.primerColorBrand || "#18A94B",
-                    borderRadius: styleVariables.primerRadiusBase || "16px" 
+                    borderRadius: styleVariables.primerRadiusBase || "16px",
+                    marginBottom: spaceSmall
                   }}
                 >
                   Pay Now
@@ -173,54 +221,74 @@ const CheckoutBuilder: React.FC = () => {
           );
         } else {
           return (
-            <div key={row.id} className="flex gap-4 mb-4">
-              {row.components.map((component, compIndex) => {
+            <div key={row.id} className="flex gap-4 mb-4" style={{ marginBottom: styleVariables.primerSpaceBase }}>
+              {row.components.map((component) => {
                 const content = component.content;
+                const config = component.config || {};
+                const label = config.label || component.originalComponent?.defaultLabel;
+                const placeholder = config.placeholder || component.originalComponent?.defaultPlaceholder;
+                const spaceSmall = config.spaceSmall || styleVariables.primerSpaceSmall;
                 
                 return (
                   <div key={component.id} className="flex-1">
                     {content.includes('card-number') && (
-                      <div 
-                        className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3"
-                        style={{ 
-                          borderRadius: styleVariables.primerRadiusBase || "16px",
-                          backgroundColor: styleVariables.primerColorBackground || "white" 
-                        }}
-                      >
-                        <span className="text-gray-400">•••• •••• •••• ••••</span>
+                      <div className="mb-2">
+                        {label && <label className="block text-sm mb-1" style={{ fontFamily: styleVariables.primerTypographyBrand }}>{label}</label>}
+                        <div 
+                          className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3"
+                          style={{ 
+                            borderRadius: styleVariables.primerRadiusBase,
+                            backgroundColor: styleVariables.primerColorBackground || "white",
+                            marginBottom: spaceSmall
+                          }}
+                        >
+                          <span className="text-gray-400">{placeholder || "•••• •••• •••• ••••"}</span>
+                        </div>
                       </div>
                     )}
                     {content.includes('card-expiry') && (
-                      <div 
-                        className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3"
-                        style={{ 
-                          borderRadius: styleVariables.primerRadiusBase || "16px",
-                          backgroundColor: styleVariables.primerColorBackground || "white"
-                        }}
-                      >
-                        <span className="text-gray-400">MM/YY</span>
+                      <div className="mb-2">
+                        {label && <label className="block text-sm mb-1" style={{ fontFamily: styleVariables.primerTypographyBrand }}>{label}</label>}
+                        <div 
+                          className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3"
+                          style={{ 
+                            borderRadius: styleVariables.primerRadiusBase,
+                            backgroundColor: styleVariables.primerColorBackground || "white",
+                            marginBottom: spaceSmall
+                          }}
+                        >
+                          <span className="text-gray-400">{placeholder || "MM/YY"}</span>
+                        </div>
                       </div>
                     )}
                     {content.includes('cvv') && (
-                      <div 
-                        className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3"
-                        style={{ 
-                          borderRadius: styleVariables.primerRadiusBase || "16px",
-                          backgroundColor: styleVariables.primerColorBackground || "white"
-                        }}
-                      >
-                        <span className="text-gray-400">123</span>
+                      <div className="mb-2">
+                        {label && <label className="block text-sm mb-1" style={{ fontFamily: styleVariables.primerTypographyBrand }}>{label}</label>}
+                        <div 
+                          className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3"
+                          style={{ 
+                            borderRadius: styleVariables.primerRadiusBase,
+                            backgroundColor: styleVariables.primerColorBackground || "white",
+                            marginBottom: spaceSmall
+                          }}
+                        >
+                          <span className="text-gray-400">{placeholder || "123"}</span>
+                        </div>
                       </div>
                     )}
                     {content.includes('card-holder-name') && (
-                      <div 
-                        className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3"
-                        style={{ 
-                          borderRadius: styleVariables.primerRadiusBase || "16px",
-                          backgroundColor: styleVariables.primerColorBackground || "white"
-                        }}
-                      >
-                        <span className="text-gray-400">Cardholder Name</span>
+                      <div className="mb-2">
+                        {label && <label className="block text-sm mb-1" style={{ fontFamily: styleVariables.primerTypographyBrand }}>{label}</label>}
+                        <div 
+                          className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3"
+                          style={{ 
+                            borderRadius: styleVariables.primerRadiusBase,
+                            backgroundColor: styleVariables.primerColorBackground || "white",
+                            marginBottom: spaceSmall
+                          }}
+                        >
+                          <span className="text-gray-400">{placeholder || "Cardholder Name"}</span>
+                        </div>
                       </div>
                     )}
                     {content.includes('card-form-submit') && (
@@ -228,7 +296,8 @@ const CheckoutBuilder: React.FC = () => {
                         className="hover:opacity-90 text-white p-2 h-10 w-full font-medium transition-colors"
                         style={{ 
                           backgroundColor: styleVariables.primerColorBrand || "#18A94B",
-                          borderRadius: styleVariables.primerRadiusBase || "16px" 
+                          borderRadius: styleVariables.primerRadiusBase || "16px",
+                          marginBottom: spaceSmall
                         }}
                       >
                         Pay Now
@@ -248,10 +317,6 @@ const CheckoutBuilder: React.FC = () => {
       padding: `calc(${styleVariables.primerSpaceBase || "4px"} * 4)`,
       borderRadius: styleVariables.primerRadiusBase || "16px",
       backgroundColor: styleVariables.primerColorBackground || "transparent",
-    };
-
-    const focusStyle = {
-      boxShadow: `0 0 0 2px ${styleVariables.primerColorFocus || "#DE00D1"}`,
     };
 
     return (
@@ -297,7 +362,12 @@ const CheckoutBuilder: React.FC = () => {
           <DragDropContext onDragEnd={onDragEnd}>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
               <div className="lg:col-span-2">
-                <LayoutBuilder rows={rows} onRemoveRow={removeRow} />
+                <LayoutBuilder 
+                  rows={rows} 
+                  onRemoveRow={removeRow} 
+                  updateComponentConfig={updateComponentConfig}
+                  styleVariables={styleVariables}
+                />
               </div>
               
               <div className="lg:col-span-1">
@@ -354,4 +424,3 @@ const CheckoutBuilder: React.FC = () => {
 };
 
 export default CheckoutBuilder;
-

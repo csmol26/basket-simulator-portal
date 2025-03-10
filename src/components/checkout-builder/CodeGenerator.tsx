@@ -6,10 +6,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Copy } from "lucide-react";
 import { toast } from "sonner";
 import { jsonToCssVariable } from "./StyleEditor";
+import { ComponentConfig } from "./ComponentList";
 
 interface DragItem {
   id: string;
   content: string;
+  config?: {
+    label?: string;
+    placeholder?: string;
+    ariaLabel?: string;
+    spaceSmall?: string;
+  };
+  originalComponent: ComponentConfig;
 }
 
 interface Row {
@@ -45,11 +53,69 @@ const CodeGenerator: React.FC<CodeGeneratorProps> = ({ rows, styleVariables }) =
       if (row.components.length === 0) return '';
       
       if (row.components.length === 1) {
-        return row.components[0].content;
+        const component = row.components[0];
+        const config = component.config || {};
+        let componentHtml = component.content;
+        
+        // Add attributes based on config
+        if (config.label || config.placeholder || config.ariaLabel) {
+          // Remove closing tag
+          componentHtml = componentHtml.replace('></primer', ' ');
+          
+          if (config.label) {
+            componentHtml += `label="${config.label}" `;
+          }
+          
+          if (config.placeholder) {
+            componentHtml += `placeholder="${config.placeholder}" `;
+          }
+          
+          if (config.ariaLabel) {
+            componentHtml += `aria-label="${config.ariaLabel}" `;
+          }
+          
+          // Add closing tag back
+          componentHtml += '></primer';
+        }
+        
+        return componentHtml;
       } else {
         // Multiple components in a row should be rendered in a flex container
+        const componentStyles = row.components.map(comp => {
+          const spaceSmall = comp.config?.spaceSmall || styleVariables.primerSpaceSmall;
+          return `margin-bottom: ${spaceSmall};`;
+        });
+        
         return `<div style="display: flex; gap: 16px;">
-  ${row.components.map(comp => `  <div style="flex: 1;">\n    ${comp.content}\n  </div>`).join('\n  ')}
+  ${row.components.map((comp, index) => {
+    const config = comp.config || {};
+    let componentHtml = comp.content;
+    
+    // Add attributes based on config
+    if (config.label || config.placeholder || config.ariaLabel) {
+      // Remove closing tag
+      componentHtml = componentHtml.replace('></primer', ' ');
+      
+      if (config.label) {
+        componentHtml += `label="${config.label}" `;
+      }
+      
+      if (config.placeholder) {
+        componentHtml += `placeholder="${config.placeholder}" `;
+      }
+      
+      if (config.ariaLabel) {
+        componentHtml += `aria-label="${config.ariaLabel}" `;
+      }
+      
+      // Add closing tag back
+      componentHtml += '></primer';
+    }
+    
+    return `  <div style="flex: 1; ${componentStyles[index]}">
+    ${componentHtml}
+  </div>`;
+  }).join('\n  ')}
 </div>`;
       }
     }).filter(content => content).join('\n');

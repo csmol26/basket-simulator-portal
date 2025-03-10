@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import { Button } from "@/components/ui/button";
@@ -65,7 +64,7 @@ const ComponentList: React.FC<ComponentListProps> = ({ onAddRow }) => {
         <CardTitle className="text-lg">Available Components</CardTitle>
       </CardHeader>
       <CardContent>
-        <Droppable droppableId="components">
+        <Droppable droppableId="components" isDropDisabled={true}>
           {(provided) => (
             <div
               {...provided.droppableProps}
@@ -87,7 +86,8 @@ const ComponentList: React.FC<ComponentListProps> = ({ onAddRow }) => {
                         ${snapshot.isDragging ? 'scale-105 shadow-lg border-primary' : 'hover:border-accent hover:shadow-md'}`}
                       style={{
                         ...provided.draggableProps.style,
-                        opacity: snapshot.isDragging ? 0.9 : 1
+                        opacity: snapshot.isDragging ? 0.9 : 1,
+                        transform: snapshot.isDragging ? provided.draggableProps.style?.transform : 'translate(0, 0)'
                       }}
                     >
                       {component.name}

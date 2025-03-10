@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -15,6 +16,7 @@ export const initialStyleVariables = {
   primerSizeBase: "4px",
   primerColorLoader: "",
   primerColorFocus: "#DE00D1",
+  primerSpaceSmall: "8px", // Adding this variable for component spacing
 };
 
 export const variableDescriptions = {
@@ -26,6 +28,7 @@ export const variableDescriptions = {
   primerSizeBase: "Controls the base size unit across the checkout",
   primerColorLoader: "Controls the loader color across the checkout (leave empty to use brand color)",
   primerColorFocus: "Controls the interactive focus color across the checkout",
+  primerSpaceSmall: "Controls the small spacing value between elements",
 };
 
 export const jsonToCssVariable = {
@@ -37,6 +40,7 @@ export const jsonToCssVariable = {
   primerSizeBase: "--primer-size-base",
   primerColorLoader: "--primer-color-loader",
   primerColorFocus: "--primer-color-focus",
+  primerSpaceSmall: "--primer-space-small",
 };
 
 // Font options for the dropdown
@@ -55,7 +59,22 @@ const fontOptions = [
   { value: "'Space Grotesk', sans-serif", label: "Space Grotesk" },
   { value: "'DM Sans', sans-serif", label: "DM Sans" },
   { value: "'Rubik', sans-serif", label: "Rubik" },
-  { value: "'Work Sans', sans-serif", label: "Work Sans" }
+  { value: "'Work Sans', sans-serif", label: "Work Sans" },
+  { value: "'Oswald', sans-serif", label: "Oswald" },
+  { value: "'Merriweather', serif", label: "Merriweather" },
+  { value: "'PT Sans', sans-serif", label: "PT Sans" },
+  { value: "'Ubuntu', sans-serif", label: "Ubuntu" },
+  { value: "'Cabin', sans-serif", label: "Cabin" },
+  { value: "'Arvo', serif", label: "Arvo" },
+  { value: "'Josefin Sans', sans-serif", label: "Josefin Sans" },
+  { value: "'Archivo', sans-serif", label: "Archivo" },
+  { value: "'Karla', sans-serif", label: "Karla" },
+  { value: "'Libre Franklin', sans-serif", label: "Libre Franklin" },
+  { value: "'Manrope', sans-serif", label: "Manrope" },
+  { value: "'Crimson Text', serif", label: "Crimson Text" },
+  { value: "'Sora', sans-serif", label: "Sora" },
+  { value: "'IBM Plex Sans', sans-serif", label: "IBM Plex Sans" },
+  { value: "'Libre Baskerville', serif", label: "Libre Baskerville" }
 ];
 
 interface StyleEditorProps {
@@ -116,7 +135,7 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ styleVariables, onStyleChange
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select font" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="max-h-[300px]">
                 {fontOptions.map((font) => (
                   <SelectItem key={font.value} value={font.value}>
                     <span style={{ fontFamily: font.value }}>{font.label}</span>
@@ -128,7 +147,7 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ styleVariables, onStyleChange
           </div>
 
           {/* Size sliders */}
-          {['primerRadiusBase', 'primerSpaceBase', 'primerSizeBase'].map((key) => (
+          {['primerRadiusBase', 'primerSpaceBase', 'primerSizeBase', 'primerSpaceSmall'].map((key) => (
             <div key={key} className="space-y-2">
               <Label htmlFor={key} className="text-sm">
                 {jsonToCssVariable[key as keyof typeof jsonToCssVariable]}
