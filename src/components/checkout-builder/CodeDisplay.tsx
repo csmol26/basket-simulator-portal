@@ -18,8 +18,8 @@ const CodeDisplay: React.FC<CodeDisplayProps> = ({ code, description }) => {
   return (
     <div className="mt-4">
       <div className="relative">
-        <pre className="p-4 bg-gray-900 rounded-md text-sm overflow-x-auto text-gray-100">
-          <code>{code}</code>
+        <pre className="p-4 bg-gray-900 rounded-md text-sm overflow-x-auto text-gray-100 whitespace-pre-wrap">
+          <code dangerouslySetInnerHTML={{ __html: code.replace(/</g, '&lt;').replace(/>/g, '&gt;') }} />
         </pre>
         <Button 
           size="sm" 
