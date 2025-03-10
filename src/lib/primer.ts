@@ -42,10 +42,14 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
     // 4. Clear any existing content in the container
     container.innerHTML = '';
     
-    // 5. Create the primer-checkout element
-    const checkoutElement = document.createElement('primer-checkout');
+    // 5. Create the elements as standard HTML elements first
+    // TypeScript doesn't know about these custom elements yet
+    const checkoutElement = document.createElement('primer-checkout') as HTMLElement;
+    const mainElement = document.createElement('primer-main') as HTMLElement;
+    const paymentsDiv = document.createElement('div') as HTMLDivElement;
+    const cardPaymentMethod = document.createElement('primer-payment-method') as HTMLElement;
     
-    // 6. Set attributes
+    // 6. Set attributes using standard DOM methods
     checkoutElement.setAttribute('client-token', clientSession.clientToken);
     
     // Set options as a JSON string attribute
@@ -59,25 +63,18 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
     };
     checkoutElement.setAttribute('options', JSON.stringify(options));
     
-    // 7. Create the primer-main element
-    const mainElement = document.createElement('primer-main');
+    // 7. Configure the component hierarchy
     mainElement.setAttribute('slot', 'main');
-    
-    // 8. Create a div for payments
-    const paymentsDiv = document.createElement('div');
     paymentsDiv.setAttribute('slot', 'payments');
-    
-    // 9. Add primary payment method (card)
-    const cardPaymentMethod = document.createElement('primer-payment-method');
     cardPaymentMethod.setAttribute('type', 'PAYMENT_CARD');
-    paymentsDiv.appendChild(cardPaymentMethod);
     
-    // 10. Assemble the components
+    // 8. Assemble the components using DOM methods
+    paymentsDiv.appendChild(cardPaymentMethod);
     mainElement.appendChild(paymentsDiv);
     checkoutElement.appendChild(mainElement);
     container.appendChild(checkoutElement);
     
-    // 11. Add event listeners to the checkout element
+    // 9. Add event listeners to the checkout element
     checkoutElement.addEventListener('primer-checkout-initialized', () => {
       console.log('Primer checkout initialized');
     });

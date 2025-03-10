@@ -19,7 +19,11 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) =
       document.head.appendChild(linkElement);
 
       return () => {
-        document.head.removeChild(linkElement);
+        // Clean up styles when component unmounts
+        const styleElement = document.querySelector('link[href="https://sdk.primer.io/web/primer-js/v0-latest/styles.css"]');
+        if (styleElement) {
+          document.head.removeChild(styleElement);
+        }
       };
     }
   }, [showPrimerCheckout]);
