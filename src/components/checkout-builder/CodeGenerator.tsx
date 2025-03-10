@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,24 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Copy } from "lucide-react";
 import { toast } from "sonner";
 import { jsonToCssVariable } from "./StyleEditor";
-import { ComponentConfig } from "./ComponentList";
-
-interface DragItem {
-  id: string;
-  content: string;
-  config?: {
-    label?: string;
-    placeholder?: string;
-    ariaLabel?: string;
-    spaceSmall?: string;
-  };
-  originalComponent: ComponentConfig;
-}
-
-interface Row {
-  id: string;
-  components: DragItem[];
-}
+import { Row } from "./types";
 
 interface CodeGeneratorProps {
   rows: Row[];
@@ -31,7 +13,6 @@ interface CodeGeneratorProps {
 }
 
 const CodeGenerator: React.FC<CodeGeneratorProps> = ({ rows, styleVariables }) => {
-  // Generate UI code for PaymentSection
   const generateUICode = () => {
     const variableString = Object.entries(styleVariables)
       .filter(([_, value]) => value !== '')
@@ -46,9 +27,7 @@ const CodeGenerator: React.FC<CodeGeneratorProps> = ({ rows, styleVariables }) =
 </div>`;
   };
 
-  // Generate code for primer.ts (checkout structure)
   const generatePrimerCode = () => {
-    // Create the HTML structure based on the rows and components
     let cardFormContent = rows.map(row => {
       if (row.components.length === 0) return '';
       
@@ -57,9 +36,7 @@ const CodeGenerator: React.FC<CodeGeneratorProps> = ({ rows, styleVariables }) =
         const config = component.config || {};
         let componentHtml = component.content;
         
-        // Add attributes based on config
         if (config.label || config.placeholder || config.ariaLabel) {
-          // Remove closing tag
           componentHtml = componentHtml.replace('></primer', ' ');
           
           if (config.label) {
@@ -74,13 +51,11 @@ const CodeGenerator: React.FC<CodeGeneratorProps> = ({ rows, styleVariables }) =
             componentHtml += `aria-label="${config.ariaLabel}" `;
           }
           
-          // Add closing tag back
           componentHtml += '></primer';
         }
         
         return componentHtml;
       } else {
-        // Multiple components in a row should be rendered in a flex container
         const componentStyles = row.components.map(comp => {
           const spaceSmall = comp.config?.spaceSmall || styleVariables.primerSpaceSmall;
           return `margin-bottom: ${spaceSmall};`;
@@ -91,9 +66,7 @@ const CodeGenerator: React.FC<CodeGeneratorProps> = ({ rows, styleVariables }) =
     const config = comp.config || {};
     let componentHtml = comp.content;
     
-    // Add attributes based on config
     if (config.label || config.placeholder || config.ariaLabel) {
-      // Remove closing tag
       componentHtml = componentHtml.replace('></primer', ' ');
       
       if (config.label) {
@@ -108,7 +81,6 @@ const CodeGenerator: React.FC<CodeGeneratorProps> = ({ rows, styleVariables }) =
         componentHtml += `aria-label="${config.ariaLabel}" `;
       }
       
-      // Add closing tag back
       componentHtml += '></primer';
     }
     
@@ -148,7 +120,6 @@ const CodeGenerator: React.FC<CodeGeneratorProps> = ({ rows, styleVariables }) =
     return checkoutHtml;
   };
 
-  // Copy code to clipboard
   const copyToClipboard = (code: string) => {
     navigator.clipboard.writeText(code);
     toast.success("Code copied to clipboard!");

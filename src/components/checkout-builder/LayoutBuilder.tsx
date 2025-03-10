@@ -1,5 +1,4 @@
-
-import React, { useState } from "react";
+import React from "react";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,24 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Settings } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { jsonToCssVariable } from "./StyleEditor";
-import { availableComponents, ComponentConfig } from "./ComponentList";
-
-interface DragItem {
-  id: string;
-  content: string;
-  config?: {
-    label?: string;
-    placeholder?: string;
-    ariaLabel?: string;
-    spaceSmall?: string;
-  };
-  originalComponent: ComponentConfig;
-}
-
-interface Row {
-  id: string;
-  components: DragItem[];
-}
+import { Row, DragItem } from "./types";
 
 interface LayoutBuilderProps {
   rows: Row[];
