@@ -1,5 +1,6 @@
 
 import { createPrimerClientSession } from './api';
+import { loadPrimer } from '@primer-io/primer-js';
 
 interface PrimerCheckoutConfig {
   amount: number;
@@ -17,10 +18,10 @@ interface PrimerCheckoutConfig {
 }
 
 export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> => {
-  console.log("Initializing Primer Composable checkout with config:", config);
+  console.log("Initializing Primer checkout with config:", config);
   
   try {
-    // 1. Request a client token from our API that makes a real call to Primer
+    // 1. Request a client token from our API
     const clientSession = await createPrimerClientSession(
       config.amount,
       config.currency,
@@ -28,11 +29,9 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
       config.items
     );
     
-    // 2. According to documentation, simply import the module
-    // and then use the Web Components approach
-    await import('@primer-io/checkout-web');
-    
-    console.log("Primer SDK imported successfully");
+    // 2. Load Primer SDK using the correct method from documentation
+    await loadPrimer();
+    console.log("Primer SDK loaded successfully");
     
     // Create primer-checkout element following the documentation
     const checkoutElement = document.createElement('primer-checkout');
