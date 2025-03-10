@@ -66,12 +66,10 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
             <p class="text-base font-medium text-gray-700 mb-4">Card - Display 1</p>
             <primer-card-form>
               <div slot="card-form-content">
-                <primer-input-card-holder-name></primer-input-card-holder-name>
-                <primer-input-card-number></primer-input-card-number>
-                <div style="display: flex; gap: 8px;">
-                  <primer-input-card-expiry></primer-input-card-expiry>
-                  <primer-input-cvv></primer-input-cvv>
-                </div>
+                <primer-input-card-holder-name placeholder="Christophe Smol"></primer-input-card-holder-name>
+                <primer-input-card-number placeholder="4444 3333 2222 1111"></primer-input-card-number>
+                <primer-input-card-expiry placeholder="12/30"></primer-input-card-expiry>
+                <primer-input-cvv placeholder="123"></primer-input-cvv>
                 <button type="submit">Pay Now</button>
               </div>
             </primer-card-form>
