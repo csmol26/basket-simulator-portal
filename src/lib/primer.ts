@@ -21,7 +21,7 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
   console.log("Initializing Primer checkout with config:", config);
   
   try {
-    // 1. Demander un token client à notre API
+    // 1. Demander un token client à notre API qui fait un appel réel à Primer
     const clientSession = await createPrimerClientSession(
       config.amount,
       config.currency,
@@ -49,9 +49,9 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
           config.onError(error, payment);
         }
         
-        // Afficher un message d'erreur par défaut si un handler est fourni
+        // Afficher un message d'erreur
         if (handler) {
-          handler.showErrorMessage();
+          handler.showErrorMessage("Le paiement a échoué. Veuillez réessayer ou choisir une autre méthode de paiement.");
         }
       },
     });
