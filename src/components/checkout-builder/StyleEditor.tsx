@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -50,6 +49,13 @@ const fontOptions = [
   { value: "'Raleway', sans-serif", label: "Raleway" },
   { value: "'Playfair Display', serif", label: "Playfair Display" },
   { value: "'Source Sans Pro', sans-serif", label: "Source Sans Pro" },
+  { value: "'Lato', sans-serif", label: "Lato" },
+  { value: "'Nunito', sans-serif", label: "Nunito" },
+  { value: "'Quicksand', sans-serif", label: "Quicksand" },
+  { value: "'Space Grotesk', sans-serif", label: "Space Grotesk" },
+  { value: "'DM Sans', sans-serif", label: "DM Sans" },
+  { value: "'Rubik', sans-serif", label: "Rubik" },
+  { value: "'Work Sans', sans-serif", label: "Work Sans" }
 ];
 
 interface StyleEditorProps {

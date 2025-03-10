@@ -2,39 +2,40 @@ import React, { useState } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import Navbar from "@/components/Navbar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ComponentList, { availableComponents } from "@/components/checkout-builder/ComponentList";
-import StyleEditor, { initialStyleVariables, jsonToCssVariable } from "@/components/checkout-builder/StyleEditor";
+import ComponentList, { availableComponents, ComponentConfig } from "@/components/checkout-builder/ComponentList";
+import StyleEditor, { initialStyleVariables } from "@/components/checkout-builder/StyleEditor";
 import LayoutBuilder from "@/components/checkout-builder/LayoutBuilder";
 import CodeGenerator from "@/components/checkout-builder/CodeGenerator";
 
 interface DragItem {
   id: string;
   content: string;
+  config?: {
+    label?: string;
+    placeholder?: string;
+    ariaLabel?: string;
+    spaceSmall?: string;
+  };
+  originalComponent: ComponentConfig;
 }
 
 const CheckoutBuilder: React.FC = () => {
   const [styleVariables, setStyleVariables] = useState(initialStyleVariables);
   
-  // State for rows (containers that can hold components horizontally)
   const [rows, setRows] = useState<{ id: string; components: DragItem[] }[]>([
     { id: "row-1", components: [] }
   ]);
 
-  // Add a new empty row
   const addRow = () => {
     setRows([...rows, { id: `row-${rows.length + 1}`, components: [] }]);
   };
 
-  // Remove a row
   const removeRow = (rowId: string) => {
-    // First move any components in this row back to the component list
     const rowToRemove = rows.find(row => row.id === rowId);
     
-    // Then remove the row
     setRows(rows.filter(row => row.id !== rowId));
   };
 
-  // Update style variable
   const handleStyleChange = (variableName: string, value: string) => {
     setStyleVariables({
       ...styleVariables,
@@ -42,30 +43,30 @@ const CheckoutBuilder: React.FC = () => {
     });
   };
 
-  // Handle drag and drop logic
   const onDragEnd = (result: any) => {
     const { source, destination } = result;
     
-    // Dropped outside any droppable area
     if (!destination) return;
     
-    // If source and destination are the same, do nothing
     if (
       source.droppableId === destination.droppableId &&
       source.index === destination.index
     ) return;
     
-    // Handle drag between different areas (component list, rows, etc.)
     if (source.droppableId === "components") {
-      // Dragging from component list
       const componentId = result.draggableId;
       const component = availableComponents.find(c => c.id === componentId);
       
       if (component && destination.droppableId.startsWith("row-")) {
-        // Moving to a row
         const newItem: DragItem = {
           id: `${component.id}-${Date.now()}`,
           content: component.element,
+          originalComponent: component,
+          config: {
+            label: component.defaultLabel,
+            placeholder: component.defaultPlaceholder,
+            ariaLabel: component.defaultAriaLabel,
+          }
         };
         
         const newRows = [...rows];
@@ -77,7 +78,6 @@ const CheckoutBuilder: React.FC = () => {
         }
       }
     } else if (source.droppableId.startsWith("row-")) {
-      // Dragging from a row
       const sourceRowIndex = rows.findIndex(row => row.id === source.droppableId);
       
       if (sourceRowIndex !== -1) {
@@ -85,15 +85,13 @@ const CheckoutBuilder: React.FC = () => {
         const [movedItem] = newRows[sourceRowIndex].components.splice(source.index, 1);
         
         if (destination.droppableId.startsWith("row-")) {
-          // Moving to another row
           const destRowIndex = newRows.findIndex(row => row.id === destination.droppableId);
           
           if (destRowIndex !== -1) {
             newRows[destRowIndex].components.splice(destination.index, 0, movedItem);
           }
         } else if (destination.droppableId === "trash") {
-          // Component was dropped in trash - we don't need to do anything else
-          // as we've already removed it from its source
+          setRows(newRows);
         }
         
         setRows(newRows);
@@ -101,9 +99,28 @@ const CheckoutBuilder: React.FC = () => {
     }
   };
 
-  // Preview of the checkout
+  const updateComponentConfig = (rowId: string, componentId: string, config: Partial<DragItem['config']>) => {
+    const newRows = rows.map(row => {
+      if (row.id === rowId) {
+        return {
+          ...row,
+          components: row.components.map(comp => {
+            if (comp.id === componentId) {
+              return {
+                ...comp,
+                config: { ...comp.config, ...config }
+              };
+            }
+            return comp;
+          })
+        };
+      }
+      return row;
+    });
+    setRows(newRows);
+  };
+
   const renderPreview = () => {
-    // Create the checkout visual preview components
     const renderCardFormComponents = () => {
       if (rows.length === 0 || rows.every(row => row.components.length === 0)) {
         return (
@@ -117,10 +134,8 @@ const CheckoutBuilder: React.FC = () => {
         if (row.components.length === 0) return null;
         
         if (row.components.length === 1) {
-          // Single component in the row - parse the HTML content
           const content = row.components[0].content;
           
-          // Return a visual representation based on component type
           return (
             <div key={row.id} className="mb-4">
               {content.includes('card-number') && (
@@ -157,7 +172,6 @@ const CheckoutBuilder: React.FC = () => {
             </div>
           );
         } else {
-          // Multiple components in a row should be displayed side by side
           return (
             <div key={row.id} className="flex gap-4 mb-4">
               {row.components.map((component, compIndex) => {
@@ -229,17 +243,13 @@ const CheckoutBuilder: React.FC = () => {
       });
     };
 
-    // Apply style variables directly to the preview container
     const previewStyle: React.CSSProperties = {
       fontFamily: styleVariables.primerTypographyBrand || "'Poppins', sans-serif",
-      // Convert pixel values to spacing
       padding: `calc(${styleVariables.primerSpaceBase || "4px"} * 4)`,
-      // Other style variables
       borderRadius: styleVariables.primerRadiusBase || "16px",
       backgroundColor: styleVariables.primerColorBackground || "transparent",
     };
 
-    // Apply style to focus elements (like inputs on focus)
     const focusStyle = {
       boxShadow: `0 0 0 2px ${styleVariables.primerColorFocus || "#DE00D1"}`,
     };
@@ -285,14 +295,11 @@ const CheckoutBuilder: React.FC = () => {
           <h1 className="text-3xl font-bold text-gray-900 mb-8">Checkout Builder</h1>
           
           <DragDropContext onDragEnd={onDragEnd}>
-            {/* Top Row - Layout Builder (2/3) and Options (1/3) */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-              {/* Layout Builder - 2/3 */}
               <div className="lg:col-span-2">
                 <LayoutBuilder rows={rows} onRemoveRow={removeRow} />
               </div>
               
-              {/* Options - 1/3 */}
               <div className="lg:col-span-1">
                 <Tabs defaultValue="components" className="w-full">
                   <TabsList className="grid w-full grid-cols-2">
@@ -314,12 +321,10 @@ const CheckoutBuilder: React.FC = () => {
               </div>
             </div>
             
-            {/* Middle Row - Preview */}
             <div className="mb-8">
               {renderPreview()}
             </div>
             
-            {/* Bottom Row - Generated Code */}
             <div>
               <CodeGenerator 
                 rows={rows}
@@ -349,3 +354,4 @@ const CheckoutBuilder: React.FC = () => {
 };
 
 export default CheckoutBuilder;
+
