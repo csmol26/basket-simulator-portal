@@ -42,18 +42,16 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
       throw new Error("Primer SDK failed to load properly");
     }
     
-    // 3. Configure Primer with client token
-    await Primer.configure({
-      clientToken: clientSession.clientToken,
-    });
-    
-    // 4. Create and show checkout
-    const checkoutHandler = await Primer.createCheckout({
-      container: `#${config.containerId}`,
-      options: {
-        locale: "en-US"
+    // 3. Use the showUniversalCheckout method instead of configure and createCheckout
+    const checkoutHandler = await Primer.showUniversalCheckout(
+      clientSession.clientToken,
+      {
+        container: `#${config.containerId}`,
+        options: {
+          locale: "en-US"
+        }
       }
-    });
+    );
     
     // 5. Set up event handlers
     checkoutHandler.on('CHECKOUT_COMPLETE', (event: any) => {
