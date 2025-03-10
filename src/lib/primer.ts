@@ -2,19 +2,6 @@
 import { createPrimerClientSession } from './api';
 import { loadPrimer } from '@primer-io/primer-js';
 
-// Define interfaces for Primer custom elements to help TypeScript
-interface PrimerCheckoutElement extends HTMLElement {
-  // Add any specific properties/methods of primer-checkout if needed
-}
-
-interface PrimerMainElement extends HTMLElement {
-  // Add any specific properties/methods of primer-main if needed
-}
-
-interface PrimerPaymentMethodElement extends HTMLElement {
-  // Add any specific properties/methods of primer-payment-method if needed
-}
-
 interface PrimerCheckoutConfig {
   amount: number;
   currency: string;
@@ -42,7 +29,7 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
       config.items
     );
     
-    // 2. Load Primer SDK - needed before we can use the web components
+    // 2. Load Primer SDK
     await loadPrimer();
     console.log("Primer SDK loaded successfully");
     
@@ -52,99 +39,37 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
       throw new Error(`Container element with ID '${config.containerId}' not found`);
     }
     
-    // 4. Clear any existing content in the container
-    container.innerHTML = '';
-
-    // 5. Get the current theme from the container's data-theme attribute
-    const currentTheme = container.getAttribute('data-theme') || 'default';
-
-    // 6. Create the primer checkout element structure with multiple payment methods
-    // Revised HTML structure for better interactivity
-    const checkoutHtml = `
-      <primer-checkout client-token="${clientSession.clientToken}">
-        <primer-main slot="main">
-          <!-- Payment methods -->
-          <div slot="payments">
-            <!-- Card payment method - improved interactive elements -->
-            <p class="text-base font-medium text-gray-700 mb-4">Card</p>
-            <div class="space-y-4">
-              <div style="--primer-input-height: 40px; --primer-space-medium: 16px; display: flex; flex-direction: column; gap: 16px;">
-                <div class="w-full">
-                  <primer-input-card-number style="width: 100%"></primer-input-card-number>
-                </div>
-                
-                <!-- Expiry and CVV side by side -->
-                <div style="display: flex; gap: 16px;">
-                  <div style="flex: 1;">
-                    <primer-input-card-expiry></primer-input-card-expiry>
-                  </div>
-                  <div style="flex: 1;">
-                    <primer-input-cvv></primer-input-cvv>
-                  </div>
-                </div>
-                
-                <button 
-                  id="submit-payment-button" 
-                  class="h-10 w-full bg-primary text-white px-4 rounded-md font-medium hover:bg-primary/90 transition-colors"
-                >
-                  Pay Now
-                </button>
-              </div>
-            </div>
-            
-            <!-- Added margin-top to create more space between payment methods -->
-            <div class="mt-8 pt-6 border-t border-gray-200">
-              <p class="text-base font-medium text-gray-700 mb-4">Alternative Payment Method</p>
-              <primer-payment-method type="PAYPAL">
-                <!-- PayPal payment method will be rendered automatically -->
-              </primer-payment-method>
-            </div>
-          </div>
-          
-          <!-- Custom completion screen -->
-          <div slot="checkout-complete">
-            <h2 class="text-xl font-bold text-green-600 text-center my-4">Thank you for your purchase!</h2>
-            <p class="text-center text-gray-600">Your order has been processed successfully.</p>
-          </div>
-        </primer-main>
+    // 4. Initialize Primer checkout with simple structure
+    container.innerHTML = `
+      <primer-checkout 
+        client-token="${clientSession.clientToken}"
+        class="w-full"
+      >
       </primer-checkout>
     `;
-    
-    // Insert the checkout HTML directly
-    container.innerHTML = checkoutHtml;
-    
-    // Get a reference to the checkout element to add event listeners
-    const checkoutElement = container.querySelector('primer-checkout') as unknown as PrimerCheckoutElement;
-    
-    // Add event listeners to the checkout element
-    checkoutElement.addEventListener('primer-checkout-initialized', () => {
-      console.log('Primer checkout initialized');
-      
-      // Add click event listener to the submit button
-      const submitButton = document.getElementById('submit-payment-button');
-      if (submitButton) {
-        submitButton.addEventListener('click', () => {
-          // Trigger submit on the Primer checkout
-          const event = new CustomEvent('primer-checkout-submit');
-          checkoutElement.dispatchEvent(event);
-        });
-      }
-    });
-    
-    checkoutElement.addEventListener('primer-state-changed', (event: any) => {
-      const state = event.detail;
-      console.log('Checkout state changed:', state);
-      
-      if (state.isSuccessful && config.onComplete) {
-        console.log('Checkout completed successfully!');
-        config.onComplete(state.payment);
-      }
-      
-      if (state.error && config.onError) {
-        console.log('Checkout failed:', state.error);
-        config.onError(state.error, state.payment);
-      }
-    });
+
+    const checkoutElement = container.querySelector('primer-checkout');
+    if (checkoutElement) {
+      // Add event listeners
+      checkoutElement.addEventListener('primer-checkout-initialized', () => {
+        console.log('Primer checkout initialized');
+      });
+
+      checkoutElement.addEventListener('primer-state-changed', (event: any) => {
+        const state = event.detail;
+        console.log('Checkout state changed:', state);
+        
+        if (state.isSuccessful && config.onComplete) {
+          console.log('Checkout completed successfully!');
+          config.onComplete(state.payment);
+        }
+        
+        if (state.error && config.onError) {
+          console.log('Checkout failed:', state.error);
+          config.onError(state.error, state.payment);
+        }
+      });
+    }
     
     console.log("Primer checkout initialized successfully");
     

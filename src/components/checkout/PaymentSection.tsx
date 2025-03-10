@@ -15,10 +15,9 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) =
       <CardContent>
         <div 
           id="primer-payment-container" 
-          className="min-h-[300px]" 
+          className="min-h-[400px]"
           aria-live="polite"
         >
-          {/* Primer payment form will be initialized here */}
           <div className="py-4 text-center text-gray-500">
             Loading payment options...
           </div>
