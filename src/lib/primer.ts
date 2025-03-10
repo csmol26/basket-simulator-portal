@@ -70,7 +70,7 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
               <primer-input-card-expiry placeholder="12/30"></primer-input-card-expiry>
               <primer-input-cvv placeholder="123"></primer-input-cvv>
               <primer-input-card-holder-name placeholder="Christophe Smol"></primer-input-card-holder-name>
-              <button type="submit">Pay Now with Card</button>
+              <primer-button type="submit">Pay Now with Card</button>
               </div>
             </primer-card-form>
             </primer-payment-method>
