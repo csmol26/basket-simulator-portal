@@ -36,17 +36,12 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) =
         :root {
           animation: blinkColors 2s infinite;
           --primer-typography-brand: Caveat;
-          --primer-color-background: #FFFF00;
+          --primer-color-background: transparent;
           --primer-radius-base: 6px;
           --primer-color-text-primary: #4CAF50;
         }
-
-        /* Completely unified card form appearance */
-        #primer-payment-container primer-card-form {
-          width: 100%;
-        }
         
-        /* Single line container style */
+        /* Single line styling for card inputs */
         #primer-payment-container .single-line-card-inputs {
           display: flex;
           width: 100%;
@@ -54,58 +49,25 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) =
           border-radius: 6px;
           overflow: hidden;
           margin-bottom: 16px;
-          background: white;
         }
         
-        /* Make inputs flex evenly */
+        /* Allow inputs to flex and fill the container */
         #primer-payment-container .single-line-card-inputs > * {
           flex: 1;
-          border: none !important;
-          margin: 0 !important;
-          padding: 0 !important;
         }
         
-        /* Special sizing for card number */
+        /* Give card number more space */
         #primer-payment-container .single-line-card-inputs primer-input-card-number {
           flex: 2;
         }
         
-        /* Remove borders between elements */
-        #primer-payment-container primer-input-card-number,
-        #primer-payment-container primer-input-card-expiry,
-        #primer-payment-container primer-input-cvv,
-        #primer-payment-container primer-input-card-holder-name {
-          border: none !important;
-          box-shadow: none !important;
-        }
-        
-        /* Force labels to be hidden */
-        #primer-payment-container primer-input-label {
-          display: none !important;
-        }
-        
-        /* Remove border radius from individual components */
-        #primer-payment-container primer-input-wrapper,
-        #primer-payment-container .primer-input {
-          border-radius: 0 !important;
-          margin: 0 !important;
-          border: none !important;
-        }
-        
         /* Style dividers between fields */
         #primer-payment-container .single-line-card-inputs > *:not(:last-child) {
-          border-right: 1px solid #e2e8f0 !important;
-        }
-        
-        /* Style contained iframes */
-        #primer-payment-container iframe {
-          border: none !important;
-          background: transparent !important;
+          border-right: 1px solid #e2e8f0;
         }
         
         /* Button styling with blinking effect */
-        #primer-payment-container button[type="submit"],
-        #primer-payment-container [data-submit] {
+        #primer-payment-container button[type="submit"] {
           width: 100%;
           padding: 0.75rem;
           margin-top: 1rem;
