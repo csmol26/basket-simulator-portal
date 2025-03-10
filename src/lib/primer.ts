@@ -56,7 +56,6 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
     container.innerHTML = '';
     
     // 5. Create the elements with proper TypeScript casting
-    // Use document.createElement followed by a type assertion (as unknown as Type)
     const checkoutElement = document.createElement('primer-checkout') as unknown as PrimerCheckoutElement;
     const mainElement = document.createElement('primer-main') as unknown as PrimerMainElement;
     const paymentsDiv = document.createElement('div');
@@ -82,13 +81,30 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
     paymentsDiv.setAttribute('slot', 'payments');
     cardPaymentMethod.setAttribute('type', 'PAYMENT_CARD');
     
-    // 8. Assemble the components using DOM methods
+    // 8. Create custom card form layout
+    const cardFormHtml = `
+      <primer-card-form>
+        <div slot="card-form-content">
+          <div class="card-row">
+            <primer-input-card-number></primer-input-card-number>
+            <primer-input-card-expiry></primer-input-card-expiry>
+            <primer-input-cvv></primer-input-cvv>
+          </div>
+          <primer-input-card-holder-name></primer-input-card-holder-name>
+          <button type="submit">Pay Now</button>
+        </div>
+      </primer-card-form>
+    `;
+    
+    cardPaymentMethod.innerHTML = cardFormHtml;
+    
+    // 9. Assemble the components using DOM methods
     paymentsDiv.appendChild(cardPaymentMethod);
     mainElement.appendChild(paymentsDiv);
     checkoutElement.appendChild(mainElement);
     container.appendChild(checkoutElement);
     
-    // 9. Add event listeners to the checkout element
+    // 10. Add event listeners to the checkout element
     checkoutElement.addEventListener('primer-checkout-initialized', () => {
       console.log('Primer checkout initialized');
     });

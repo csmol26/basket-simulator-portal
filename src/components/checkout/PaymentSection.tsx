@@ -40,6 +40,56 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) =
           --primer-radius-base: 6px;
           --primer-color-text-primary: #4CAF50;
         }
+
+        /* Custom styles for the seamless card form appearance */
+        #primer-payment-container primer-card-form {
+          width: 100%;
+        }
+
+        /* Create a seamless card form appearance */
+        #primer-payment-container .card-row {
+          display: flex;
+          width: 100%;
+          margin-bottom: 16px;
+          border: 1px solid #e2e8f0;
+          border-radius: 6px;
+          overflow: hidden;
+        }
+
+        /* Remove individual borders between inputs */
+        #primer-payment-container .card-row > * {
+          flex: 1;
+          margin: 0;
+          border: none !important;
+          border-radius: 0 !important;
+        }
+
+        /* Remove any margin/padding that might create visual separation */
+        #primer-payment-container primer-input-card-number,
+        #primer-payment-container primer-input-card-expiry,
+        #primer-payment-container primer-input-cvv {
+          margin: 0;
+          padding: 0;
+        }
+
+        /* Ensure the hosted iframes inherit these styles */
+        #primer-payment-container iframe {
+          border: none !important;
+        }
+
+        /* Button styling */
+        #primer-payment-container button[type="submit"],
+        #primer-payment-container [data-submit] {
+          width: 100%;
+          padding: 0.75rem;
+          margin-top: 1rem;
+          border-radius: 6px;
+          animation: blinkColors 2s infinite;
+          background: var(--primer-color-brand);
+          color: white;
+          font-weight: bold;
+          cursor: pointer;
+        }
       `;
       document.head.appendChild(styleElement);
 
