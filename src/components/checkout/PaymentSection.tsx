@@ -155,13 +155,14 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) =
         case 'card-form-builder':
           themeStyles = `
             :root {
-            --primer-color-brand: #4b18aa;
-            --primer-typography-brand: 'Playfair Display', serif;
-            --primer-color-background: transparent;
-            --primer-radius-base: 20px;
-            --primer-space-base: 15px;
-            --primer-size-base: 8px;
-            --primer-color-focus: #0038e0;
+              --primer-color-brand: #9118aa;
+              --primer-typography-brand: 'Poppins', sans-serif;
+              --primer-color-background: transparent;
+              --primer-radius-base: 20px;
+              --primer-space-base: 14px;
+              --primer-size-base: 4px;
+              --primer-color-focus: #DE00D1;
+              --primer-space-small: 8px;
             }
           `;
           break;
