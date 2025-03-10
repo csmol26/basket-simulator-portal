@@ -1,16 +1,14 @@
-
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ComponentList from "./ComponentList";
 import StyleEditor from "./StyleEditor";
-import LayoutBuilder from "./LayoutBuilder";
-import { Row } from "./types";
+import { Row, StyleVariables } from "./types";
 
 interface BuilderTabsProps {
   rows: Row[];
   onAddRow: () => void;
   onRemoveRow: (rowId: string) => void;
-  styleVariables: Record<string, string>;
+  styleVariables: StyleVariables;
   handleStyleChange: (variableName: string, value: string) => void;
   updateComponentConfig: (rowId: string, componentId: string, config: any) => void;
 }
