@@ -65,7 +65,7 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
     // 6. Set attributes using standard DOM methods
     checkoutElement.setAttribute('client-token', clientSession.clientToken);
     
-    // Custom styling for checkout with updated values
+    // Custom styling for checkout with fixed brand color
     const customStyles = {
       primerColorBrand: '#FFC0CB', // Light Pink
       primerTypographyBrand: 'Caveat', // Caveat font

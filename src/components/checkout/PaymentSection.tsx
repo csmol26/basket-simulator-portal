@@ -24,28 +24,10 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) =
       fontLinkElement.href = 'https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap';
       document.head.appendChild(fontLinkElement);
 
-      // Add custom blinking animation for the pay button
-      const styleElement = document.createElement('style');
-      styleElement.textContent = `
-        @keyframes blinkPayButton {
-          0% { --primer-color-brand: #FFC0CB; } /* Light Pink */
-          50% { --primer-color-brand: #9370DB; } /* Purple */
-          100% { --primer-color-brand: #FFC0CB; } /* Light Pink */
-        }
-        
-        primer-button[type="submit"] {
-          animation: blinkPayButton 2s infinite;
-        }
-      `;
-      document.head.appendChild(styleElement);
-
       return () => {
         // Clean up styles when component unmounts
         document.head.removeChild(linkElement);
         document.head.removeChild(fontLinkElement);
-        if (styleElement.parentNode) {
-          document.head.removeChild(styleElement);
-        }
       };
     }
   }, [showPrimerCheckout]);
