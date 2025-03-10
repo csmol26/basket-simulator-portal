@@ -12,21 +12,21 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) =
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-xl font-medium">Paiement</CardTitle>
+        <CardTitle className="text-xl font-medium">Payment</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
           {!showPrimerCheckout ? (
             <p className="text-sm text-gray-500">
-              Les informations de paiement seront collectées de manière sécurisée via l'interface de paiement Primer après avoir validé vos informations d'expédition.
+              Payment information will be securely collected via the Primer payment interface after validating your shipping information.
             </p>
           ) : (
             <p className="text-sm text-gray-500 mb-4">
-              Veuillez compléter votre paiement ci-dessous:
+              Please complete your payment below:
             </p>
           )}
           
-          {/* Container pour l'UI de paiement Primer */}
+          {/* Container for Primer payment UI */}
           <div 
             id="primer-payment-container" 
             ref={primerContainerRef}
@@ -34,7 +34,7 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) =
           >
             {!showPrimerCheckout && (
               <div className="flex items-center justify-center h-full">
-                <p className="text-muted-foreground text-sm">Le formulaire de paiement Primer apparaîtra ici</p>
+                <p className="text-muted-foreground text-sm">Primer payment form will appear here</p>
               </div>
             )}
           </div>

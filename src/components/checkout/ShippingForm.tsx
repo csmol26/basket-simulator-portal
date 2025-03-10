@@ -26,15 +26,15 @@ const ShippingForm: React.FC<ShippingFormProps> = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-xl font-medium">Informations d'expédition</CardTitle>
+        <CardTitle className="text-xl font-medium">Shipping Information</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="firstName">Prénom</Label>
+            <Label htmlFor="firstName">First Name</Label>
             <Input 
               id="firstName" 
-              placeholder="Entrez votre prénom" 
+              placeholder="Enter your first name" 
               required 
               value={formData.firstName}
               onChange={handleInputChange}
@@ -42,10 +42,10 @@ const ShippingForm: React.FC<ShippingFormProps> = ({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="lastName">Nom</Label>
+            <Label htmlFor="lastName">Last Name</Label>
             <Input 
               id="lastName" 
-              placeholder="Entrez votre nom" 
+              placeholder="Enter your last name" 
               required 
               value={formData.lastName}
               onChange={handleInputChange}
@@ -55,11 +55,11 @@ const ShippingForm: React.FC<ShippingFormProps> = ({
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="email">Adresse email</Label>
+          <Label htmlFor="email">Email Address</Label>
           <Input 
             id="email" 
             type="email" 
-            placeholder="Entrez votre email" 
+            placeholder="Enter your email" 
             required 
             value={formData.email}
             onChange={handleInputChange}
@@ -68,10 +68,10 @@ const ShippingForm: React.FC<ShippingFormProps> = ({
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="address">Adresse</Label>
+          <Label htmlFor="address">Address</Label>
           <Input 
             id="address" 
-            placeholder="Entrez votre adresse" 
+            placeholder="Enter your address" 
             required 
             value={formData.address}
             onChange={handleInputChange}
@@ -81,10 +81,10 @@ const ShippingForm: React.FC<ShippingFormProps> = ({
         
         <div className="grid grid-cols-3 gap-4">
           <div className="space-y-2 col-span-1">
-            <Label htmlFor="zipCode">Code postal</Label>
+            <Label htmlFor="zipCode">Zip Code</Label>
             <Input 
               id="zipCode" 
-              placeholder="Code postal" 
+              placeholder="Zip code" 
               required 
               value={formData.zipCode}
               onChange={handleInputChange}
@@ -92,10 +92,10 @@ const ShippingForm: React.FC<ShippingFormProps> = ({
             />
           </div>
           <div className="space-y-2 col-span-1">
-            <Label htmlFor="city">Ville</Label>
+            <Label htmlFor="city">City</Label>
             <Input 
               id="city" 
-              placeholder="Ville" 
+              placeholder="City" 
               required 
               value={formData.city}
               onChange={handleInputChange}
@@ -103,10 +103,10 @@ const ShippingForm: React.FC<ShippingFormProps> = ({
             />
           </div>
           <div className="space-y-2 col-span-1">
-            <Label htmlFor="country">Pays</Label>
+            <Label htmlFor="country">Country</Label>
             <Input 
               id="country" 
-              placeholder="Pays" 
+              placeholder="Country" 
               required 
               value={formData.country}
               onChange={handleInputChange}

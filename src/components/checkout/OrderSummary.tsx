@@ -21,20 +21,20 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-xl font-medium">Récapitulatif de commande</CardTitle>
+        <CardTitle className="text-xl font-medium">Order Summary</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="text-gray-500">Sous-total</span>
+            <span className="text-gray-500">Subtotal</span>
             <span className="font-medium">${subtotal.toFixed(2)}</span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-gray-500">Livraison</span>
+            <span className="text-gray-500">Shipping</span>
             <span className="font-medium">${shipping.toFixed(2)}</span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-gray-500">Taxe estimée</span>
+            <span className="text-gray-500">Estimated Tax</span>
             <span className="font-medium">${tax.toFixed(2)}</span>
           </div>
           <div className="border-t border-gray-200 my-2 pt-2 flex justify-between">
@@ -49,7 +49,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
             className="w-full mt-4"
             disabled={loading}
           >
-            {loading ? "Traitement en cours..." : "Passer à la validation du paiement"}
+            {loading ? "Processing..." : "Proceed to Payment"}
           </Button>
         )}
       </CardContent>

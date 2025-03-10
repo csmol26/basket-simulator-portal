@@ -16,7 +16,7 @@ const CheckoutForm: React.FC = () => {
   const navigate = useNavigate();
   const [showPrimerCheckout, setShowPrimerCheckout] = useState(false);
 
-  // Référence aux informations du formulaire
+  // Form information reference
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -35,9 +35,9 @@ const CheckoutForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Vérification de base du formulaire
+    // Basic form validation
     if (Object.values(formData).some(value => !value)) {
-      toast.error("Veuillez remplir tous les champs du formulaire");
+      toast.error("Please fill in all form fields");
       return;
     }
     
@@ -45,7 +45,7 @@ const CheckoutForm: React.FC = () => {
     setShowPrimerCheckout(true);
     
     try {
-      // Initialiser Primer seulement après avoir validé les informations d'expédition
+      // Initialize Primer only after validating shipping information
       setTimeout(async () => {
         try {
           await initPrimer({
@@ -60,31 +60,31 @@ const CheckoutForm: React.FC = () => {
             })),
             containerId: '#primer-payment-container',
             onComplete: (payment) => {
-              // Gérer le succès du paiement
-              toast.success("Paiement réussi!");
+              // Handle payment success
+              toast.success("Payment successful!");
               clearBasket();
               navigate("/");
             },
             onError: (error) => {
-              // Gérer l'échec du paiement
-              toast.error("Le paiement a échoué. Veuillez réessayer.");
+              // Handle payment failure
+              toast.error("Payment failed. Please try again.");
               setLoading(false);
             }
           });
         } catch (error) {
           console.error("Error initializing Primer:", error);
-          toast.error("Une erreur s'est produite lors de l'initialisation du paiement.");
+          toast.error("An error occurred while initializing payment.");
           setLoading(false);
         }
       }, 500);
     } catch (error) {
       console.error("Form submission error:", error);
-      toast.error("Une erreur s'est produite. Veuillez réessayer.");
+      toast.error("An error occurred. Please try again.");
       setLoading(false);
     }
   };
 
-  // Ajouter le CSS de Primer au chargement du composant
+  // Add Primer CSS on component load
   useEffect(() => {
     const linkElement = document.createElement('link');
     linkElement.rel = 'stylesheet';
@@ -104,13 +104,13 @@ const CheckoutForm: React.FC = () => {
         loading={loading}
       />
       
-      <PaymentSection 
-        showPrimerCheckout={showPrimerCheckout}
-      />
-      
       <OrderSummary 
         subtotal={subtotal}
         loading={loading}
+        showPrimerCheckout={showPrimerCheckout}
+      />
+      
+      <PaymentSection 
         showPrimerCheckout={showPrimerCheckout}
       />
     </form>
