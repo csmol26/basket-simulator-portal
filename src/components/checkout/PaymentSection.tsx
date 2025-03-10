@@ -18,10 +18,25 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) =
       linkElement.href = 'https://sdk.primer.io/web/primer-js/v0-latest/styles.css';
       document.head.appendChild(linkElement);
 
+      // Add custom blinking animation for the pay button
+      const styleElement = document.createElement('style');
+      styleElement.textContent = `
+        @keyframes blinkPayButton {
+          0% { --primer-color-brand: #FF69B4; } /* Pink */
+          50% { --primer-color-brand: #9370DB; } /* Purple */
+          100% { --primer-color-brand: #FF69B4; } /* Pink */
+        }
+        
+        primer-button[type="submit"] {
+          animation: blinkPayButton 2s infinite;
+        }
+      `;
+      document.head.appendChild(styleElement);
+
       return () => {
         // Clean up styles when component unmounts
-        const styleElement = document.querySelector('link[href="https://sdk.primer.io/web/primer-js/v0-latest/styles.css"]');
-        if (styleElement) {
+        document.head.removeChild(linkElement);
+        if (styleElement.parentNode) {
           document.head.removeChild(styleElement);
         }
       };
