@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -23,18 +24,12 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) =
       fontLinkElement.href = 'https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap';
       document.head.appendChild(fontLinkElement);
 
-      // Add custom CSS variables globally with blinking animation
+      // Add custom CSS variables globally without blinking animation
       const styleElement = document.createElement('style');
       styleElement.textContent = `
-        @keyframes blinkColors {
-          0% { --primer-color-brand:rgb(135, 245, 185); }
-          50% { --primer-color-brand: #18A94B; }
-          100% { --primer-color-brand:rgb(135, 245, 185); }
-        }
-        
         :root {
-          animation: blinkColors 2s infinite;
           --primer-typography-brand: Roboto;
+          --primer-color-brand: #18A94B;
           --primer-color-background: transparent;
           --primer-radius-base: 16px;
           --primer-space-base: 8px;
@@ -42,13 +37,12 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) =
           --primer-color-focus: #DE00D1;
         }
         
-        /* Button styling with blinking effect */
+        /* Button styling without blinking effect */
         #primer-payment-container button[type="submit"] {
           width: 100%;
           padding: 0.75rem;
           margin-top: 1rem;
           border-radius: 6px;
-          animation: blinkColors 2s infinite;
           background: var(--primer-color-brand);
           color: white;
           font-weight: bold;
