@@ -1,5 +1,4 @@
 
-import { Primer } from '@primer-io/checkout-web';
 import { createPrimerClientSession } from './api';
 
 interface PrimerCheckoutConfig {
@@ -29,11 +28,12 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
       config.items
     );
     
-    // 2. Initialize Primer with the client token
-    const primer = new Primer(clientSession.clientToken);
+    // 2. Initialize Primer using the imported module
+    // Instead of using the constructor, use the imported module directly
+    const { Primer } = await import('@primer-io/checkout-web');
     
     // 3. Create the checkout instance using the Composable Checkout API
-    const checkout = await primer.createCheckout();
+    const checkout = await Primer.createCheckout(clientSession.clientToken);
     
     // 4. Configure the checkout with event handlers
     checkout.on('CHECKOUT_COMPLETE', (data) => {
@@ -53,15 +53,19 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
     // 5. Initialize the payment method managers
     const { CardManager, ApplePayManager, GooglePayManager } = checkout.paymentMethods;
     
-    // 6. Render the payment methods in the container
+    // 6. Render the payment methods in their containers
     // Render card form
     if (CardManager) {
       const cardManager = await CardManager.init();
       await cardManager.renderCardForm(`${config.containerId}-card`);
     }
     
-    // Render Apple Pay if available and on supported device
-    if (ApplePayManager && window.ApplePaySession && ApplePaySession.canMakePayments()) {
+    // Fix the ApplePaySession check
+    // Safely check for Apple Pay support
+    if (ApplePayManager && 
+        typeof window !== 'undefined' && 
+        'ApplePaySession' in window && 
+        window.ApplePaySession?.canMakePayments?.()) {
       const applePayManager = await ApplePayManager.init();
       await applePayManager.renderApplePayButton(`${config.containerId}-applepay`);
     }

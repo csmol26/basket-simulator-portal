@@ -58,7 +58,7 @@ const CheckoutForm: React.FC = () => {
               quantity: item.quantity,
               unitPrice: item.product.price
             })),
-            containerId: '#primer-payment-container',
+            containerId: 'primer-payment-container',
             onComplete: (payment) => {
               // Handle payment success
               toast.success("Payment successful!");
