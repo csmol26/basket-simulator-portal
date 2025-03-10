@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -106,6 +107,14 @@ const CodeGenerator: React.FC<CodeGeneratorProps> = ({ rows, styleVariables }) =
             <!-- Card payment method -->
             <p class="text-base font-medium text-gray-700 mb-4">Card</p>
             ${cardPaymentHtml}
+            
+            <!-- Added margin-top to create more space between payment methods -->
+            <div class="mt-8 pt-6 border-t border-gray-200">
+              <p class="text-base font-medium text-gray-700 mb-4">Alternative Payment Method</p>
+              <primer-payment-method type="PAYPAL">
+                <!-- PayPal payment method will be rendered automatically -->
+              </primer-payment-method>
+            </div>
           </div>
           
           <!-- Custom completion screen -->
