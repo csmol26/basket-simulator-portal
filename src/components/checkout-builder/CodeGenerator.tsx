@@ -20,10 +20,9 @@ interface Row {
 interface CodeGeneratorProps {
   rows: Row[];
   styleVariables: Record<string, string>;
-  cardFirst: boolean;
 }
 
-const CodeGenerator: React.FC<CodeGeneratorProps> = ({ rows, styleVariables, cardFirst }) => {
+const CodeGenerator: React.FC<CodeGeneratorProps> = ({ rows, styleVariables }) => {
   // Generate UI code for PaymentSection
   const generateUICode = () => {
     const variableString = Object.entries(styleVariables)
@@ -61,23 +60,14 @@ const CodeGenerator: React.FC<CodeGeneratorProps> = ({ rows, styleVariables, car
   </div>
 </primer-card-form>`;
 
-    const apmHtml = `<div class="mt-8 pt-6 border-t border-gray-200">
-  <p class="text-base font-medium text-gray-700 mb-4">Alternative Payment Method</p>
-  <primer-payment-method type="PAYPAL">
-    <!-- APM will be rendered automatically -->
-  </primer-payment-method>
-</div>`;
-
     const checkoutHtml = `
       <primer-checkout client-token="\${clientSession.clientToken}">
         <primer-main slot="main">
           <!-- Payment methods -->
           <div slot="payments">
-            <!-- Card payment method display 1 -->
+            <!-- Card payment method -->
             <p class="text-base font-medium text-gray-700 mb-4">Card</p>
-            ${cardFirst ? cardPaymentHtml : apmHtml}
-            
-            ${cardFirst ? apmHtml : cardPaymentHtml}
+            ${cardPaymentHtml}
           </div>
           
           <!-- Custom completion screen -->

@@ -14,7 +14,6 @@ interface DragItem {
 }
 
 const CheckoutBuilder: React.FC = () => {
-  const [cardFirst, setCardFirst] = useState<boolean>(true);
   const [styleVariables, setStyleVariables] = useState(initialStyleVariables);
   
   // State for rows (containers that can hold components horizontally)
@@ -34,11 +33,6 @@ const CheckoutBuilder: React.FC = () => {
     
     // Then remove the row
     setRows(rows.filter(row => row.id !== rowId));
-  };
-
-  // Toggle card form position relative to alternative payment methods
-  const toggleCardPosition = () => {
-    setCardFirst(!cardFirst);
   };
 
   // Update style variable
@@ -126,7 +120,6 @@ const CheckoutBuilder: React.FC = () => {
         if (row.components.length === 1) {
           // Single component in the row - parse the HTML content
           const content = row.components[0].content;
-          const componentName = content.match(/<primer-input-([^>]+)>/)?.[1] || "component";
           
           // Return a visual representation based on component type
           return (
@@ -144,6 +137,11 @@ const CheckoutBuilder: React.FC = () => {
               {content.includes('cvv') && (
                 <div className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3">
                   <span className="text-gray-400">123</span>
+                </div>
+              )}
+              {content.includes('card-holder-name') && (
+                <div className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3">
+                  <span className="text-gray-400">Cardholder Name</span>
                 </div>
               )}
               {content.includes('card-form-submit') && (
@@ -175,6 +173,11 @@ const CheckoutBuilder: React.FC = () => {
                     {content.includes('cvv') && (
                       <div className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3">
                         <span className="text-gray-400">123</span>
+                      </div>
+                    )}
+                    {content.includes('card-holder-name') && (
+                      <div className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3">
+                        <span className="text-gray-400">Cardholder Name</span>
                       </div>
                     )}
                     {content.includes('card-form-submit') && (
@@ -209,50 +212,11 @@ const CheckoutBuilder: React.FC = () => {
         
         <div className="border border-gray-200 rounded-md p-6">
           <div className="mb-6">
-            <div className="flex items-center mb-4">
-              <div className="w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center mr-2 text-xs font-bold">1</div>
-              <p className="text-base font-medium text-gray-700">Card Payment</p>
-            </div>
-            
-            <div className="pl-8">
-              {cardFirst && renderCardFormComponents()}
+            <p className="text-base font-medium text-gray-700 mb-4">Card Payment</p>
+            <div>
+              {renderCardFormComponents()}
             </div>
           </div>
-          
-          <div className="mb-6">
-            <div className="flex items-center mb-4">
-              <div className="w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center mr-2 text-xs font-bold">2</div>
-              <p className="text-base font-medium text-gray-700">Alternative Payment Methods</p>
-            </div>
-            
-            <div className="pl-8">
-              <div className="flex gap-3 items-center">
-                <button className="bg-blue-600 hover:bg-blue-700 text-white rounded-md p-2 h-10 px-4 font-medium transition-colors flex items-center gap-2">
-                  <span className="font-bold">Pay</span>
-                  <span className="font-light">Pal</span>
-                </button>
-                <button className="bg-yellow-500 hover:bg-yellow-600 text-black rounded-md p-2 h-10 px-4 font-medium transition-colors">
-                  APM
-                </button>
-                <button className="bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-md p-2 h-10 px-4 font-medium transition-colors">
-                  Other
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          {!cardFirst && (
-            <div className="mb-6">
-              <div className="flex items-center mb-4">
-                <div className="w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center mr-2 text-xs font-bold">3</div>
-                <p className="text-base font-medium text-gray-700">Card Payment</p>
-              </div>
-              
-              <div className="pl-8">
-                {renderCardFormComponents()}
-              </div>
-            </div>
-          )}
         </div>
       </div>
     );
@@ -283,11 +247,7 @@ const CheckoutBuilder: React.FC = () => {
                   </TabsList>
                   
                   <TabsContent value="components" className="mt-4">
-                    <ComponentList 
-                      onCardPositionToggle={toggleCardPosition}
-                      cardFirst={cardFirst}
-                      onAddRow={addRow}
-                    />
+                    <ComponentList onAddRow={addRow} />
                   </TabsContent>
                   
                   <TabsContent value="styles" className="mt-4">
@@ -310,7 +270,6 @@ const CheckoutBuilder: React.FC = () => {
               <CodeGenerator 
                 rows={rows}
                 styleVariables={styleVariables}
-                cardFirst={cardFirst}
               />
             </div>
           </DragDropContext>

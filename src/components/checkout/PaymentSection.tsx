@@ -191,7 +191,7 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) =
             </p>
           ) : (
             <div className="space-y-4">
-              {/* Primer logo image moved above the "Card" heading */}
+              {/* Primer logo image */}
               <div className="flex justify-center mb-4">
                 <img 
                   src="https://disruptivetechnews.com/wp-content/uploads/1663672073-primer-io-2x.jpeg" 

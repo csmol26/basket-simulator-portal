@@ -14,14 +14,10 @@ export const availableComponents = [
 ];
 
 interface ComponentListProps {
-  onCardPositionToggle: () => void;
-  cardFirst: boolean;
   onAddRow: () => void;
 }
 
 const ComponentList: React.FC<ComponentListProps> = ({ 
-  onCardPositionToggle, 
-  cardFirst,
   onAddRow 
 }) => {
   return (
@@ -59,18 +55,6 @@ const ComponentList: React.FC<ComponentListProps> = ({
             </div>
           )}
         </Droppable>
-        
-        <div className="mt-8 pt-4 border-t border-gray-200">
-          <p className="text-sm font-medium text-gray-700 mb-4">Payment Method Order</p>
-          <Button 
-            onClick={onCardPositionToggle} 
-            variant="outline" 
-            className="w-full justify-between"
-          >
-            {cardFirst ? "Card → APM" : "APM → Card"}
-            <span className="text-xs text-gray-500">Click to toggle</span>
-          </Button>
-        </div>
         
         <div className="mt-8 pt-4 border-t border-gray-200">
           <p className="text-sm font-medium text-gray-700 mb-4">Row Management</p>
