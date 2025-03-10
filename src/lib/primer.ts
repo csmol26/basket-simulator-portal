@@ -56,6 +56,7 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
     container.innerHTML = '';
     
     // 5. Create the primer checkout element structure with multiple payment methods
+    // Added additional margin classes to the PayPal payment method for more spacing
     const checkoutHtml = `
       <primer-checkout client-token="${clientSession.clientToken}">
         <primer-main slot="main">
@@ -72,9 +73,14 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
                 </div>
               </primer-card-form>
             </primer-payment-method>
-            <primer-payment-method type="PAYPAL">
-              <!-- PayPal payment method will be rendered automatically -->
-            </primer-payment-method>
+            
+            <!-- Added margin-top to create more space between payment methods -->
+            <div class="mt-8 pt-6 border-t border-gray-200">
+              <p class="text-base font-medium text-gray-700 mb-4">Alternative Payment Method</p>
+              <primer-payment-method type="PAYPAL">
+                <!-- PayPal payment method will be rendered automatically -->
+              </primer-payment-method>
+            </div>
           </div>
           
           <!-- Custom completion screen -->
