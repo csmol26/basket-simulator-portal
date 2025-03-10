@@ -7,7 +7,9 @@ interface PaymentSectionProps {
 }
 
 const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) => {
-  const primerContainerRef = useRef<HTMLDivElement>(null);
+  const cardContainerRef = useRef<HTMLDivElement>(null);
+  const applePayContainerRef = useRef<HTMLDivElement>(null);
+  const googlePayContainerRef = useRef<HTMLDivElement>(null);
 
   return (
     <Card>
@@ -26,18 +28,32 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) =
             </p>
           )}
           
-          {/* Container for Primer payment UI */}
+          {/* Container for Primer card payment UI */}
           <div 
-            id="primer-payment-container" 
-            ref={primerContainerRef}
+            id="primer-payment-container-card" 
+            ref={cardContainerRef}
             className="min-h-48 bg-gray-50 rounded-md border border-gray-200 p-4"
           >
             {!showPrimerCheckout && (
               <div className="flex items-center justify-center h-full">
-                <p className="text-muted-foreground text-sm">Primer payment form will appear here</p>
+                <p className="text-muted-foreground text-sm">Credit card payment form will appear here</p>
               </div>
             )}
           </div>
+          
+          {/* Container for Apple Pay */}
+          <div 
+            id="primer-payment-container-applepay" 
+            ref={applePayContainerRef}
+            className="min-h-12 py-2"
+          />
+          
+          {/* Container for Google Pay */}
+          <div 
+            id="primer-payment-container-googlepay" 
+            ref={googlePayContainerRef}
+            className="min-h-12 py-2"
+          />
         </div>
       </CardContent>
     </Card>

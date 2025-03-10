@@ -7,8 +7,8 @@ import { toast } from "sonner";
 
 // Import refactored components
 import ShippingForm from "./checkout/ShippingForm";
-import PaymentSection from "./checkout/PaymentSection";
 import OrderSummary from "./checkout/OrderSummary";
+import PaymentSection from "./checkout/PaymentSection";
 
 const CheckoutForm: React.FC = () => {
   const { subtotal, items, clearBasket } = useBasket();
@@ -63,7 +63,7 @@ const CheckoutForm: React.FC = () => {
               // Handle payment success
               toast.success("Payment successful!");
               clearBasket();
-              navigate("/");
+              navigate("/confirmation");
             },
             onError: (error) => {
               // Handle payment failure
@@ -88,7 +88,7 @@ const CheckoutForm: React.FC = () => {
   useEffect(() => {
     const linkElement = document.createElement('link');
     linkElement.rel = 'stylesheet';
-    linkElement.href = 'https://sdk.primer.io/web/v2.50.3/Checkout.css';
+    linkElement.href = 'https://sdk.primer.io/web/latest/Checkout.css';
     document.head.appendChild(linkElement);
 
     return () => {
