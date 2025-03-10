@@ -14,7 +14,7 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) =
     if (showPrimerCheckout) {
       const linkElement = document.createElement('link');
       linkElement.rel = 'stylesheet';
-      linkElement.href = 'https://sdk.primer.io/web/latest/Checkout.css';
+      linkElement.href = 'https://sdk.primer.io/web/primer-js/v0-latest/styles.css';
       document.head.appendChild(linkElement);
 
       return () => {
