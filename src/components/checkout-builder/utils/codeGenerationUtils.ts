@@ -20,31 +20,72 @@ export const generateUICode = (styleVariables: StyleVariables) => {
 };
 
 /**
- * Formats a primer component tag with its attributes
+ * Formats a primer component tag with its attributes based on component config
  */
-export const formatPrimerTag = (tagName: string, attributes: Record<string, string | undefined>) => {
-  let attributeString = '';
+export const formatPrimerComponent = (componentType: string, config?: { placeholder?: string; label?: string; }) => {
+  const placeholder = config?.placeholder ? ` placeholder="${config.placeholder}"` : '';
   
-  Object.entries(attributes).forEach(([key, value]) => {
-    if (value) attributeString += ` ${key}="${value}"`;
-  });
-  
-  return `<${tagName}${attributeString}></${tagName}>`;
+  switch (componentType) {
+    case 'card-number':
+      return `<primer-input-card-number${placeholder}></primer-input-card-number>`;
+    case 'card-expiry':
+      return `<primer-input-card-expiry${placeholder}></primer-input-card-expiry>`;
+    case 'card-cvv':
+      return `<primer-input-cvv${placeholder}></primer-input-cvv>`;
+    case 'card-holder':
+      return `<primer-input-card-holder-name${placeholder}></primer-input-card-holder-name>`;
+    case 'card-submit':
+      return `<primer-card-form-submit style="height: 40px; width: 100%; font-weight: 500;"></primer-card-form-submit>`;
+    default:
+      return '';
+  }
 };
 
 /**
  * Generates the Primer checkout HTML code based on the layout configuration
  */
 export const generatePrimerCode = (rows: Row[], styleVariables: StyleVariables) => {
-  return `<primer-checkout client-token="\${clientSession.clientToken}">
-  <primer-main slot="main">
-    <!-- Payment methods -->
-    <div slot="payments">
-      <!-- Card payment method -->
-      <p class="text-base font-medium text-gray-700 mb-4">Card</p>
-      <primer-card-form>
-        <div slot="card-form-content" style="--primer-input-height: 40px; --primer-space-medium: 16px; display: flex; flex-direction: column; gap: 16px;">
-          <primer-input-card-number placeholder="4444 3333 2222 1111"></primer-input-card-number>
+  // Find card components to generate appropriate layout
+  let cardComponents = rows.flatMap(row => row.components);
+  
+  // Generate the card form content based on layout configuration
+  let cardFormContent = '';
+  
+  // Process rows to build card form content
+  for (const row of rows) {
+    if (row.components.length === 0) continue;
+    
+    if (row.components.length === 1) {
+      // Single component in row
+      const component = row.components[0];
+      cardFormContent += `          ${formatPrimerComponent(component.originalComponent.id, component.config)}\n`;
+    } else if (row.components.length === 2) {
+      // Two components side by side
+      cardFormContent += `          <!-- Two components side by side -->\n`;
+      cardFormContent += `          <div style="display: flex; gap: 16px;">\n`;
+      cardFormContent += `            <div style="flex: 1;">\n`;
+      cardFormContent += `              ${formatPrimerComponent(row.components[0].originalComponent.id, row.components[0].config)}\n`;
+      cardFormContent += `            </div>\n`;
+      cardFormContent += `            <div style="flex: 1;">\n`;
+      cardFormContent += `              ${formatPrimerComponent(row.components[1].originalComponent.id, row.components[1].config)}\n`;
+      cardFormContent += `            </div>\n`;
+      cardFormContent += `          </div>\n`;
+    } else {
+      // More than two components
+      cardFormContent += `          <!-- Multiple components in row -->\n`;
+      cardFormContent += `          <div style="display: flex; gap: 16px;">\n`;
+      for (const component of row.components) {
+        cardFormContent += `            <div style="flex: 1;">\n`;
+        cardFormContent += `              ${formatPrimerComponent(component.originalComponent.id, component.config)}\n`;
+        cardFormContent += `            </div>\n`;
+      }
+      cardFormContent += `          </div>\n`;
+    }
+  }
+  
+  // If no components were added, use default layout
+  if (!cardComponents.length) {
+    cardFormContent = `          <primer-input-card-number placeholder="4444 3333 2222 1111"></primer-input-card-number>
           
           <!-- Expiry and CVV side by side -->
           <div style="display: flex; gap: 16px;">
@@ -57,7 +98,19 @@ export const generatePrimerCode = (rows: Row[], styleVariables: StyleVariables) 
           </div>
           
           <primer-input-card-holder-name placeholder="John Smith"></primer-input-card-holder-name>
-          <primer-card-form-submit style="height: 40px; width: 100%; font-weight: 500;"></primer-card-form-submit>
+          <primer-card-form-submit style="height: 40px; width: 100%; font-weight: 500;"></primer-card-form-submit>`;
+  }
+  
+  // Generate the complete Primer checkout code
+  return `<primer-checkout client-token="\${clientSession.clientToken}">
+  <primer-main slot="main">
+    <!-- Payment methods -->
+    <div slot="payments">
+      <!-- Card payment method -->
+      <p class="text-base font-medium text-gray-700 mb-4">Card</p>
+      <primer-card-form>
+        <div slot="card-form-content" style="--primer-input-height: 40px; --primer-space-medium: 16px; display: flex; flex-direction: column; gap: 16px;">
+${cardFormContent}
         </div>
       </primer-card-form>
 
@@ -83,6 +136,5 @@ export const generatePrimerCode = (rows: Row[], styleVariables: StyleVariables) 
  * Apply syntax highlighting to the code - removed for now as it was causing issues
  */
 export const applyHighlighting = (code: string) => {
-  // Return code without any highlighting for now to fix rendering issues
-  return code;
+  return code; // Return raw code without highlighting
 };

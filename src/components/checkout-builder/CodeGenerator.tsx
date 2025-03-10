@@ -12,6 +12,10 @@ interface CodeGeneratorProps {
 }
 
 const CodeGenerator: React.FC<CodeGeneratorProps> = ({ rows, styleVariables }) => {
+  // Generate codes dynamically based on current rows and style variables
+  const uiCode = generateUICode(styleVariables);
+  const primerCode = generatePrimerCode(rows, styleVariables);
+
   return (
     <Card className="h-full">
       <CardHeader>
@@ -26,14 +30,14 @@ const CodeGenerator: React.FC<CodeGeneratorProps> = ({ rows, styleVariables }) =
           
           <TabsContent value="uiCode">
             <CodeDisplay 
-              code={generateUICode(styleVariables)}
+              code={uiCode}
               description="Copy this code to your PaymentSection.tsx file"
             />
           </TabsContent>
           
           <TabsContent value="primerCode">
             <CodeDisplay 
-              code={generatePrimerCode(rows, styleVariables)}
+              code={primerCode}
               description="Copy this code to the initPrimer function in primer.ts"
             />
           </TabsContent>
