@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -34,29 +33,18 @@ const CodeGenerator: React.FC<CodeGeneratorProps> = ({ rows, styleVariables }) =
       
       if (row.components.length === 1) {
         const component = row.components[0];
-        const config = component.config || {};
-        let componentHtml = component.content;
+        let configAttributes = '';
         
-        if (config.label || config.placeholder || config.ariaLabel) {
-          componentHtml = componentHtml.replace('></primer', ' ');
-          
-          if (config.label) {
-            componentHtml += `label="${config.label}" `;
-          }
-          
-          if (config.placeholder) {
-            componentHtml += `placeholder="${config.placeholder}" `;
-          }
-          
-          if (config.ariaLabel) {
-            componentHtml += `aria-label="${config.ariaLabel}" `;
-          }
-          
-          componentHtml += '></primer';
+        if (component.config) {
+          if (component.config.label) configAttributes += ` label="${component.config.label}"`;
+          if (component.config.placeholder) configAttributes += ` placeholder="${component.config.placeholder}"`;
+          if (component.config.ariaLabel) configAttributes += ` aria-label="${component.config.ariaLabel}"`;
         }
         
-        return componentHtml;
-      } else {
+        return `              ${component.content.replace('></primer', `${configAttributes}></primer`)}`;
+      }
+      
+      else {
         const componentStyles = row.components.map(comp => {
           const spaceSmall = comp.config?.spaceSmall || styleVariables.primerSpaceSmall;
           return `margin-bottom: ${spaceSmall};`;
@@ -92,24 +80,46 @@ const CodeGenerator: React.FC<CodeGeneratorProps> = ({ rows, styleVariables }) =
 </div>`;
       }
     }).filter(content => content).join('\n');
-    
-    const cardPaymentHtml = `<primer-card-form>
-  <div slot="card-form-content" style="--primer-input-height: 40px; --primer-space-medium: 16px; display: flex; flex-direction: column; gap: 16px;">
-    ${cardFormContent}
-    <primer-card-form-submit style="height: 40px; width: 100%; font-weight: 500;"></primer-card-form-submit>
-  </div>
-</primer-card-form>`;
 
-    // Properly indented complete checkout HTML including alternative payment methods and completion screen
     const checkoutHtml = `<primer-checkout client-token="\${clientSession.clientToken}">
   <primer-main slot="main">
     <!-- Payment methods -->
     <div slot="payments">
       <!-- Card payment method -->
       <p class="text-base font-medium text-gray-700 mb-4">Card</p>
-      ${cardPaymentHtml}
-      
-      <!-- Added margin-top to create more space between payment methods -->
+      <primer-card-form>
+        <div slot="card-form-content" 
+             style="--primer-input-height: 40px; --primer-space-medium: 16px; 
+                    display: flex; flex-direction: column; gap: 16px;">
+          <div style="display: flex; gap: 16px;">
+            <div style="flex: 1; margin-bottom: 8px;">
+              <primer-input-card-number label="Card Number" 
+                                      placeholder="4444 3333 2222 1111" 
+                                      aria-label="Card Number">
+              </primer-input-card-number>
+            </div>
+            <div style="flex: 1; margin-bottom: 8px;">
+              <primer-input-card-expiry label="Expiry Date" 
+                                      placeholder="MM/YY" 
+                                      aria-label="Card Expiry Date">
+              </primer-input-card-expiry>
+            </div>
+            <div style="flex: 1; margin-bottom: 8px;">
+              <primer-input-cvv label="CVV" 
+                              placeholder="123" 
+                              aria-label="Card Security Code">
+              </primer-input-cvv>
+            </div>
+          </div>
+          <primer-input-card-holder-name label="Cardholder Name" 
+                                       placeholder="John Smith" 
+                                       aria-label="Cardholder Name">
+          </primer-input-card-holder-name>
+          <primer-card-form-submit></primer-card-form-submit>
+        </div>
+      </primer-card-form>
+
+      <!-- Alternative Payment Methods -->
       <div class="mt-8 pt-6 border-t border-gray-200">
         <p class="text-base font-medium text-gray-700 mb-4">Alternative Payment Method</p>
         <primer-payment-method type="PAYPAL">
