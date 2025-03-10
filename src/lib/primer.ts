@@ -42,26 +42,26 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
       throw new Error("Primer SDK failed to load properly");
     }
     
-    // 3. Use the showUniversalCheckout method instead of configure and createCheckout
-    const checkoutHandler = await Primer.showUniversalCheckout(
+    // 3. Use the showUniversalCheckout method with the correct parameter structure
+    // The UniversalCheckoutOptions type does not have an 'options' property
+    const checkout = await Primer.showUniversalCheckout(
       clientSession.clientToken,
       {
         container: `#${config.containerId}`,
-        options: {
-          locale: "en-US"
-        }
+        locale: "en-US"
       }
     );
     
-    // 5. Set up event handlers
-    checkoutHandler.on('CHECKOUT_COMPLETE', (event: any) => {
+    // 4. Set up event handlers - use the correct event names from the SDK
+    // The checkout object has methods for handling events
+    checkout.addEventListener('CHECKOUT_COMPLETE', (event: any) => {
       console.log('Checkout completed successfully!', event);
       if (config.onComplete) {
         config.onComplete(event.payment);
       }
     });
     
-    checkoutHandler.on('CHECKOUT_ERROR', (event: any) => {
+    checkout.addEventListener('CHECKOUT_ERROR', (event: any) => {
       console.log('Checkout failed:', event);
       if (config.onError) {
         config.onError(event.error, event.payment);
