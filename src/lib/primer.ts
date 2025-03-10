@@ -81,16 +81,16 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
     paymentsDiv.setAttribute('slot', 'payments');
     cardPaymentMethod.setAttribute('type', 'PAYMENT_CARD');
     
-    // 8. Create custom card form layout
+    // 8. Create custom card form layout with single-line appearance
     const cardFormHtml = `
       <primer-card-form>
         <div slot="card-form-content">
-          <div class="card-row">
-            <primer-input-card-number></primer-input-card-number>
-            <primer-input-card-expiry></primer-input-card-expiry>
-            <primer-input-cvv></primer-input-cvv>
+          <div class="single-line-card-inputs">
+            <primer-input-card-number placeholder="Card number"></primer-input-card-number>
+            <primer-input-card-expiry placeholder="MM/YY"></primer-input-card-expiry>
+            <primer-input-cvv placeholder="CVV"></primer-input-cvv>
           </div>
-          <primer-input-card-holder-name></primer-input-card-holder-name>
+          <primer-input-card-holder-name placeholder="Name on card"></primer-input-card-holder-name>
           <button type="submit">Pay Now</button>
         </div>
       </primer-card-form>
