@@ -54,10 +54,13 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
     
     // 4. Clear any existing content in the container
     container.innerHTML = '';
-    
-    // 5. Create the primer checkout element structure with multiple payment methods
+
+    // 5. Get the current theme from the container's data-theme attribute
+    const currentTheme = container.getAttribute('data-theme') || 'default';
+
+    // 6. Create the primer checkout element structure with multiple payment methods
     const checkoutHtml = `
-      <primer-checkout client-token="${clientSession.clientToken}" custom-styles='{"primerTypographyBrand":"Poppins","primerTypographyBodyLargeFont":"Poppins","primerTypographyBodyMediumFont":"Poppins","primerTypographyBodySmallFont":"Poppins","primerTypographyTitleLargeFont":"Poppins"}'>
+      <primer-checkout client-token="${clientSession.clientToken}">
         <primer-main slot="main">
           <!-- Payment methods -->
           <div slot="payments">
@@ -65,23 +68,22 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
             <p class="text-base font-medium text-gray-700 mb-4">Card</p>
             <primer-card-form>
               <div slot="card-form-content" style="--primer-input-height: 40px; --primer-space-medium: 16px; display: flex; flex-direction: column; gap: 16px;">
-              <primer-input-card-number placeholder="4444 3333 2222 1111"></primer-input-card-number>
-              
-              <!-- Expiry and CVV side by side -->
-              <div style="display: flex; gap: 16px;">
-                <div style="flex: 1;">
-                  <primer-input-card-expiry placeholder="12/30"></primer-input-card-expiry>
+                <primer-input-card-number placeholder="4444 3333 2222 1111"></primer-input-card-number>
+                
+                <!-- Expiry and CVV side by side -->
+                <div style="display: flex; gap: 16px;">
+                  <div style="flex: 1;">
+                    <primer-input-card-expiry placeholder="12/30"></primer-input-card-expiry>
+                  </div>
+                  <div style="flex: 1;">
+                    <primer-input-cvv placeholder="123"></primer-input-cvv>
+                  </div>
                 </div>
-                <div style="flex: 1;">
-                  <primer-input-cvv placeholder="123"></primer-input-cvv>
-                </div>
-              </div>
-              
-              <primer-card-form-submit style="height: 40px; width: 100%; font-weight: 500;"></primer-card-form-submit>
+                
+                <primer-card-form-submit style="height: 40px; width: 100%; font-weight: 500;"></primer-card-form-submit>
               </div>
             </primer-card-form>
-            </primer-payment-method>
-                        
+            
             <!-- Added margin-top to create more space between payment methods -->
             <div class="mt-8 pt-6 border-t border-gray-200">
               <p class="text-base font-medium text-gray-700 mb-4">Alternative Payment Method</p>
@@ -125,31 +127,6 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
         config.onError(state.error, state.payment);
       }
     });
-    
-    // Add click event listener for the collapsible card form
-    const toggleButton = container.querySelector('#toggle-card-form-2');
-    const formContainer = container.querySelector('#card-form-2-container');
-    
-    if (toggleButton && formContainer) {
-      toggleButton.addEventListener('click', () => {
-        // Toggle the 'hidden' class to show/hide the form
-        formContainer.classList.toggle('hidden');
-        
-        // Toggle the chevron icon direction
-        const chevron = toggleButton.querySelector('.chevron-down');
-        if (chevron) {
-          if (formContainer.classList.contains('hidden')) {
-            chevron.outerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron-down">
-              <path d="m6 9 6 6 6-6"/>
-            </svg>`;
-          } else {
-            chevron.outerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron-up">
-              <path d="m18 15-6-6-6 6"/>
-            </svg>`;
-          }
-        }
-      });
-    }
     
     console.log("Primer checkout initialized successfully");
     
