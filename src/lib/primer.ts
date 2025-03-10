@@ -29,44 +29,39 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
       config.items
     );
     
-    // 2. Load Primer SDK using the correct method from documentation
-    await loadPrimer();
+    // 2. Load Primer SDK
+    const Primer = await loadPrimer();
     console.log("Primer SDK loaded successfully");
     
-    // Create primer-checkout element following the documentation
-    const checkoutElement = document.createElement('primer-checkout');
-    checkoutElement.setAttribute('client-token', clientSession.clientToken);
+    // 3. Configure Primer with client token
+    await Primer.configure({
+      clientToken: clientSession.clientToken,
+    });
     
-    // Add options if needed
-    const options = {
-      locale: "en-US"
-    };
-    checkoutElement.setAttribute('options', JSON.stringify(options));
+    // 4. Create and show checkout
+    const checkoutHandler = await Primer.createCheckout({
+      container: `#${config.containerId}`,
+      options: {
+        locale: "en-US"
+      }
+    });
     
-    // Add event listeners for completion and errors
-    checkoutElement.addEventListener('primer-checkout-complete', (event: any) => {
-      console.log('Checkout completed successfully!', event.detail);
+    // 5. Set up event handlers
+    checkoutHandler.on('CHECKOUT_COMPLETE', (event: any) => {
+      console.log('Checkout completed successfully!', event);
       if (config.onComplete) {
-        config.onComplete(event.detail.payment);
+        config.onComplete(event.payment);
       }
     });
     
-    checkoutElement.addEventListener('primer-checkout-fail', (event: any) => {
-      console.log('Checkout failed:', event.detail);
+    checkoutHandler.on('CHECKOUT_ERROR', (event: any) => {
+      console.log('Checkout failed:', event);
       if (config.onError) {
-        config.onError(event.detail.error, event.detail.payment);
+        config.onError(event.error, event.payment);
       }
     });
     
-    // Append to container
-    const container = document.getElementById(config.containerId);
-    if (container) {
-      container.innerHTML = ''; // Clear container
-      container.appendChild(checkoutElement);
-      console.log("Primer checkout element added to container");
-    } else {
-      throw new Error(`Container with ID '${config.containerId}' not found`);
-    }
+    console.log("Primer checkout initialized successfully");
     
   } catch (error) {
     console.error("Error initializing Primer checkout:", error);
