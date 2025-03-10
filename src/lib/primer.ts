@@ -28,23 +28,21 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
       config.items
     );
     
-    // 2. Load Primer SDK using the correct method from documentation
-    const primerModule = await import('@primer-io/checkout-web');
+    // 2. According to documentation, simply import the module
+    // and then use the Web Components approach
+    await import('@primer-io/checkout-web');
     
-    // Check what methods are available on the imported module
-    console.log("Available Primer methods:", Object.keys(primerModule));
+    console.log("Primer SDK imported successfully");
     
-    // According to the documentation, we need to first load Primer
-    if (typeof primerModule.loadPrimer === 'function') {
-      await primerModule.loadPrimer();
-      console.log("Primer SDK loaded successfully");
-    } else {
-      console.log("loadPrimer method not found, trying alternative approach");
-    }
-    
-    // Create primer-checkout element
+    // Create primer-checkout element following the documentation
     const checkoutElement = document.createElement('primer-checkout');
     checkoutElement.setAttribute('client-token', clientSession.clientToken);
+    
+    // Add options if needed
+    const options = {
+      locale: "en-US"
+    };
+    checkoutElement.setAttribute('options', JSON.stringify(options));
     
     // Add event listeners for completion and errors
     checkoutElement.addEventListener('primer-checkout-complete', (event: any) => {
