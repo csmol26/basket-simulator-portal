@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import Navbar from "@/components/Navbar";
@@ -109,65 +110,149 @@ const CheckoutBuilder: React.FC = () => {
 
   // Preview of the checkout
   const renderPreview = () => {
-    // Create the HTML structure based on the rows and components
-    const cardFormContent = rows.map(row => {
-      if (row.components.length === 0) return '';
-      
-      if (row.components.length === 1) {
-        return row.components[0].content;
-      } else {
-        // Multiple components in a row should be rendered in a flex container
-        return `<div style="display: flex; gap: 16px;">
-    ${row.components.map(comp => `<div style="flex: 1;">${comp.content}</div>`).join('\n    ')}
-  </div>`;
+    // Create the checkout visual preview components
+    const renderCardFormComponents = () => {
+      if (rows.length === 0 || rows.every(row => row.components.length === 0)) {
+        return (
+          <div className="text-center p-4 text-gray-400 italic">
+            Drag components here to build your card form
+          </div>
+        );
       }
-    }).filter(content => content).join('\n');
-
-    const cardPaymentHtml = `<primer-card-form>
-  <div slot="card-form-content" style="--primer-input-height: 40px; --primer-space-medium: 16px; display: flex; flex-direction: column; gap: 16px;">
-    ${cardFormContent || '<p class="text-center text-gray-400">Drag components here</p>'}
-  </div>
-</primer-card-form>`;
-
-    const apmHtml = `<div class="mt-8 pt-6 border-t border-gray-200">
-  <p class="text-base font-medium text-gray-700 mb-4">Alternative Payment Method</p>
-  <primer-payment-method type="PAYPAL">
-    <!-- APM will be rendered automatically -->
-  </primer-payment-method>
-</div>`;
+      
+      return rows.map((row, rowIndex) => {
+        if (row.components.length === 0) return null;
+        
+        if (row.components.length === 1) {
+          // Single component in the row - parse the HTML content
+          const content = row.components[0].content;
+          const componentName = content.match(/<primer-input-([^>]+)>/)?.[1] || "component";
+          
+          // Return a visual representation based on component type
+          return (
+            <div key={row.id} className="mb-4">
+              {content.includes('card-number') && (
+                <div className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3">
+                  <span className="text-gray-400">•••• •••• •••• ••••</span>
+                </div>
+              )}
+              {content.includes('card-expiry') && (
+                <div className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3">
+                  <span className="text-gray-400">MM/YY</span>
+                </div>
+              )}
+              {content.includes('cvv') && (
+                <div className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3">
+                  <span className="text-gray-400">123</span>
+                </div>
+              )}
+              {content.includes('card-form-submit') && (
+                <button className="bg-green-600 hover:bg-green-700 text-white rounded-md p-2 h-10 w-full font-medium transition-colors">
+                  Pay Now
+                </button>
+              )}
+            </div>
+          );
+        } else {
+          // Multiple components in a row should be displayed side by side
+          return (
+            <div key={row.id} className="flex gap-4 mb-4">
+              {row.components.map((component, compIndex) => {
+                const content = component.content;
+                
+                return (
+                  <div key={component.id} className="flex-1">
+                    {content.includes('card-number') && (
+                      <div className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3">
+                        <span className="text-gray-400">•••• •••• •••• ••••</span>
+                      </div>
+                    )}
+                    {content.includes('card-expiry') && (
+                      <div className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3">
+                        <span className="text-gray-400">MM/YY</span>
+                      </div>
+                    )}
+                    {content.includes('cvv') && (
+                      <div className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3">
+                        <span className="text-gray-400">123</span>
+                      </div>
+                    )}
+                    {content.includes('card-form-submit') && (
+                      <button className="bg-green-600 hover:bg-green-700 text-white rounded-md p-2 h-10 w-full font-medium transition-colors">
+                        Pay Now
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          );
+        }
+      });
+    };
+    
+    // Apply custom styles to the preview
+    const previewStyles = Object.entries(styleVariables)
+      .filter(([_, value]) => value !== '')
+      .reduce((acc, [key, value]) => {
+        // @ts-ignore
+        acc[jsonToCssVariable[key]] = value;
+        return acc;
+      }, {} as Record<string, string>);
 
     return (
       <div 
         className="bg-white border border-gray-200 rounded-md p-6 shadow-sm"
-        style={{
-          ...Object.entries(styleVariables)
-            .filter(([_, value]) => value !== '')
-            .reduce((acc, [key, value]) => {
-              // @ts-ignore
-              acc[jsonToCssVariable[key]] = value;
-              return acc;
-            }, {} as Record<string, string>)
-        }}
+        style={previewStyles}
       >
         <h3 className="text-lg font-medium mb-4">Checkout Preview</h3>
-        <div className="border border-gray-200 rounded-md p-4">
-          <div className="mb-4">
-            <p className="text-base font-medium text-gray-700 mb-4">Card</p>
-            <div className="bg-gray-100 p-4 rounded-md">
-              <pre className="text-xs overflow-auto whitespace-pre-wrap">
-                {cardPaymentHtml}
-              </pre>
+        
+        <div className="border border-gray-200 rounded-md p-6">
+          <div className="mb-6">
+            <div className="flex items-center mb-4">
+              <div className="w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center mr-2 text-xs font-bold">1</div>
+              <p className="text-base font-medium text-gray-700">Card Payment</p>
+            </div>
+            
+            <div className="pl-8">
+              {cardFirst && renderCardFormComponents()}
             </div>
           </div>
           
-          <div>
-            <p className="text-base font-medium text-gray-700 mb-4">Alternative Payment Method</p>
-            <div className="bg-gray-100 p-4 rounded-md">
-              <pre className="text-xs overflow-auto whitespace-pre-wrap">
-                {apmHtml}
-              </pre>
+          <div className="mb-6">
+            <div className="flex items-center mb-4">
+              <div className="w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center mr-2 text-xs font-bold">2</div>
+              <p className="text-base font-medium text-gray-700">Alternative Payment Methods</p>
+            </div>
+            
+            <div className="pl-8">
+              <div className="flex gap-3 items-center">
+                <button className="bg-blue-600 hover:bg-blue-700 text-white rounded-md p-2 h-10 px-4 font-medium transition-colors flex items-center gap-2">
+                  <span className="font-bold">Pay</span>
+                  <span className="font-light">Pal</span>
+                </button>
+                <button className="bg-yellow-500 hover:bg-yellow-600 text-black rounded-md p-2 h-10 px-4 font-medium transition-colors">
+                  APM
+                </button>
+                <button className="bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-md p-2 h-10 px-4 font-medium transition-colors">
+                  Other
+                </button>
+              </div>
             </div>
           </div>
+          
+          {!cardFirst && (
+            <div className="mb-6">
+              <div className="flex items-center mb-4">
+                <div className="w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center mr-2 text-xs font-bold">3</div>
+                <p className="text-base font-medium text-gray-700">Card Payment</p>
+              </div>
+              
+              <div className="pl-8">
+                {renderCardFormComponents()}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     );
