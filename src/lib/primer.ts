@@ -29,9 +29,18 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
       config.items
     );
     
-    // 2. Load Primer SDK
-    const Primer = await loadPrimer();
+    // 2. Load Primer SDK - loadPrimer() doesn't return the Primer object
+    // Instead we need to access it through the global window object after loading
+    await loadPrimer();
     console.log("Primer SDK loaded successfully");
+    
+    // Access the Primer object from the global window object
+    // @ts-ignore - Primer is added to window by loadPrimer()
+    const Primer = window.Primer;
+    
+    if (!Primer) {
+      throw new Error("Primer SDK failed to load properly");
+    }
     
     // 3. Configure Primer with client token
     await Primer.configure({
