@@ -20,24 +20,25 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) =
       // Add Google Fonts for Caveat
       const fontLinkElement = document.createElement('link');
       fontLinkElement.rel = 'stylesheet';
-      fontLinkElement.href = 'https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap';
+      fontLinkElement.href = 'https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap';
       document.head.appendChild(fontLinkElement);
 
       // Add custom CSS variables globally with blinking animation
       const styleElement = document.createElement('style');
       styleElement.textContent = `
         @keyframes blinkColors {
-          0% { --primer-color-brand: #9b87f5; }
-          50% { --primer-color-brand: #D946EF; }
-          100% { --primer-color-brand: #9b87f5; }
+          0% { --primer-color-brand:rgb(135, 245, 185); }
+          50% { --primer-color-brand: #18A94B; }
+          100% { --primer-color-brand:rgb(135, 245, 185); }
         }
         
         :root {
           animation: blinkColors 2s infinite;
-          --primer-typography-brand: Caveat;
+          --primer-typography-brand: Roboto;
           --primer-color-background: transparent;
-          --primer-radius-base: 6px;
+          --primer-radius-base: 16px;
           --primer-color-text-primary: #4CAF50;
+          --primer-color-focus: #DE00D1;
         }
         
         /* Button styling with blinking effect */
