@@ -32,7 +32,7 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) =
           --primer-color-brand: #18A94B;
           --primer-color-background: transparent;
           --primer-radius-base: 16px;
-          --primer-space-base: 8px;
+          --primer-space-base: 6px;
           --primer-color-text-primary: #4CAF50;
           --primer-color-focus: #DE00D1;
         }
