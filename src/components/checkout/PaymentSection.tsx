@@ -24,11 +24,17 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) =
       fontLinkElement.href = 'https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap';
       document.head.appendChild(fontLinkElement);
 
-      // Add custom CSS variables globally
+      // Add custom CSS variables globally with blinking animation
       const styleElement = document.createElement('style');
       styleElement.textContent = `
+        @keyframes blinkColors {
+          0% { --primer-color-brand: #9b87f5; }
+          50% { --primer-color-brand: #D946EF; }
+          100% { --primer-color-brand: #9b87f5; }
+        }
+        
         :root {
-          --primer-color-brand: #FFC0CB;
+          animation: blinkColors 2s infinite;
           --primer-typography-brand: Caveat;
           --primer-color-background: #FFFF00;
           --primer-radius-base: 6px;
@@ -58,16 +64,27 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) =
               Payment information will be securely collected via the Primer payment interface after validating your shipping information.
             </p>
           ) : (
-            <p className="text-sm text-gray-500 mb-4">
-              Please complete your payment below:
-            </p>
+            <div className="space-y-4">
+              <p className="text-sm text-gray-500">
+                Please complete your payment below:
+              </p>
+              
+              {/* Primer logo image */}
+              <div className="flex justify-center mb-4">
+                <img 
+                  src="https://disruptivetechnews.com/wp-content/uploads/1663672073-primer-io-2x.jpeg" 
+                  alt="Primer.io" 
+                  className="h-16 object-contain"
+                />
+              </div>
+            </div>
           )}
           
-          {/* Container for Primer checkout */}
+          {/* Container for Primer checkout - removed bg-gray-50 class */}
           <div 
             id="primer-payment-container" 
             ref={containerRef}
-            className="min-h-48 bg-gray-50 rounded-md border border-gray-200 p-4"
+            className="min-h-48 rounded-md border border-gray-200 p-4"
           >
             {!showPrimerCheckout && (
               <div className="flex items-center justify-center h-full">
