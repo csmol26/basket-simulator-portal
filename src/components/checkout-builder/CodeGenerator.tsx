@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -144,12 +145,56 @@ const CodeGenerator: React.FC<CodeGeneratorProps> = ({ rows, styleVariables }) =
     toast.success("Code copied to clipboard!");
   };
 
+  // Custom CSS for syntax highlighting
+  const syntaxHighlightingStyles = `
+    .code-highlight {
+      color: #F6F6F7; /* Light gray for general text */
+    }
+    .code-highlight .tag {
+      color: #33C3F0; /* Bright blue for tags */
+    }
+    .code-highlight .attr-name {
+      color: #9F9EA1; /* Silver gray for attribute names */
+    }
+    .code-highlight .attr-value {
+      color: #C8C8C9; /* Light gray for attribute values */
+    }
+    .code-highlight .comment {
+      color: #8A898C; /* Medium gray for comments */
+    }
+  `;
+
+  const applyHighlighting = (code: string) => {
+    // Replace tags with highlighted versions
+    let highlighted = code.replace(/<\/?([a-z-]+)(?:\s|>)/gi, (match) => 
+      `<span class="tag">${match}</span>`
+    );
+    
+    // Replace attribute names
+    highlighted = highlighted.replace(/\s([a-z-]+)=/gi, (match) => 
+      `<span class="attr-name">${match}</span>`
+    );
+    
+    // Replace attribute values
+    highlighted = highlighted.replace(/"([^"]*)"/g, (match) => 
+      `<span class="attr-value">${match}</span>`
+    );
+    
+    // Replace comments
+    highlighted = highlighted.replace(/<!--([\s\S]*?)-->/g, (match) => 
+      `<span class="comment">${match}</span>`
+    );
+    
+    return highlighted;
+  };
+
   return (
     <Card className="h-full">
       <CardHeader>
         <CardTitle className="text-lg">Generated Code</CardTitle>
       </CardHeader>
       <CardContent>
+        <style>{syntaxHighlightingStyles}</style>
         <Tabs defaultValue="uiCode" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="uiCode">UI Code</TabsTrigger>
@@ -158,8 +203,8 @@ const CodeGenerator: React.FC<CodeGeneratorProps> = ({ rows, styleVariables }) =
           
           <TabsContent value="uiCode" className="mt-4">
             <div className="relative">
-              <pre className="p-4 bg-gray-900 text-gray-100 rounded-md text-sm overflow-x-auto">
-                <code>{generateUICode()}</code>
+              <pre className="p-4 bg-gray-900 rounded-md text-sm overflow-x-auto">
+                <code className="code-highlight" dangerouslySetInnerHTML={{ __html: applyHighlighting(generateUICode()) }} />
               </pre>
               <Button 
                 size="sm" 
@@ -175,8 +220,8 @@ const CodeGenerator: React.FC<CodeGeneratorProps> = ({ rows, styleVariables }) =
           
           <TabsContent value="primerCode" className="mt-4">
             <div className="relative">
-              <pre className="p-4 bg-gray-900 text-gray-100 rounded-md text-sm overflow-x-auto">
-                <code>{generatePrimerCode()}</code>
+              <pre className="p-4 bg-gray-900 rounded-md text-sm overflow-x-auto">
+                <code className="code-highlight" dangerouslySetInnerHTML={{ __html: applyHighlighting(generatePrimerCode()) }} />
               </pre>
               <Button 
                 size="sm" 
