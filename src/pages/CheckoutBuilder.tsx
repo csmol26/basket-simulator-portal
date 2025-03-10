@@ -1,10 +1,9 @@
-
 import React, { useState } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import Navbar from "@/components/Navbar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ComponentList from "@/components/checkout-builder/ComponentList";
-import StyleEditor, { initialStyleVariables } from "@/components/checkout-builder/StyleEditor";
+import ComponentList, { availableComponents } from "@/components/checkout-builder/ComponentList";
+import StyleEditor, { initialStyleVariables, jsonToCssVariable } from "@/components/checkout-builder/StyleEditor";
 import LayoutBuilder from "@/components/checkout-builder/LayoutBuilder";
 import CodeGenerator from "@/components/checkout-builder/CodeGenerator";
 
@@ -108,14 +107,71 @@ const CheckoutBuilder: React.FC = () => {
     }
   };
 
-  // Available components definition (needed for the drag and drop logic)
-  const availableComponents = [
-    { id: "card-number", name: "Card Number", element: "<primer-input-card-number placeholder=\"4444 3333 2222 1111\"></primer-input-card-number>" },
-    { id: "card-expiry", name: "Card Expiry", element: "<primer-input-card-expiry placeholder=\"12/30\"></primer-input-card-expiry>" },
-    { id: "card-cvv", name: "Card CVV", element: "<primer-input-cvv placeholder=\"123\"></primer-input-cvv>" },
-    { id: "card-holder", name: "Card Holder Name", element: "<primer-input-card-holder-name placeholder=\"Cardholder Name\"></primer-input-card-holder-name>" },
-    { id: "card-submit", name: "Submit Button", element: "<primer-card-form-submit style=\"height: 40px; width: 100%; font-weight: 500;\"></primer-card-form-submit>" },
-  ];
+  // Preview of the checkout
+  const renderPreview = () => {
+    // Create the HTML structure based on the rows and components
+    const cardFormContent = rows.map(row => {
+      if (row.components.length === 0) return '';
+      
+      if (row.components.length === 1) {
+        return row.components[0].content;
+      } else {
+        // Multiple components in a row should be rendered in a flex container
+        return `<div style="display: flex; gap: 16px;">
+    ${row.components.map(comp => `<div style="flex: 1;">${comp.content}</div>`).join('\n    ')}
+  </div>`;
+      }
+    }).filter(content => content).join('\n');
+
+    const cardPaymentHtml = `<primer-card-form>
+  <div slot="card-form-content" style="--primer-input-height: 40px; --primer-space-medium: 16px; display: flex; flex-direction: column; gap: 16px;">
+    ${cardFormContent || '<p class="text-center text-gray-400">Drag components here</p>'}
+  </div>
+</primer-card-form>`;
+
+    const apmHtml = `<div class="mt-8 pt-6 border-t border-gray-200">
+  <p class="text-base font-medium text-gray-700 mb-4">Alternative Payment Method</p>
+  <primer-payment-method type="PAYPAL">
+    <!-- APM will be rendered automatically -->
+  </primer-payment-method>
+</div>`;
+
+    return (
+      <div 
+        className="bg-white border border-gray-200 rounded-md p-6 shadow-sm"
+        style={{
+          ...Object.entries(styleVariables)
+            .filter(([_, value]) => value !== '')
+            .reduce((acc, [key, value]) => {
+              // @ts-ignore
+              acc[jsonToCssVariable[key]] = value;
+              return acc;
+            }, {} as Record<string, string>)
+        }}
+      >
+        <h3 className="text-lg font-medium mb-4">Checkout Preview</h3>
+        <div className="border border-gray-200 rounded-md p-4">
+          <div className="mb-4">
+            <p className="text-base font-medium text-gray-700 mb-4">Card</p>
+            <div className="bg-gray-100 p-4 rounded-md">
+              <pre className="text-xs overflow-auto whitespace-pre-wrap">
+                {cardPaymentHtml}
+              </pre>
+            </div>
+          </div>
+          
+          <div>
+            <p className="text-base font-medium text-gray-700 mb-4">Alternative Payment Method</p>
+            <div className="bg-gray-100 p-4 rounded-md">
+              <pre className="text-xs overflow-auto whitespace-pre-wrap">
+                {apmHtml}
+              </pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -126,9 +182,15 @@ const CheckoutBuilder: React.FC = () => {
           <h1 className="text-3xl font-bold text-gray-900 mb-8">Checkout Builder</h1>
           
           <DragDropContext onDragEnd={onDragEnd}>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Left Column - Components and Style Variables */}
-              <div className="lg:col-span-1 space-y-6">
+            {/* Top Row - Layout Builder (2/3) and Options (1/3) */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+              {/* Layout Builder - 2/3 */}
+              <div className="lg:col-span-2">
+                <LayoutBuilder rows={rows} onRemoveRow={removeRow} />
+              </div>
+              
+              {/* Options - 1/3 */}
+              <div className="lg:col-span-1">
                 <Tabs defaultValue="components" className="w-full">
                   <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger value="components">Components</TabsTrigger>
@@ -151,20 +213,20 @@ const CheckoutBuilder: React.FC = () => {
                   </TabsContent>
                 </Tabs>
               </div>
-              
-              {/* Middle Column - Checkout Preview */}
-              <div className="lg:col-span-1">
-                <LayoutBuilder rows={rows} onRemoveRow={removeRow} />
-              </div>
-              
-              {/* Right Column - Generated Code */}
-              <div className="lg:col-span-1">
-                <CodeGenerator 
-                  rows={rows}
-                  styleVariables={styleVariables}
-                  cardFirst={cardFirst}
-                />
-              </div>
+            </div>
+            
+            {/* Middle Row - Preview */}
+            <div className="mb-8">
+              {renderPreview()}
+            </div>
+            
+            {/* Bottom Row - Generated Code */}
+            <div>
+              <CodeGenerator 
+                rows={rows}
+                styleVariables={styleVariables}
+                cardFirst={cardFirst}
+              />
             </div>
           </DragDropContext>
         </div>
