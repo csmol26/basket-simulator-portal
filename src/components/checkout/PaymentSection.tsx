@@ -1,5 +1,5 @@
 
-import React, { useRef } from "react";
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface PaymentSectionProps {
@@ -7,10 +7,6 @@ interface PaymentSectionProps {
 }
 
 const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) => {
-  const cardContainerRef = useRef<HTMLDivElement>(null);
-  const applePayContainerRef = useRef<HTMLDivElement>(null);
-  const googlePayContainerRef = useRef<HTMLDivElement>(null);
-
   return (
     <Card>
       <CardHeader>
@@ -28,32 +24,17 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ showPrimerCheckout }) =
             </p>
           )}
           
-          {/* Container for Primer card payment UI */}
+          {/* Container for Universal Primer checkout */}
           <div 
-            id="primer-payment-container-card" 
-            ref={cardContainerRef}
+            id="primer-payment-container" 
             className="min-h-48 bg-gray-50 rounded-md border border-gray-200 p-4"
           >
             {!showPrimerCheckout && (
               <div className="flex items-center justify-center h-full">
-                <p className="text-muted-foreground text-sm">Credit card payment form will appear here</p>
+                <p className="text-muted-foreground text-sm">Payment form will appear here</p>
               </div>
             )}
           </div>
-          
-          {/* Container for Apple Pay */}
-          <div 
-            id="primer-payment-container-applepay" 
-            ref={applePayContainerRef}
-            className="min-h-12 py-2"
-          />
-          
-          {/* Container for Google Pay */}
-          <div 
-            id="primer-payment-container-googlepay" 
-            ref={googlePayContainerRef}
-            className="min-h-12 py-2"
-          />
         </div>
       </CardContent>
     </Card>

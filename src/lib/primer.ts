@@ -28,53 +28,30 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
       config.items
     );
     
-    // 2. Initialize Primer using the imported module
-    // Instead of using the constructor, use the imported module directly
-    const { Primer } = await import('@primer-io/checkout-web');
+    // 2. Import the Primer module dynamically
+    const PrimerModule = await import('@primer-io/checkout-web');
     
-    // 3. Create the checkout instance using the Composable Checkout API
-    const checkout = await Primer.createCheckout(clientSession.clientToken);
-    
-    // 4. Configure the checkout with event handlers
-    checkout.on('CHECKOUT_COMPLETE', (data) => {
-      console.log('Checkout completed successfully!', data);
-      if (config.onComplete) {
-        config.onComplete(data.payment);
+    // 3. Initialize the Universal Checkout with client token
+    // Using the updated API from Primer
+    const checkout = await PrimerModule.default.showUniversalCheckout(clientSession.clientToken, {
+      // Using the container ID to render all payment methods
+      container: `#${config.containerId}`,
+      
+      // Configure checkout events
+      onCheckoutComplete: (data: any) => {
+        console.log('Checkout completed successfully!', data);
+        if (config.onComplete) {
+          config.onComplete(data.payment);
+        }
+      },
+      
+      onCheckoutFail: (error: any, data: any) => {
+        console.log('Checkout failed:', error, data);
+        if (config.onError) {
+          config.onError(error, data.payment);
+        }
       }
     });
-    
-    checkout.on('CHECKOUT_ERROR', (error, data) => {
-      console.log('Checkout failed:', error, data);
-      if (config.onError) {
-        config.onError(error, data.payment);
-      }
-    });
-    
-    // 5. Initialize the payment method managers
-    const { CardManager, ApplePayManager, GooglePayManager } = checkout.paymentMethods;
-    
-    // 6. Render the payment methods in their containers
-    // Render card form
-    if (CardManager) {
-      const cardManager = await CardManager.init();
-      await cardManager.renderCardForm(`${config.containerId}-card`);
-    }
-    
-    // Fix the ApplePaySession check
-    // Safely check for Apple Pay support
-    if (ApplePayManager && 
-        typeof window !== 'undefined' && 
-        'ApplePaySession' in window && 
-        window.ApplePaySession?.canMakePayments?.()) {
-      const applePayManager = await ApplePayManager.init();
-      await applePayManager.renderApplePayButton(`${config.containerId}-applepay`);
-    }
-    
-    // Render Google Pay if available
-    if (GooglePayManager) {
-      const googlePayManager = await GooglePayManager.init();
-      await googlePayManager.renderGooglePayButton(`${config.containerId}-googlepay`);
-    }
     
     console.log("Primer checkout initialized successfully", checkout);
     
