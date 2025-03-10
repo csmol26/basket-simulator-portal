@@ -53,15 +53,15 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
     );
     
     // 4. Set up event handlers - use the correct event names from the SDK
-    // The checkout object has methods for handling events
-    checkout.addEventListener('CHECKOUT_COMPLETE', (event: any) => {
+    // The Primer SDK likely uses 'on' instead of 'addEventListener'
+    checkout.on('CHECKOUT_COMPLETE', (event: any) => {
       console.log('Checkout completed successfully!', event);
       if (config.onComplete) {
         config.onComplete(event.payment);
       }
     });
     
-    checkout.addEventListener('CHECKOUT_ERROR', (event: any) => {
+    checkout.on('CHECKOUT_ERROR', (event: any) => {
       console.log('Checkout failed:', event);
       if (config.onError) {
         config.onError(event.error, event.payment);
