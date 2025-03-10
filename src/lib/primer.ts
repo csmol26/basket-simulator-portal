@@ -1,6 +1,6 @@
 
-// This is a simplified mock implementation for demonstration purposes
-// In a real implementation, you would use the actual Primer SDK
+import { Primer } from '@primer-io/checkout-web';
+import { createPrimerClientSession } from './api';
 
 interface PrimerCheckoutConfig {
   amount: number;
@@ -12,33 +12,54 @@ interface PrimerCheckoutConfig {
     quantity: number;
     unitPrice: number;
   }[];
+  containerId: string;
+  onComplete?: (payment: any) => void;
+  onError?: (error: any, paymentData: any) => void;
 }
 
 export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> => {
   console.log("Initializing Primer checkout with config:", config);
   
-  // Simulate API call delay
-  await new Promise(resolve => setTimeout(resolve, 1500));
-  
-  // Mock implementation - In a real application, you would:
-  // 1. Make an API call to your backend to create a client token
-  // 2. Initialize the Primer SDK with that token
-  // 3. Set up the UI components for payment
-  
-  console.log("Primer checkout initialized successfully");
-  
-  // In a real implementation, you would return the Primer instance
-  // or any needed references
-  
-  // This would typically be where you'd configure callbacks for
-  // successful payments, errors, etc.
-  
-  // For this simulation, we're just logging the process
-  console.log("Primer checkout flow complete");
-  
-  // In a real implementation, you'd handle the redirect or confirmation
-  alert("Payment simulation complete! In a real implementation, this would process through Primer's API.");
-  
-  // Redirect to confirmation page or update UI
-  window.location.href = "/";
+  try {
+    // 1. Demander un token client à notre API
+    const clientSession = await createPrimerClientSession(
+      config.amount,
+      config.currency,
+      config.orderId,
+      config.items
+    );
+    
+    // 2. Initialiser le checkout Primer avec le token obtenu
+    const universalCheckout = await Primer.showUniversalCheckout(clientSession.clientToken, {
+      // Spécifier le sélecteur du conteneur où le checkout sera affiché
+      container: config.containerId,
+      
+      // Callback lorsque le paiement est complété avec succès
+      onCheckoutComplete({ payment }) {
+        console.log('Checkout completed successfully!', payment);
+        if (config.onComplete) {
+          config.onComplete(payment);
+        }
+      },
+      
+      // Callback en cas d'échec du paiement
+      onCheckoutFail(error, { payment }, handler) {
+        console.log('Checkout failed:', error, payment);
+        if (config.onError) {
+          config.onError(error, payment);
+        }
+        
+        // Afficher un message d'erreur par défaut si un handler est fourni
+        if (handler) {
+          handler.showErrorMessage();
+        }
+      },
+    });
+    
+    console.log("Primer checkout initialized successfully", universalCheckout);
+    
+  } catch (error) {
+    console.error("Error initializing Primer checkout:", error);
+    throw error;
+  }
 };

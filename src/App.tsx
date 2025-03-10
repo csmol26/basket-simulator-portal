@@ -8,6 +8,7 @@ import { BasketProvider } from "./context/BasketContext";
 import Index from "./pages/Index";
 import Basket from "./pages/Basket";
 import Checkout from "./pages/Checkout";
+import Confirmation from "./pages/Confirmation";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/basket" element={<Basket />} />
             <Route path="/checkout" element={<Checkout />} />
+            <Route path="/confirmation" element={<Confirmation />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
