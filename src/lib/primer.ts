@@ -29,18 +29,13 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
     );
     
     // 2. Import the Primer module dynamically
-    const Primer = await import('@primer-io/checkout-web');
+    const primerModule = await import('@primer-io/checkout-web');
     
     // 3. Initialize the Universal Checkout with client token
-    // Using the correct property access for the Primer SDK
-    const checkout = await Primer.default.init({
-      // Provide the client token
-      clientToken: clientSession.clientToken,
-      
+    // Use the Universal Checkout implementation
+    const checkout = await primerModule.default.showUniversalCheckout(clientSession.clientToken, {
       // Configure the container where the checkout will be rendered
-      containers: {
-        main: `#${config.containerId}`
-      },
+      container: `#${config.containerId}`,
       
       // Configure checkout events
       onCheckoutComplete: (data: any) => {
