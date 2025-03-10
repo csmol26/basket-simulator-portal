@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import Navbar from "@/components/Navbar";
@@ -145,7 +144,13 @@ const CheckoutBuilder: React.FC = () => {
                 </div>
               )}
               {content.includes('card-form-submit') && (
-                <button className="bg-green-600 hover:bg-green-700 text-white rounded-md p-2 h-10 w-full font-medium transition-colors">
+                <button 
+                  className="bg-green-600 hover:bg-green-700 text-white rounded-md p-2 h-10 w-full font-medium transition-colors"
+                  style={{ 
+                    backgroundColor: styleVariables.primerColorBrand || "#18A94B",
+                    borderRadius: styleVariables.primerRadiusBase || "16px" 
+                  }}
+                >
                   Pay Now
                 </button>
               )}
@@ -161,27 +166,57 @@ const CheckoutBuilder: React.FC = () => {
                 return (
                   <div key={component.id} className="flex-1">
                     {content.includes('card-number') && (
-                      <div className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3">
+                      <div 
+                        className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3"
+                        style={{ 
+                          borderRadius: styleVariables.primerRadiusBase || "16px",
+                          backgroundColor: styleVariables.primerColorBackground || "white" 
+                        }}
+                      >
                         <span className="text-gray-400">•••• •••• •••• ••••</span>
                       </div>
                     )}
                     {content.includes('card-expiry') && (
-                      <div className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3">
+                      <div 
+                        className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3"
+                        style={{ 
+                          borderRadius: styleVariables.primerRadiusBase || "16px",
+                          backgroundColor: styleVariables.primerColorBackground || "white"
+                        }}
+                      >
                         <span className="text-gray-400">MM/YY</span>
                       </div>
                     )}
                     {content.includes('cvv') && (
-                      <div className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3">
+                      <div 
+                        className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3"
+                        style={{ 
+                          borderRadius: styleVariables.primerRadiusBase || "16px",
+                          backgroundColor: styleVariables.primerColorBackground || "white"
+                        }}
+                      >
                         <span className="text-gray-400">123</span>
                       </div>
                     )}
                     {content.includes('card-holder-name') && (
-                      <div className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3">
+                      <div 
+                        className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3"
+                        style={{ 
+                          borderRadius: styleVariables.primerRadiusBase || "16px",
+                          backgroundColor: styleVariables.primerColorBackground || "white"
+                        }}
+                      >
                         <span className="text-gray-400">Cardholder Name</span>
                       </div>
                     )}
                     {content.includes('card-form-submit') && (
-                      <button className="bg-green-600 hover:bg-green-700 text-white rounded-md p-2 h-10 w-full font-medium transition-colors">
+                      <button 
+                        className="hover:opacity-90 text-white p-2 h-10 w-full font-medium transition-colors"
+                        style={{ 
+                          backgroundColor: styleVariables.primerColorBrand || "#18A94B",
+                          borderRadius: styleVariables.primerRadiusBase || "16px" 
+                        }}
+                      >
                         Pay Now
                       </button>
                     )}
@@ -193,26 +228,45 @@ const CheckoutBuilder: React.FC = () => {
         }
       });
     };
-    
-    // Apply custom styles to the preview
-    const previewStyles = Object.entries(styleVariables)
-      .filter(([_, value]) => value !== '')
-      .reduce((acc, [key, value]) => {
-        // @ts-ignore
-        acc[jsonToCssVariable[key]] = value;
-        return acc;
-      }, {} as Record<string, string>);
+
+    // Apply style variables directly to the preview container
+    const previewStyle: React.CSSProperties = {
+      fontFamily: styleVariables.primerTypographyBrand || "'Poppins', sans-serif",
+      // Convert pixel values to spacing
+      padding: `calc(${styleVariables.primerSpaceBase || "4px"} * 4)`,
+      // Other style variables
+      borderRadius: styleVariables.primerRadiusBase || "16px",
+      backgroundColor: styleVariables.primerColorBackground || "transparent",
+    };
+
+    // Apply style to focus elements (like inputs on focus)
+    const focusStyle = {
+      boxShadow: `0 0 0 2px ${styleVariables.primerColorFocus || "#DE00D1"}`,
+    };
 
     return (
       <div 
         className="bg-white border border-gray-200 rounded-md p-6 shadow-sm"
-        style={previewStyles}
+        style={previewStyle}
       >
-        <h3 className="text-lg font-medium mb-4">Checkout Preview</h3>
+        <h3 
+          className="text-lg font-medium mb-4"
+          style={{ fontFamily: styleVariables.primerTypographyBrand || "'Poppins', sans-serif" }}
+        >
+          Checkout Preview
+        </h3>
         
-        <div className="border border-gray-200 rounded-md p-6">
+        <div 
+          className="border border-gray-200 rounded-md p-6"
+          style={{ borderRadius: styleVariables.primerRadiusBase || "16px" }}
+        >
           <div className="mb-6">
-            <p className="text-base font-medium text-gray-700 mb-4">Card Payment</p>
+            <p 
+              className="text-base font-medium text-gray-700 mb-4"
+              style={{ fontFamily: styleVariables.primerTypographyBrand || "'Poppins', sans-serif" }}
+            >
+              Card Payment
+            </p>
             <div>
               {renderCardFormComponents()}
             </div>
