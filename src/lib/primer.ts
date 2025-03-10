@@ -64,26 +64,25 @@ export const initPrimer = async (config: PrimerCheckoutConfig): Promise<void> =>
         <primer-main slot="main">
           <!-- Payment methods -->
           <div slot="payments">
-            <!-- Card payment method -->
+            <!-- Card payment method display 1 -->
             <p class="text-base font-medium text-gray-700 mb-4">Card</p>
             <primer-card-form>
-  <div slot="card-form-content" style="--primer-input-height: 40px; --primer-space-medium: 16px; display: flex; flex-direction: column; gap: 16px;">
-    <div style="display: flex; gap: 16px;">
-    <div style="flex: 1; margin-bottom: 4px;">
-    <primer-input-card-number -input-card-number>label="My card" placeholder="**** **** **** ****" aria-label="Card Number" ></primer
-  </div>
-    <div style="flex: 1; margin-bottom: 8px;">
-    <primer-input-cvv -input-cvv>label="CVV" placeholder="123" aria-label="Card Security Code" ></primer
-  </div>
-    <div style="flex: 1; margin-bottom: 8px;">
-    <primer-input-card-expiry -input-card-expiry>label="Expiry Date" placeholder="MM/YY" aria-label="Card Expiry Date" ></primer
-  </div>
-</div>
-<primer-input-card-holder-name -input-card-holder-name>label="Cardholder Name" placeholder="Chris Smol" aria-label="Cardholder Name" ></primer
-<primer-card-form-submit></primer-card-form-submit>
-  </div>
-</primer-card-form>
-          </div>
+              <div slot="card-form-content" style="--primer-input-height: 40px; --primer-space-medium: 16px; display: flex; flex-direction: column; gap: 16px;">
+                <primer-input-card-number placeholder="4444 3333 2222 1111"></primer-input-card-number>
+                
+                <!-- Expiry and CVV side by side -->
+                <div style="display: flex; gap: 16px;">
+                  <div style="flex: 1;">
+                    <primer-input-card-expiry placeholder="12/30"></primer-input-card-expiry>
+                  </div>
+                  <div style="flex: 1;">
+                    <primer-input-cvv placeholder="123"></primer-input-cvv>
+                  </div>
+                </div>
+                
+                <primer-card-form-submit style="height: 40px; width: 100%; font-weight: 500;"></primer-card-form-submit>
+              </div>
+            </primer-card-form>
             
             <!-- Added margin-top to create more space between payment methods -->
             <div class="mt-8 pt-6 border-t border-gray-200">
