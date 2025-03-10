@@ -16,15 +16,15 @@ const CheckoutForm: React.FC = () => {
   const navigate = useNavigate();
   const [showPrimerCheckout, setShowPrimerCheckout] = useState(false);
 
-  // Form information reference
+  // Form information reference with pre-filled data
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    address: "",
-    zipCode: "",
-    city: "",
-    country: ""
+    firstName: "Chris",
+    lastName: "Smol",
+    email: "christophe.smol@gmail.com",
+    address: "30 avenue de France",
+    zipCode: "59000",
+    city: "Lille",
+    country: "France"
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
