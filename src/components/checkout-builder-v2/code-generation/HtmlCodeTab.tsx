@@ -8,11 +8,12 @@ import { generateHTMLCode } from './codeGenerationUtils';
 
 interface HtmlCodeTabProps {
   rows: Row[];
+  checkoutRows: Row[];  // Add checkoutRows prop
   styleVariables: StyleVariables;
   checkoutConfig: CheckoutConfig;
 }
 
-const HtmlCodeTab: React.FC<HtmlCodeTabProps> = ({ rows, styleVariables, checkoutConfig }) => {
+const HtmlCodeTab: React.FC<HtmlCodeTabProps> = ({ rows, checkoutRows, styleVariables, checkoutConfig }) => {
   const copyToClipboard = () => {
     navigator.clipboard.writeText(generateHTMLCode(checkoutConfig));
     toast.success('HTML code copied to clipboard!');

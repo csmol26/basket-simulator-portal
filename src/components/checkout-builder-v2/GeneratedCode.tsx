@@ -14,11 +14,12 @@ import ImplementationGuide from './code-generation/ImplementationGuide';
 
 interface GeneratedCodeProps {
   rows: Row[];
+  checkoutRows: Row[];  // Add the checkoutRows property to fix the TypeScript error
   styleVariables: StyleVariables;
   checkoutConfig: CheckoutConfig;
 }
 
-const GeneratedCode: React.FC<GeneratedCodeProps> = ({ rows, styleVariables, checkoutConfig }) => {
+const GeneratedCode: React.FC<GeneratedCodeProps> = ({ rows, checkoutRows, styleVariables, checkoutConfig }) => {
   const [codeTab, setCodeTab] = useState("html");
 
   const downloadCode = async () => {
@@ -27,9 +28,9 @@ const GeneratedCode: React.FC<GeneratedCodeProps> = ({ rows, styleVariables, che
       const codeGenerationUtils = await import('./code-generation/codeGenerationUtils');
       
       // Get the actual code strings by awaiting the promises
-      const htmlCode = codeGenerationUtils.generateHTMLCode(checkoutConfig);
-      const cssCode = codeGenerationUtils.generateCSSCode(styleVariables);
-      const tsCode = codeGenerationUtils.generateTSCode(checkoutConfig);
+      const htmlCode = await codeGenerationUtils.generateHTMLCode(checkoutConfig);
+      const cssCode = await codeGenerationUtils.generateCSSCode(styleVariables);
+      const tsCode = await codeGenerationUtils.generateTSCode(checkoutConfig);
       
       // Now create blobs with the resolved string values
       const htmlBlob = new Blob([htmlCode], { type: 'text/html' });
@@ -86,6 +87,7 @@ const GeneratedCode: React.FC<GeneratedCodeProps> = ({ rows, styleVariables, che
             <TabsContent value="html">
               <HtmlCodeTab 
                 rows={rows}
+                checkoutRows={checkoutRows}  // Pass the checkoutRows prop to HtmlCodeTab
                 styleVariables={styleVariables}
                 checkoutConfig={checkoutConfig}
               />
