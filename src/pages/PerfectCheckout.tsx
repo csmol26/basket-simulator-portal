@@ -240,33 +240,6 @@ const PerfectCheckout: React.FC = () => {
                 </CardContent>
               </Card>
               
-              {/* Preview Section */}
-              <Card className="mb-6">
-                <CardHeader>
-                  <CardTitle className="text-lg">Checkout Preview</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="border border-gray-200 rounded-md p-6">
-                    {slots.map((slot, index) => (
-                      <div key={slot.id} className="mb-6 last:mb-0">
-                        <h2 className="text-xl font-semibold mb-4">{slot.name}</h2>
-                        <div className="space-y-3">
-                          {slot.items.length === 0 ? (
-                            <p className="text-gray-400 text-sm italic">No payment methods added</p>
-                          ) : (
-                            slot.items.map((item) => (
-                              <div key={item.id} className="p-3 bg-gray-50 border border-gray-200 rounded-md">
-                                {item.name}
-                              </div>
-                            ))
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-              
               {/* Trash Zone */}
               <Card>
                 <CardContent className="p-4">
