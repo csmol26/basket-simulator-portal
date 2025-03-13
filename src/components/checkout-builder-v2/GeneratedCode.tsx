@@ -7,6 +7,8 @@ import HtmlCodeTab from "./code-generation/HtmlCodeTab";
 import TypeScriptCodeTab from "./code-generation/TypeScriptCodeTab";
 import CssCodeTab from "./code-generation/CssCodeTab";
 import ImplementationGuide from "./code-generation/ImplementationGuide";
+import UICodeTab from "./code-generation/UICodeTab";
+import UXCodeTab from "./code-generation/UXCodeTab";
 import { Row, StyleVariables, CheckoutConfig } from "./types";
 
 interface GeneratedCodeProps {
@@ -35,6 +37,7 @@ const GeneratedCode: React.FC<GeneratedCodeProps> = ({
               <TabsTrigger value="typescript">TypeScript</TabsTrigger>
               <TabsTrigger value="css">CSS</TabsTrigger>
               <TabsTrigger value="guide">Implementation Guide</TabsTrigger>
+              <TabsTrigger value="code-generator">Code Generator</TabsTrigger>
             </TabsList>
           </Tabs>
         </CardTitle>
@@ -65,6 +68,25 @@ const GeneratedCode: React.FC<GeneratedCodeProps> = ({
         
         <TabsContent value="guide" className="m-0 mt-4">
           <ImplementationGuide />
+        </TabsContent>
+
+        <TabsContent value="code-generator" className="m-0 mt-4">
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-lg font-medium mb-2">UI Styles (CSS Variables)</h3>
+              <UICodeTab styleVariables={styleVariables} />
+            </div>
+            
+            <div>
+              <h3 className="text-lg font-medium mb-2">UX Code (Primer Checkout Markup)</h3>
+              <UXCodeTab 
+                cardFormRows={cardFormRows}
+                checkoutRows={checkoutRows}
+                styleVariables={styleVariables}
+                checkoutConfig={checkoutConfig}
+              />
+            </div>
+          </div>
         </TabsContent>
       </CardContent>
     </Card>
