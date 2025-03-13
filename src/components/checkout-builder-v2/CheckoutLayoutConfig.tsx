@@ -93,7 +93,7 @@ const CheckoutLayoutConfig: React.FC = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <ComponentPalette />
+                <ComponentPalette onAddRow={addRow} onDragEnd={onDragEnd} />
               </div>
             </CardContent>
           </Card>
