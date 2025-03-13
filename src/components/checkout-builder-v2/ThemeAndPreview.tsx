@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -217,19 +216,9 @@ const ThemeAndPreview: React.FC<ThemeAndPreviewProps> = ({
     );
   };
 
-  // Helper to check if there's a card payment component in the rows
-  const hasCardPaymentInCheckout = () => {
-    return rows.some(row => 
-      row.components.some(component => 
-        component.originalComponent.isCardForm || 
-        component.originalComponent.id === 'card-form'
-      )
-    );
-  };
-
-  // Generate APM preview with integrated card form
+  // Generate checkout preview with slots
   const renderCheckoutPreview = () => {
-    if (rows.length === 0 || rows.every(row => row.components.length === 0)) {
+    if (rows.length === 0) {
       return (
         <div className="bg-gray-100 border border-gray-200 rounded-md p-4 text-center">
           No payment methods added
@@ -240,49 +229,51 @@ const ThemeAndPreview: React.FC<ThemeAndPreviewProps> = ({
     return (
       <div className="space-y-4">
         {rows.map((row, rowIndex) => {
+          // Skip empty rows
           if (row.components.length === 0) return null;
 
           return (
-            <div key={`apm-row-${rowIndex}`} className="mb-4">
-              {row.components.map((component, compIndex) => {
-                // For APM payment methods
-                if (component.originalComponent.isAPM) {
-                  return (
-                    <div key={`apm-${compIndex}`} className="mb-3">
-                      <button
-                        className="w-full p-3 border border-gray-300 rounded-md flex items-center justify-center bg-white hover:bg-gray-50"
-                        style={{ borderRadius: styleVariables.primerRadiusBase }}
-                      >
-                        <span>{component.originalComponent.name}</span>
-                      </button>
-                    </div>
-                  );
-                }
-                
-                // For card form, display the card form components
-                if (component.originalComponent.isCardForm) {
-                  return (
-                    <div key={`card-form-${compIndex}`} className="mb-3 p-4 border border-gray-200 rounded-md">
-                      <h3 className="text-base font-medium mb-3">Card Payment</h3>
-                      {renderCardFormPreview()}
-                    </div>
-                  );
-                }
-                
-                return null;
-              })}
+            <div key={`slot-${rowIndex}`} className="mb-4">
+              <div className="font-medium text-sm mb-2">Slot {rowIndex + 1}</div>
+              <div className="p-3 border border-gray-200 rounded-md mb-4">
+                {row.components.map((component, compIndex) => {
+                  // For APM payment methods
+                  if (component.originalComponent.isAPM) {
+                    return (
+                      <div key={`apm-${compIndex}`} className="mb-3">
+                        <div className="font-medium text-sm mb-2">{component.originalComponent.name}</div>
+                        <button
+                          className="w-full p-3 border border-gray-300 rounded-md flex items-center justify-center bg-white hover:bg-gray-50"
+                          style={{ borderRadius: styleVariables.primerRadiusBase }}
+                        >
+                          <span>{component.originalComponent.name}</span>
+                        </button>
+                      </div>
+                    );
+                  }
+                  
+                  // For card form, display the card form components
+                  if (component.originalComponent.isCardForm) {
+                    return (
+                      <div key={`card-form-${compIndex}`} className="mb-3">
+                        <div className="font-medium text-sm mb-2">Card Payment</div>
+                        {cardFormRows.length > 0 ? (
+                          renderCardFormPreview()
+                        ) : (
+                          <div className="px-3 py-2 text-sm rounded-md w-full bg-gray-100 text-gray-800">
+                            Credit Card
+                          </div>
+                        )}
+                      </div>
+                    );
+                  }
+                  
+                  return null;
+                })}
+              </div>
             </div>
           );
         })}
-
-        {/* If no card form is added in checkout but we have card form components, 
-            display placeholder message */}
-        {!hasCardPaymentInCheckout() && cardFormRows.length > 0 && (
-          <div className="p-4 bg-gray-50 border border-dashed border-gray-300 rounded-md text-sm text-gray-600 mt-4">
-            <p>Note: You've configured a card form but haven't added it to the checkout. 
-            Add the Card Payment component in the Checkout Builder tab to see it here.</p>
-          </div>
-        )}
       </div>
     );
   };
@@ -329,7 +320,7 @@ const ThemeAndPreview: React.FC<ThemeAndPreviewProps> = ({
               >
                 <div className="text-center mb-6">
                   <h2 className="text-2xl font-semibold" style={{ color: styleVariables.primerColorBrand }}>
-                    Complete Your Purchase
+                    Checkout
                   </h2>
                   <p className="text-sm text-gray-500">
                     Secure checkout powered by Primer
@@ -358,7 +349,7 @@ const ThemeAndPreview: React.FC<ThemeAndPreviewProps> = ({
                   
                   {/* Payment Methods */}
                   <div className="space-y-4">
-                    <h3 className="font-medium">Payment Method</h3>
+                    <h3 className="font-medium">Payment Methods</h3>
                     {renderCheckoutPreview()}
                   </div>
                 </div>
