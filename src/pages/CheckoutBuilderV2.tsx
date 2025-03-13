@@ -113,11 +113,13 @@ const CheckoutBuilderV2: React.FC = () => {
             <TabsContent value="checkout-builder" className="mt-0">
               <DragDropContext onDragEnd={onDragEnd}>
                 <CheckoutBuilder 
-                  checkoutRows={checkoutRows}
+                  rows={checkoutRows}
                   styleVariables={styleVariables}
+                  checkoutConfig={checkoutConfig}
                   onAddRow={addCheckoutRow}
                   onRemoveRow={removeCheckoutRow}
                   updateComponentConfig={updateCheckoutComponentConfig}
+                  onDragEnd={onDragEnd}
                 />
               </DragDropContext>
             </TabsContent>
