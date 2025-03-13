@@ -19,8 +19,7 @@ const CodePreviewPanel: React.FC<CodePreviewPanelProps> = ({
   const handleCopyCode = () => {
     const code = generateCode();
     navigator.clipboard.writeText(code);
-    toast({
-      title: "Code copied",
+    toast.success("Code copied", {
       description: "HTML code has been copied to clipboard"
     });
   };
