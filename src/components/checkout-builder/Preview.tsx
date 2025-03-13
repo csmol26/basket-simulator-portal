@@ -67,7 +67,11 @@ const Preview: React.FC<PreviewProps> = ({ rows, styleVariables }) => {
             
             <div 
               className="p-4 border border-gray-200 rounded-md"
-              style={{...generateCssVariables(), borderRadius: styleVariables.primerRadiusBase}}
+              style={{
+                ...generateCssVariables(), 
+                borderRadius: styleVariables.primerRadiusBase,
+                borderColor: styleVariables.primerColorBorder
+              }}
             >
               <h2 
                 className="text-xl font-medium mb-2"
@@ -82,10 +86,18 @@ const Preview: React.FC<PreviewProps> = ({ rows, styleVariables }) => {
                 
                 return (
                   <div key={row.id} className="mb-4">
-                    <div className="font-medium text-sm mb-2">Slot {rowIndex + 1}</div>
+                    <div 
+                      className="font-medium text-sm mb-2"
+                      style={{color: styleVariables.primerColorTextPrimary}}
+                    >
+                      Slot {rowIndex + 1}
+                    </div>
                     <div 
                       className="p-3 border border-gray-200 rounded-md mb-2"
-                      style={{borderRadius: styleVariables.primerRadiusBase}}
+                      style={{
+                        borderRadius: styleVariables.primerRadiusBase,
+                        borderColor: styleVariables.primerColorBorder
+                      }}
                     >
                       {row.components.some(comp => 
                         comp.originalComponent.id === 'card-number' || 
@@ -95,7 +107,10 @@ const Preview: React.FC<PreviewProps> = ({ rows, styleVariables }) => {
                         comp.originalComponent.id === 'card-submit'
                       ) ? (
                         <div className="space-y-4">
-                          <div className="font-medium text-sm mb-2" style={{color: styleVariables.primerColorBrand}}>
+                          <div 
+                            className="font-medium text-sm mb-2" 
+                            style={{color: styleVariables.primerColorBrand}}
+                          >
                             Card Payment
                           </div>
                           <div className="flex gap-4 flex-wrap">
@@ -103,7 +118,10 @@ const Preview: React.FC<PreviewProps> = ({ rows, styleVariables }) => {
                               <div 
                                 key={`${row.id}-${component.id}`}
                                 className="p-3 border border-gray-200 rounded flex-1 min-w-[200px]"
-                                style={{borderRadius: styleVariables.primerRadiusBase}}
+                                style={{
+                                  borderRadius: styleVariables.primerRadiusBase,
+                                  borderColor: styleVariables.primerColorBorder
+                                }}
                               >
                                 <div 
                                   className="text-sm font-medium mb-1"
@@ -133,8 +151,11 @@ const Preview: React.FC<PreviewProps> = ({ rows, styleVariables }) => {
                         </div>
                       ) : (
                         <div 
-                          className="px-3 py-2 text-sm rounded-md w-full bg-gray-100 text-gray-800"
-                          style={{borderRadius: styleVariables.primerRadiusBase}}
+                          className="px-3 py-2 text-sm rounded-md w-full bg-gray-100"
+                          style={{
+                            borderRadius: styleVariables.primerRadiusBase,
+                            color: styleVariables.primerColorTextPrimary
+                          }}
                         >
                           [Slot {rowIndex + 1} Component]
                         </div>
@@ -147,7 +168,10 @@ const Preview: React.FC<PreviewProps> = ({ rows, styleVariables }) => {
               {rows.length === 0 && (
                 <div 
                   className="p-3 border border-gray-200 rounded-md mb-4 text-center text-gray-500"
-                  style={{borderRadius: styleVariables.primerRadiusBase}}
+                  style={{
+                    borderRadius: styleVariables.primerRadiusBase,
+                    borderColor: styleVariables.primerColorBorder
+                  }}
                 >
                   No slots defined. Add components in the Layout Builder.
                 </div>
