@@ -15,7 +15,6 @@ import { useToast } from "@/hooks/use-toast";
 import CheckoutLayoutConfig from "./CheckoutLayoutConfig";
 import { CardFormLayout, PaymentMethodDisplay } from "./types";
 
-// Import CheckoutLayoutConfigProps interface
 interface CheckoutLayoutConfigProps {
   checkoutConfig: any;
   onChangeCardFormLayout: (layout: any) => void;
@@ -23,7 +22,6 @@ interface CheckoutLayoutConfigProps {
   onToggleCardholderName: (show: boolean) => void;
 }
 
-// Create a wrapper component for CheckoutLayoutConfig
 const CheckoutLayoutConfigWrapper: React.FC<CheckoutLayoutConfigProps> = ({
   checkoutConfig,
   onChangeCardFormLayout,
@@ -37,7 +35,6 @@ const CheckoutLayoutConfigWrapper: React.FC<CheckoutLayoutConfigProps> = ({
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-1 gap-4">
-          {/* Configuration options can go here */}
           <p className="text-sm text-gray-500">Configure your checkout layout and payment options</p>
         </div>
       </CardContent>
@@ -70,18 +67,15 @@ const CheckoutBuilder: React.FC = () => {
     onDragEnd
   } = useCheckoutBuilderV2();
 
-  // Generate the payment method HTML code
   const generatePaymentMethodsHtml = () => {
     let html = '<primer-checkout client-token="${clientSession.clientToken}">\n';
     html += '  <primer-main slot="main">\n';
     html += '    <!-- Payment methods -->\n';
     html += '    <div slot="payments">\n';
     
-    // Check if any rows have components
     const hasComponents = checkoutRows.some(row => row.components.length > 0);
     
     if (hasComponents) {
-      // Generate HTML for each payment method in each row
       checkoutRows.forEach((row, rowIndex) => {
         if (row.components.length > 0) {
           html += `      <!-- Slot ${rowIndex + 1} -->\n`;
@@ -95,11 +89,9 @@ const CheckoutBuilder: React.FC = () => {
               html += '        <primer-card-form>\n';
               html += '          <div slot="card-form-content" style="--primer-input-height: 40px; --primer-space-medium: 16px; display: flex; flex-direction: column; gap: 16px;">\n';
               
-              // Generate the card form components based on cardFormRows
               if (cardFormRows.length > 0) {
                 cardFormRows.forEach(cardRow => {
                   if (cardRow.components.length === 1) {
-                    // Single component
                     const cardComp = cardRow.components[0];
                     const componentId = cardComp.originalComponent.id;
                     const label = cardComp.config?.label ? ` label="${cardComp.config.label}"` : '';
@@ -119,7 +111,6 @@ const CheckoutBuilder: React.FC = () => {
                       html += `            <primer-card-form-submit${btnText}${variant} style="height: 40px; width: 100%; font-weight: 500;"></primer-card-form-submit>\n`;
                     }
                   } else if (cardRow.components.length > 1) {
-                    // Multiple components in a row
                     html += '            <div style="display: flex; gap: 16px;">\n';
                     
                     cardRow.components.forEach(cardComp => {
@@ -150,7 +141,6 @@ const CheckoutBuilder: React.FC = () => {
                   }
                 });
               } else {
-                // Default card form if no components are defined
                 html += '            <primer-input-card-number label="Card Number" placeholder="4444 3333 2222 1111"></primer-input-card-number>\n';
                 html += '            <div style="display: flex; gap: 16px;">\n';
                 html += '              <div style="flex: 1;">\n';
@@ -174,7 +164,6 @@ const CheckoutBuilder: React.FC = () => {
         }
       });
     } else {
-      // Default configuration if no components added
       html += '      <!-- Default Payment Methods -->\n';
       html += '      <primer-payment-method type="PAYMENT_CARD">\n';
       html += '        <primer-card-form>\n';
@@ -241,7 +230,7 @@ const CheckoutBuilder: React.FC = () => {
               <TabsContent value="checkout-builder" className="p-0">
                 <div className="grid grid-cols-1 xl:grid-cols-[1fr_3fr] gap-6">
                   <div className="w-full space-y-6">
-                    <ComponentPalette onAddRow={addCheckoutRow} />
+                    <ComponentPalette onAddRow={addCheckoutRow} onDragEnd={onDragEnd} />
                     <CheckoutLayoutConfigWrapper 
                       checkoutConfig={checkoutConfig}
                       onChangeCardFormLayout={changeCardFormLayout}
@@ -258,7 +247,6 @@ const CheckoutBuilder: React.FC = () => {
                       onDragEnd={onDragEnd}
                     />
                     
-                    {/* Generated HTML Code for Checkout Builder */}
                     <Card>
                       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-md font-medium">
