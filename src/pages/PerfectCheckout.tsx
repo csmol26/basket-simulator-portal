@@ -1,15 +1,14 @@
-
 import React, { useState } from "react";
 import Navbar from "@/components/Navbar";
 import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Trash2, MoveVertical, Type, CreditCard, LayoutGrid } from "lucide-react";
+import { Plus, Trash2, MoveVertical, Type, CreditCard, LayoutGrid, Palette } from "lucide-react";
 import { v4 as uuidv4 } from 'uuid';
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Slider } from "@/components/ui/slider";
 
-// Define types for our drag and drop items
 interface PaymentMethod {
   id: string;
   type: string;
@@ -22,7 +21,6 @@ interface CheckoutSlot {
   items: PaymentMethod[];
 }
 
-// Card Form Builder types
 interface CardFormComponent {
   id: string;
   type: string;
@@ -37,11 +35,26 @@ interface CardFormRow {
   components: CardFormComponent[];
 }
 
-const PerfectCheckout: React.FC = () => {
-  // State for active tab
-  const [activeTab, setActiveTab] = useState<string>("checkout-builder");
+interface StyleVariables {
+  primerColorBrand: string;
+  primerRadiusBase: string;
+  primerSpaceBase: string;
+  primerTypographyBrand: string;
+  background: string;
+  textColor: string;
+}
 
-  // Available payment methods
+const PerfectCheckout: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<string>("checkout-builder");
+  const [styleVariables, setStyleVariables] = useState<StyleVariables>({
+    primerColorBrand: "#18A94B",
+    primerRadiusBase: "16px",
+    primerSpaceBase: "4px",
+    primerTypographyBrand: "Poppins, sans-serif",
+    background: "#ffffff",
+    textColor: "#333333"
+  });
+
   const availablePaymentMethods: PaymentMethod[] = [
     { id: 'card', type: 'PAYMENT_CARD', name: 'Credit Card' },
     { id: 'paypal', type: 'PAYPAL', name: 'PayPal' },
@@ -52,17 +65,16 @@ const PerfectCheckout: React.FC = () => {
     { id: 'sofort', type: 'SOFORT', name: 'Sofort' },
   ];
 
-  // State for checkout slots
   const [slots, setSlots] = useState<CheckoutSlot[]>([
     { id: 'slot-1', name: 'Card Payment', items: [] }
   ]);
 
-  // State for card form components
   const [cardFormRows, setCardFormRows] = useState<CardFormRow[]>([
     { id: 'row-1', components: [] }
   ]);
 
-  // Available card form components
+  const [currentTheme, setCurrentTheme] = useState<string>("default");
+
   const availableCardComponents: CardFormComponent[] = [
     { 
       id: 'card-number', 
@@ -104,53 +116,114 @@ const PerfectCheckout: React.FC = () => {
     }
   ];
 
-  // Handle adding a new slot
+  const themeOptions = [
+    { id: "default", name: "Default", description: "The standard Primer checkout theme with green accents and rounded corners." },
+    { id: "minimal", name: "Minimal", description: "A minimalist grayscale theme with subtle styling and small radius." },
+    { id: "high-contrast", name: "High Contrast", description: "Maximum accessibility with strong black borders and high contrast elements." },
+    { id: "kawaii", name: "Kawaii", description: "Playful pink theme with soft rounded corners and Comic Sans font." },
+    { id: "retro-90s", name: "Retro 90s", description: "Nostalgic 90s web design with bright colors, sharp edges, and monospace font." },
+  ];
+
   const addSlot = () => {
     setSlots([...slots, { id: `slot-${uuidv4()}`, name: `Payment Option ${slots.length + 1}`, items: [] }]);
   };
 
-  // Handle removing a slot
   const removeSlot = (slotId: string) => {
     if (slots.length > 1) {
       setSlots(slots.filter(slot => slot.id !== slotId));
     }
   };
 
-  // Handle slot name change
   const handleSlotNameChange = (slotId: string, newName: string) => {
     setSlots(slots.map(slot => 
       slot.id === slotId ? { ...slot, name: newName } : slot
     ));
   };
 
-  // Handle adding a new card form row
   const addCardFormRow = () => {
     setCardFormRows([...cardFormRows, { id: `row-${uuidv4()}`, components: [] }]);
   };
 
-  // Handle removing a card form row
   const removeCardFormRow = (rowId: string) => {
     if (cardFormRows.length > 1) {
       setCardFormRows(cardFormRows.filter(row => row.id !== rowId));
     }
   };
 
-  // Handle drag end
+  const handleStyleChange = (variable: keyof StyleVariables, value: string) => {
+    setStyleVariables({
+      ...styleVariables,
+      [variable]: value
+    });
+  };
+
+  const handleThemeChange = (theme: string) => {
+    setCurrentTheme(theme);
+    
+    switch (theme) {
+      case "minimal":
+        setStyleVariables({
+          primerColorBrand: "#666666",
+          primerRadiusBase: "2px",
+          primerSpaceBase: "4px",
+          primerTypographyBrand: "Inter, sans-serif",
+          background: "#ffffff",
+          textColor: "#333333"
+        });
+        break;
+      case "high-contrast":
+        setStyleVariables({
+          primerColorBrand: "#000000",
+          primerRadiusBase: "0px",
+          primerSpaceBase: "6px",
+          primerTypographyBrand: "Inter, sans-serif",
+          background: "#ffffff",
+          textColor: "#000000"
+        });
+        break;
+      case "kawaii":
+        setStyleVariables({
+          primerColorBrand: "#ff70b5",
+          primerRadiusBase: "12px",
+          primerSpaceBase: "6px",
+          primerTypographyBrand: "'Comic Sans MS', cursive, sans-serif",
+          background: "#fff0f7",
+          textColor: "#994068"
+        });
+        break;
+      case "retro-90s":
+        setStyleVariables({
+          primerColorBrand: "#00ccff",
+          primerRadiusBase: "0px",
+          primerSpaceBase: "8px",
+          primerTypographyBrand: "'VT323', 'Courier New', monospace",
+          background: "#000000",
+          textColor: "#00ccff"
+        });
+        break;
+      default:
+        setStyleVariables({
+          primerColorBrand: "#18A94B",
+          primerRadiusBase: "16px",
+          primerSpaceBase: "4px",
+          primerTypographyBrand: "Poppins, sans-serif",
+          background: "#ffffff",
+          textColor: "#333333"
+        });
+    }
+  };
+
   const onDragEnd = (result: DropResult) => {
     const { source, destination } = result;
 
-    // If dropped outside a droppable area
     if (!destination) return;
 
-    // If dropped in the same position
     if (
       source.droppableId === destination.droppableId &&
       source.index === destination.index
     ) return;
 
-    // Handle drag and drop for Checkout Builder
     if (activeTab === "checkout-builder") {
-      // If dragging from payment methods to a slot
       if (source.droppableId === 'payment-methods') {
         const method = availablePaymentMethods[source.index];
         const newMethod = { ...method, id: `${method.id}-${uuidv4()}` };
@@ -163,7 +236,6 @@ const PerfectCheckout: React.FC = () => {
           setSlots(newSlots);
         }
       }
-      // If dragging between slots
       else if (source.droppableId.startsWith('slot-') && destination.droppableId.startsWith('slot-')) {
         const newSlots = [...slots];
         const sourceSlot = newSlots.find(slot => slot.id === source.droppableId);
@@ -175,7 +247,6 @@ const PerfectCheckout: React.FC = () => {
           setSlots(newSlots);
         }
       }
-      // If dragging to the trash
       else if (destination.droppableId === 'trash' && source.droppableId.startsWith('slot-')) {
         const newSlots = [...slots];
         const sourceSlot = newSlots.find(slot => slot.id === source.droppableId);
@@ -186,9 +257,7 @@ const PerfectCheckout: React.FC = () => {
         }
       }
     }
-    // Handle drag and drop for Card Form Builder
     else if (activeTab === "card-form-builder") {
-      // If dragging from card components to a row
       if (source.droppableId === 'card-components') {
         const component = availableCardComponents[source.index];
         const newComponent = { 
@@ -204,7 +273,6 @@ const PerfectCheckout: React.FC = () => {
           setCardFormRows(newRows);
         }
       }
-      // If dragging between rows
       else if (source.droppableId.startsWith('row-') && destination.droppableId.startsWith('row-')) {
         const newRows = [...cardFormRows];
         const sourceRow = newRows.find(row => row.id === source.droppableId);
@@ -216,7 +284,6 @@ const PerfectCheckout: React.FC = () => {
           setCardFormRows(newRows);
         }
       }
-      // If dragging to the card-trash
       else if (destination.droppableId === 'card-trash' && source.droppableId.startsWith('row-')) {
         const newRows = [...cardFormRows];
         const sourceRow = newRows.find(row => row.id === source.droppableId);
@@ -229,7 +296,6 @@ const PerfectCheckout: React.FC = () => {
     }
   };
 
-  // Generate HTML code preview for card form
   const generateCardFormHTML = () => {
     let html = '<primer-card-form>\n';
     html += '  <div slot="card-form-content" style="display: flex; flex-direction: column; gap: 16px;">\n';
@@ -238,11 +304,9 @@ const PerfectCheckout: React.FC = () => {
       if (row.components.length === 0) return;
 
       if (row.components.length === 1) {
-        // Single component
         const component = row.components[0];
         html += `    ${component.element}\n`;
       } else {
-        // Multiple components in a row
         html += '    <div style="display: flex; gap: 16px;">\n';
         row.components.forEach(component => {
           html += `      <div style="flex: 1;">\n`;
@@ -259,8 +323,17 @@ const PerfectCheckout: React.FC = () => {
     return html;
   };
 
+  const themeStyles: React.CSSProperties = {
+    "--primer-color-brand": styleVariables.primerColorBrand,
+    "--primer-radius-base": styleVariables.primerRadiusBase,
+    "--primer-space-base": styleVariables.primerSpaceBase,
+    "--primer-typography-brand": styleVariables.primerTypographyBrand,
+    "--page-background-color": styleVariables.background,
+    "--page-text-color": styleVariables.textColor,
+  } as React.CSSProperties;
+
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col" style={themeStyles}>
       <Navbar />
       <div className="flex-1 max-w-6xl mx-auto w-full px-4 py-8 md:px-6">
         <h1 className="text-3xl font-bold mb-6">Build Your Perfect Checkout</h1>
@@ -275,13 +348,15 @@ const PerfectCheckout: React.FC = () => {
               <CreditCard className="h-4 w-4" />
               Card Form Builder
             </TabsTrigger>
+            <TabsTrigger value="theme-preview" className="flex items-center gap-2">
+              <Palette className="h-4 w-4" />
+              Theme and Preview
+            </TabsTrigger>
           </TabsList>
           
-          {/* Checkout Builder Tab */}
           <TabsContent value="checkout-builder">
             <DragDropContext onDragEnd={onDragEnd}>
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Payment Methods Panel */}
                 <div className="lg:col-span-1">
                   <Card>
                     <CardHeader>
@@ -319,7 +394,6 @@ const PerfectCheckout: React.FC = () => {
                   </Card>
                 </div>
                 
-                {/* Checkout Builder Area */}
                 <div className="lg:col-span-2">
                   <Card className="mb-6">
                     <CardHeader>
@@ -406,7 +480,6 @@ const PerfectCheckout: React.FC = () => {
                     </CardContent>
                   </Card>
                   
-                  {/* Trash Zone */}
                   <Card>
                     <CardContent className="p-4">
                       <Droppable droppableId="trash">
@@ -429,11 +502,9 @@ const PerfectCheckout: React.FC = () => {
             </DragDropContext>
           </TabsContent>
           
-          {/* Card Form Builder Tab */}
           <TabsContent value="card-form-builder">
             <DragDropContext onDragEnd={onDragEnd}>
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Card Components Panel */}
                 <div className="lg:col-span-1">
                   <Card>
                     <CardHeader>
@@ -471,7 +542,6 @@ const PerfectCheckout: React.FC = () => {
                   </Card>
                 </div>
                 
-                {/* Card Form Builder Area */}
                 <div className="lg:col-span-2">
                   <Card className="mb-6">
                     <CardHeader>
@@ -547,7 +617,6 @@ const PerfectCheckout: React.FC = () => {
                     </CardContent>
                   </Card>
                   
-                  {/* Card Form Preview */}
                   <Card className="mb-6">
                     <CardHeader>
                       <CardTitle className="text-lg">Card Form Preview</CardTitle>
@@ -581,7 +650,6 @@ const PerfectCheckout: React.FC = () => {
                     </CardContent>
                   </Card>
                   
-                  {/* Generated HTML Code */}
                   <Card className="mb-6">
                     <CardHeader>
                       <CardTitle className="text-lg">Generated HTML</CardTitle>
@@ -595,7 +663,6 @@ const PerfectCheckout: React.FC = () => {
                     </CardContent>
                   </Card>
                   
-                  {/* Trash Zone */}
                   <Card>
                     <CardContent className="p-4">
                       <Droppable droppableId="card-trash">
@@ -616,6 +683,295 @@ const PerfectCheckout: React.FC = () => {
                 </div>
               </div>
             </DragDropContext>
+          </TabsContent>
+          
+          <TabsContent value="theme-preview">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="lg:col-span-1">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Checkout Preview</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div 
+                      className={`p-6 rounded-lg border ${
+                        currentTheme === 'kawaii' ? 'bg-pink-50 border-pink-200' : 
+                        currentTheme === 'retro-90s' ? 'bg-black text-cyan-400 border-pink-500 border-2' : 
+                        currentTheme === 'high-contrast' ? 'bg-white border-black border-2' : 
+                        'bg-white border-gray-200'
+                      }`}
+                    >
+                      <h2 className="text-xl font-semibold mb-4">Checkout</h2>
+                      
+                      <div className="space-y-4 mb-6">
+                        <div className="font-medium">Payment Method</div>
+                        {slots.map((slot, index) => (
+                          <div 
+                            key={slot.id} 
+                            className={`p-3 rounded-md border ${
+                              currentTheme === 'kawaii' ? 'border-pink-300 bg-white' : 
+                              currentTheme === 'retro-90s' ? 'border-cyan-500 bg-gray-900' : 
+                              currentTheme === 'high-contrast' ? 'border-black bg-white' : 
+                              'border-gray-200 bg-white'
+                            }`}
+                          >
+                            <div className="font-medium">{slot.name}</div>
+                            <div className="flex flex-wrap gap-2 mt-2">
+                              {slot.items.length > 0 ? (
+                                slot.items.map((item) => (
+                                  <div 
+                                    key={item.id} 
+                                    className={`px-3 py-1 text-sm rounded-md ${
+                                      currentTheme === 'kawaii' ? 'bg-pink-100 text-pink-800' : 
+                                      currentTheme === 'retro-90s' ? 'bg-cyan-900 text-cyan-300 border border-cyan-500' : 
+                                      currentTheme === 'high-contrast' ? 'bg-black text-white' : 
+                                      'bg-gray-100 text-gray-800'
+                                    }`}
+                                  >
+                                    {item.name}
+                                  </div>
+                                ))
+                              ) : (
+                                <div 
+                                  className={`px-3 py-1 text-sm rounded-md w-full ${
+                                    currentTheme === 'kawaii' ? 'bg-pink-100 text-pink-800' : 
+                                    currentTheme === 'retro-90s' ? 'bg-cyan-900 text-cyan-300 border border-cyan-500' : 
+                                    currentTheme === 'high-contrast' ? 'bg-black text-white' : 
+                                    'bg-gray-100 text-gray-800'
+                                  }`}
+                                >
+                                  [Empty Payment Method Slot]
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      
+                      <div className="space-y-4">
+                        <div className="font-medium">Card Details</div>
+                        <div 
+                          className={`p-4 rounded-md border ${
+                            currentTheme === 'kawaii' ? 'border-pink-300 bg-white' : 
+                            currentTheme === 'retro-90s' ? 'border-cyan-500 bg-gray-900' : 
+                            currentTheme === 'high-contrast' ? 'border-black bg-white' : 
+                            'border-gray-200 bg-white'
+                          }`}
+                        >
+                          {cardFormRows.map((row, rowIndex) => (
+                            <div key={row.id} className={`${rowIndex > 0 ? 'mt-4' : ''} flex gap-4`}>
+                              {row.components.length > 0 ? (
+                                row.components.map((component) => (
+                                  <div key={component.id} className="flex-1">
+                                    {component.label && (
+                                      <label 
+                                        className={`block text-sm font-medium mb-1 ${
+                                          currentTheme === 'kawaii' ? 'text-pink-800' : 
+                                          currentTheme === 'retro-90s' ? 'text-cyan-300' : 
+                                          'text-gray-700'
+                                        }`}
+                                      >
+                                        {component.label}
+                                      </label>
+                                    )}
+                                    {component.type === 'card-submit' ? (
+                                      <button 
+                                        className={`w-full rounded-md py-2 px-4 text-sm font-medium ${
+                                          currentTheme === 'kawaii' ? 'bg-pink-500 text-white' : 
+                                          currentTheme === 'retro-90s' ? 'bg-cyan-500 text-black border border-white' : 
+                                          currentTheme === 'high-contrast' ? 'bg-black text-white' : 
+                                          'bg-green-500 text-white'
+                                        }`}
+                                      >
+                                        Pay Now
+                                      </button>
+                                    ) : (
+                                      <div 
+                                        className={`h-10 px-3 py-2 rounded-md text-sm ${
+                                          currentTheme === 'kawaii' ? 'bg-pink-50 border border-pink-200 text-pink-800' : 
+                                          currentTheme === 'retro-90s' ? 'bg-gray-800 border border-cyan-500 text-cyan-300' : 
+                                          currentTheme === 'high-contrast' ? 'bg-white border-2 border-black text-black' : 
+                                          'bg-gray-50 border border-gray-300 text-gray-500'
+                                        }`}
+                                      >
+                                        {component.placeholder || component.name}
+                                      </div>
+                                    )}
+                                  </div>
+                                ))
+                              ) : (
+                                <div 
+                                  className={`w-full h-10 px-3 py-2 rounded-md text-sm ${
+                                    currentTheme === 'kawaii' ? 'bg-pink-50 border border-pink-200 text-pink-300' : 
+                                    currentTheme === 'retro-90s' ? 'bg-gray-800 border border-cyan-500 text-cyan-600' : 
+                                    currentTheme === 'high-contrast' ? 'bg-white border-2 border-black text-gray-400' : 
+                                    'bg-gray-50 border border-gray-300 text-gray-400'
+                                  }`}
+                                >
+                                  [Empty row]
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+              
+              <div className="lg:col-span-1">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Theme Configuration</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-6">
+                      <div>
+                        <label htmlFor="theme-select" className="text-sm font-medium block mb-2">
+                          Select Theme
+                        </label>
+                        <select 
+                          id="theme-select"
+                          className="w-full p-2 border border-gray-200 rounded-md"
+                          value={currentTheme}
+                          onChange={(e) => handleThemeChange(e.target.value)}
+                        >
+                          {themeOptions.map(theme => (
+                            <option key={theme.id} value={theme.id}>
+                              {theme.name}
+                            </option>
+                          ))}
+                        </select>
+                        <p className="mt-2 text-sm text-gray-500">
+                          {themeOptions.find(t => t.id === currentTheme)?.description}
+                        </p>
+                      </div>
+                      
+                      <div>
+                        <label className="text-sm font-medium block mb-2">
+                          Brand Color
+                        </label>
+                        <div className="flex gap-2">
+                          <input
+                            type="color"
+                            value={styleVariables.primerColorBrand}
+                            onChange={(e) => handleStyleChange('primerColorBrand', e.target.value)}
+                            className="w-12 h-10 rounded overflow-hidden"
+                          />
+                          <Input
+                            value={styleVariables.primerColorBrand}
+                            onChange={(e) => handleStyleChange('primerColorBrand', e.target.value)}
+                            className="flex-1"
+                          />
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <label className="text-sm font-medium block mb-2">
+                          Background Color
+                        </label>
+                        <div className="flex gap-2">
+                          <input
+                            type="color"
+                            value={styleVariables.background}
+                            onChange={(e) => handleStyleChange('background', e.target.value)}
+                            className="w-12 h-10 rounded overflow-hidden"
+                          />
+                          <Input
+                            value={styleVariables.background}
+                            onChange={(e) => handleStyleChange('background', e.target.value)}
+                            className="flex-1"
+                          />
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <label className="text-sm font-medium block mb-2">
+                          Text Color
+                        </label>
+                        <div className="flex gap-2">
+                          <input
+                            type="color"
+                            value={styleVariables.textColor}
+                            onChange={(e) => handleStyleChange('textColor', e.target.value)}
+                            className="w-12 h-10 rounded overflow-hidden"
+                          />
+                          <Input
+                            value={styleVariables.textColor}
+                            onChange={(e) => handleStyleChange('textColor', e.target.value)}
+                            className="flex-1"
+                          />
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <label className="text-sm font-medium block mb-2">
+                          Border Radius: {styleVariables.primerRadiusBase}
+                        </label>
+                        <Slider
+                          value={[parseInt(styleVariables.primerRadiusBase)]}
+                          min={0}
+                          max={24}
+                          step={1}
+                          onValueChange={(values) => handleStyleChange('primerRadiusBase', `${values[0]}px`)}
+                          className="mb-4"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="text-sm font-medium block mb-2">
+                          Base Spacing: {styleVariables.primerSpaceBase}
+                        </label>
+                        <Slider
+                          value={[parseInt(styleVariables.primerSpaceBase)]}
+                          min={2}
+                          max={16}
+                          step={1}
+                          onValueChange={(values) => handleStyleChange('primerSpaceBase', `${values[0]}px`)}
+                          className="mb-4"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label htmlFor="font-select" className="text-sm font-medium block mb-2">
+                          Font Family
+                        </label>
+                        <select 
+                          id="font-select"
+                          className="w-full p-2 border border-gray-200 rounded-md"
+                          value={styleVariables.primerTypographyBrand}
+                          onChange={(e) => handleStyleChange('primerTypographyBrand', e.target.value)}
+                        >
+                          <option value="Poppins, sans-serif">Poppins</option>
+                          <option value="'Comic Sans MS', cursive, sans-serif">Comic Sans MS</option>
+                          <option value="'VT323', 'Courier New', monospace">VT323 (Retro)</option>
+                          <option value="Georgia, serif">Georgia</option>
+                          <option value="'Courier New', monospace">Courier New</option>
+                          <option value="Arial, sans-serif">Arial</option>
+                          <option value="Inter, sans-serif">Inter</option>
+                        </select>
+                      </div>
+                      
+                      <div>
+                        <div className="text-sm font-medium mb-2">CSS Variables</div>
+                        <pre className="bg-gray-900 text-gray-100 p-4 rounded-md overflow-x-auto text-xs">
+                          {`/* Theme CSS Variables */
+:root {
+  --primer-color-brand: ${styleVariables.primerColorBrand};
+  --primer-radius-base: ${styleVariables.primerRadiusBase};
+  --primer-space-base: ${styleVariables.primerSpaceBase};
+  --primer-typography-brand: ${styleVariables.primerTypographyBrand};
+  --page-background-color: ${styleVariables.background};
+  --page-text-color: ${styleVariables.textColor};
+}`}
+                        </pre>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
