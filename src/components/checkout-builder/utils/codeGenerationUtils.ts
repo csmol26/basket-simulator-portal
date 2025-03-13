@@ -22,20 +22,30 @@ export const generateUICode = (styleVariables: StyleVariables) => {
 /**
  * Formats a primer component tag with its attributes based on component config
  */
-export const formatPrimerComponent = (componentType: string, config?: { placeholder?: string; label?: string; }) => {
+export const formatPrimerComponent = (componentType: string, config?: { 
+  placeholder?: string; 
+  label?: string; 
+  ariaLabel?: string;
+  buttonText?: string;
+  variant?: string;
+}) => {
   const placeholder = config?.placeholder ? ` placeholder="${config.placeholder}"` : '';
+  const label = config?.label ? ` label="${config.label}"` : '';
+  const ariaLabel = config?.ariaLabel ? ` aria-label="${config.ariaLabel}"` : '';
+  const buttonText = config?.buttonText ? ` buttonText="${config.buttonText}"` : '';
+  const variant = config?.variant ? ` variant="${config.variant}"` : '';
   
   switch (componentType) {
     case 'card-number':
-      return `<primer-input-card-number${placeholder}></primer-input-card-number>`;
+      return `<primer-input-card-number${label}${placeholder}${ariaLabel}></primer-input-card-number>`;
     case 'card-expiry':
-      return `<primer-input-card-expiry${placeholder}></primer-input-card-expiry>`;
+      return `<primer-input-card-expiry${label}${placeholder}${ariaLabel}></primer-input-card-expiry>`;
     case 'card-cvv':
-      return `<primer-input-cvv${placeholder}></primer-input-cvv>`;
+      return `<primer-input-cvv${label}${placeholder}${ariaLabel}></primer-input-cvv>`;
     case 'card-holder':
-      return `<primer-input-card-holder-name${placeholder}></primer-input-card-holder-name>`;
+      return `<primer-input-card-holder-name${label}${placeholder}${ariaLabel}></primer-input-card-holder-name>`;
     case 'card-submit':
-      return `<primer-card-form-submit style="height: 40px; width: 100%; font-weight: 500;"></primer-card-form-submit>`;
+      return `<primer-card-form-submit${buttonText}${variant} style="height: 40px; width: 100%; font-weight: 500;"></primer-card-form-submit>`;
     default:
       return '';
   }

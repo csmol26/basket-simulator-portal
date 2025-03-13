@@ -9,6 +9,8 @@ export interface DragItem {
     placeholder?: string;
     ariaLabel?: string;
     spaceSmall?: string;
+    buttonText?: string;
+    variant?: string;
   };
   originalComponent: ComponentConfig;
 }

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Draggable } from "react-beautiful-dnd";
 import { DragItem, StyleVariables } from '../types';
 import ComponentConfigPopover from './ComponentConfigPopover';
@@ -19,6 +19,13 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
   updateComponentConfig,
   styleVariables
 }) => {
+  const [isSelected, setIsSelected] = useState(false);
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsSelected(!isSelected);
+  };
+
   return (
     <Draggable
       key={component.id}
@@ -30,7 +37,8 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          className="p-2 bg-white border border-gray-200 rounded-md shadow-sm flex-1 cursor-move hover:border-accent relative group"
+          className={`p-2 bg-white border ${isSelected ? 'border-primary' : 'border-gray-200'} rounded-md shadow-sm flex-1 cursor-move hover:border-accent relative group`}
+          onClick={handleClick}
         >
           <div className="text-xs text-center overflow-hidden text-ellipsis whitespace-nowrap">
             {component.originalComponent?.name || "Component"}

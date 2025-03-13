@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Settings } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DragItem } from '../types';
 import { jsonToCssVariable } from "../StyleVarsEditor";
 
@@ -27,6 +28,216 @@ const ComponentConfigPopover: React.FC<ComponentConfigPopoverProps> = ({
     return isNaN(numValue) ? 0 : Math.min(20, Math.max(0, numValue));
   };
 
+  // Component-specific field configurations
+  const renderComponentSpecificFields = () => {
+    switch (component.originalComponent?.id) {
+      case 'card-number':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor={`${component.id}-label`} className="text-xs">
+                Label
+              </Label>
+              <Input
+                id={`${component.id}-label`}
+                placeholder="Card Number"
+                value={component.config?.label || ''}
+                onChange={(e) => 
+                  updateComponentConfig(rowId, component.id, { label: e.target.value })
+                }
+                className="h-8 text-xs"
+              />
+              <p className="text-[10px] text-gray-500">
+                Default: Card Number
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor={`${component.id}-placeholder`} className="text-xs">
+                Placeholder
+              </Label>
+              <Input
+                id={`${component.id}-placeholder`}
+                placeholder="4111 1111 1111 1111"
+                value={component.config?.placeholder || ''}
+                onChange={(e) => 
+                  updateComponentConfig(rowId, component.id, { placeholder: e.target.value })
+                }
+                className="h-8 text-xs"
+              />
+              <p className="text-[10px] text-gray-500">
+                Default: 4111 1111 1111 1111
+              </p>
+            </div>
+          </>
+        );
+      case 'card-cvv':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor={`${component.id}-label`} className="text-xs">
+                Label
+              </Label>
+              <Input
+                id={`${component.id}-label`}
+                placeholder="CVV"
+                value={component.config?.label || ''}
+                onChange={(e) => 
+                  updateComponentConfig(rowId, component.id, { label: e.target.value })
+                }
+                className="h-8 text-xs"
+              />
+              <p className="text-[10px] text-gray-500">
+                Default: CVV
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor={`${component.id}-placeholder`} className="text-xs">
+                Placeholder
+              </Label>
+              <Input
+                id={`${component.id}-placeholder`}
+                placeholder="123"
+                value={component.config?.placeholder || ''}
+                onChange={(e) => 
+                  updateComponentConfig(rowId, component.id, { placeholder: e.target.value })
+                }
+                className="h-8 text-xs"
+              />
+              <p className="text-[10px] text-gray-500">
+                Default: 123
+              </p>
+            </div>
+          </>
+        );
+      case 'card-expiry':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor={`${component.id}-label`} className="text-xs">
+                Label
+              </Label>
+              <Input
+                id={`${component.id}-label`}
+                placeholder="Expiry Date"
+                value={component.config?.label || ''}
+                onChange={(e) => 
+                  updateComponentConfig(rowId, component.id, { label: e.target.value })
+                }
+                className="h-8 text-xs"
+              />
+              <p className="text-[10px] text-gray-500">
+                Default: Expiry Date
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor={`${component.id}-placeholder`} className="text-xs">
+                Placeholder
+              </Label>
+              <Input
+                id={`${component.id}-placeholder`}
+                placeholder="MM/YY"
+                value={component.config?.placeholder || ''}
+                onChange={(e) => 
+                  updateComponentConfig(rowId, component.id, { placeholder: e.target.value })
+                }
+                className="h-8 text-xs"
+              />
+              <p className="text-[10px] text-gray-500">
+                Default: MM/YY
+              </p>
+            </div>
+          </>
+        );
+      case 'card-holder':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor={`${component.id}-label`} className="text-xs">
+                Label
+              </Label>
+              <Input
+                id={`${component.id}-label`}
+                placeholder="Cardholder Name"
+                value={component.config?.label || ''}
+                onChange={(e) => 
+                  updateComponentConfig(rowId, component.id, { label: e.target.value })
+                }
+                className="h-8 text-xs"
+              />
+              <p className="text-[10px] text-gray-500">
+                Default: Cardholder Name
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor={`${component.id}-placeholder`} className="text-xs">
+                Placeholder
+              </Label>
+              <Input
+                id={`${component.id}-placeholder`}
+                placeholder="Name on card"
+                value={component.config?.placeholder || ''}
+                onChange={(e) => 
+                  updateComponentConfig(rowId, component.id, { placeholder: e.target.value })
+                }
+                className="h-8 text-xs"
+              />
+              <p className="text-[10px] text-gray-500">
+                Default: Name on card
+              </p>
+            </div>
+          </>
+        );
+      case 'card-submit':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor={`${component.id}-buttonText`} className="text-xs">
+                Button Text
+              </Label>
+              <Input
+                id={`${component.id}-buttonText`}
+                placeholder="Pay"
+                value={component.config?.buttonText || ''}
+                onChange={(e) => 
+                  updateComponentConfig(rowId, component.id, { buttonText: e.target.value })
+                }
+                className="h-8 text-xs"
+              />
+              <p className="text-[10px] text-gray-500">
+                Default: Pay
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor={`${component.id}-variant`} className="text-xs">
+                Button Variant
+              </Label>
+              <Select 
+                value={component.config?.variant || 'primary'}
+                onValueChange={(value) => 
+                  updateComponentConfig(rowId, component.id, { variant: value })
+                }
+              >
+                <SelectTrigger id={`${component.id}-variant`} className="h-8 text-xs">
+                  <SelectValue placeholder="Select variant" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="primary">Primary</SelectItem>
+                  <SelectItem value="secondary">Secondary</SelectItem>
+                  <SelectItem value="outline">Outline</SelectItem>
+                  <SelectItem value="ghost">Ghost</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-[10px] text-gray-500">
+                Default: primary
+              </p>
+            </div>
+          </>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -41,67 +252,10 @@ const ComponentConfigPopover: React.FC<ComponentConfigPopoverProps> = ({
         <div className="space-y-4">
           <h4 className="font-medium text-sm">Configure {component.originalComponent?.name}</h4>
           
-          {component.originalComponent?.defaultLabel && (
-            <div className="space-y-2">
-              <Label htmlFor={`${component.id}-label`} className="text-xs">
-                Label
-              </Label>
-              <Input
-                id={`${component.id}-label`}
-                placeholder={component.originalComponent.defaultLabel}
-                value={component.config?.label || ''}
-                onChange={(e) => 
-                  updateComponentConfig(rowId, component.id, { label: e.target.value })
-                }
-                className="h-8 text-xs"
-              />
-              <p className="text-[10px] text-gray-500">
-                Default: {component.originalComponent.defaultLabel}
-              </p>
-            </div>
-          )}
+          {/* Component-specific configuration fields */}
+          {renderComponentSpecificFields()}
 
-          {component.originalComponent?.defaultPlaceholder && (
-            <div className="space-y-2">
-              <Label htmlFor={`${component.id}-placeholder`} className="text-xs">
-                Placeholder
-              </Label>
-              <Input
-                id={`${component.id}-placeholder`}
-                placeholder={component.originalComponent.defaultPlaceholder}
-                value={component.config?.placeholder || ''}
-                onChange={(e) => 
-                  updateComponentConfig(rowId, component.id, { placeholder: e.target.value })
-                }
-                className="h-8 text-xs"
-              />
-              <p className="text-[10px] text-gray-500">
-                Default: {component.originalComponent.defaultPlaceholder}
-              </p>
-            </div>
-          )}
-
-          {component.originalComponent?.defaultAriaLabel && (
-            <div className="space-y-2">
-              <Label htmlFor={`${component.id}-ariaLabel`} className="text-xs">
-                Aria Label
-              </Label>
-              <Input
-                id={`${component.id}-ariaLabel`}
-                placeholder={component.originalComponent.defaultAriaLabel}
-                value={component.config?.ariaLabel || ''}
-                onChange={(e) => 
-                  updateComponentConfig(rowId, component.id, { ariaLabel: e.target.value })
-                }
-                className="h-8 text-xs"
-              />
-              <p className="text-[10px] text-gray-500">
-                Default: {component.originalComponent.defaultAriaLabel}
-              </p>
-            </div>
-          )}
-
-          {/* Spacing configuration */}
+          {/* Common spacing configuration */}
           <div className="space-y-2 pt-2 border-t border-gray-100">
             <Label htmlFor={`${component.id}-space-small`} className="text-xs">
               {jsonToCssVariable.primerSpaceSmall} (Field Spacing)
