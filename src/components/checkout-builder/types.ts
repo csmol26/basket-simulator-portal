@@ -30,4 +30,6 @@ export interface StyleVariables {
   primerColorLoader: string;
   primerColorFocus: string;
   primerSpaceSmall: string;
+  primerColorTextPrimary: string;
+  primerColorBorder: string;
 }

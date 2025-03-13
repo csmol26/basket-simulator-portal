@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -16,7 +15,9 @@ export const initialStyleVariables = {
   primerSizeBase: "4px",
   primerColorLoader: "",
   primerColorFocus: "#DE00D1",
-  primerSpaceSmall: "8px", // Adding this variable for component spacing
+  primerSpaceSmall: "8px",
+  primerColorTextPrimary: "#333333",
+  primerColorBorder: "#e5e7eb",
 };
 
 export const variableDescriptions = {
@@ -29,6 +30,8 @@ export const variableDescriptions = {
   primerColorLoader: "Controls the loader color across the checkout (leave empty to use brand color)",
   primerColorFocus: "Controls the interactive focus color across the checkout",
   primerSpaceSmall: "Controls the small spacing value between elements",
+  primerColorTextPrimary: "Controls the primary text color across the checkout",
+  primerColorBorder: "Controls the border color across the checkout",
 };
 
 export const jsonToCssVariable = {
@@ -41,6 +44,8 @@ export const jsonToCssVariable = {
   primerColorLoader: "--primer-color-loader",
   primerColorFocus: "--primer-color-focus",
   primerSpaceSmall: "--primer-space-small",
+  primerColorTextPrimary: "--primer-color-text-primary",
+  primerColorBorder: "--primer-color-border",
 };
 
 // Font options for the dropdown
@@ -102,10 +107,15 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ styleVariables, onStyleChange
       <CardContent>
         <div className="space-y-6">
           {/* Color inputs */}
-          {['primerColorBrand', 'primerColorBackground', 'primerColorLoader', 'primerColorFocus'].map((key) => (
+          {['primerColorBrand', 'primerColorBackground', 'primerColorLoader', 'primerColorFocus', 'primerColorTextPrimary', 'primerColorBorder'].map((key) => (
             <div key={key} className="space-y-2">
               <Label htmlFor={key} className="text-sm flex justify-between">
-                <span>{jsonToCssVariable[key as keyof typeof jsonToCssVariable]}</span>
+                <span>{key === 'primerColorBrand' ? 'Brand Color' : 
+                       key === 'primerColorBackground' ? 'Background Color' :
+                       key === 'primerColorLoader' ? 'Loader Color' :
+                       key === 'primerColorFocus' ? 'Focus Color' :
+                       key === 'primerColorTextPrimary' ? 'Text Color' :
+                       'Border Color'}</span>
                 <input 
                   type="color" 
                   value={styleVariables[key as keyof typeof styleVariables] || '#000000'} 
@@ -150,7 +160,9 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ styleVariables, onStyleChange
           {['primerRadiusBase', 'primerSpaceBase', 'primerSizeBase', 'primerSpaceSmall'].map((key) => (
             <div key={key} className="space-y-2">
               <Label htmlFor={key} className="text-sm">
-                {jsonToCssVariable[key as keyof typeof jsonToCssVariable]}
+                {key === 'primerRadiusBase' ? 'Border Radius' : 
+                 key === 'primerSpaceBase' ? 'Base Spacing' :
+                 key === 'primerSizeBase' ? 'Base Size' : 'Small Spacing'}
               </Label>
               <div className="flex gap-4 items-center">
                 <div className="flex-1">
