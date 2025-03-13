@@ -10,7 +10,7 @@ import Basket from "./pages/Basket";
 import Checkout from "./pages/Checkout";
 import Confirmation from "./pages/Confirmation";
 import CheckoutBuilder from "./pages/CheckoutBuilder";
-import CheckoutBuilderV2 from "./pages/CheckoutBuilderV2";
+import PerfectCheckout from "./pages/PerfectCheckout";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,7 +28,7 @@ const App = () => (
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/confirmation" element={<Confirmation />} />
             <Route path="/checkout-builder" element={<CheckoutBuilder />} />
-            <Route path="/checkout-builder-v2" element={<CheckoutBuilderV2 />} />
+            <Route path="/perfect-checkout" element={<PerfectCheckout />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
