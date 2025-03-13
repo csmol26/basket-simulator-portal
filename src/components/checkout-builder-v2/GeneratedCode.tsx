@@ -40,7 +40,7 @@ const GeneratedCode: React.FC<GeneratedCodeProps> = ({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <TabsContent value="html" className="m-0 mt-4" forceMount={activeCodeTab === "html"}>
+        <TabsContent value="html" className="m-0 mt-4">
           <CodeHeader language="html" />
           <HtmlCodeTab 
             cardFormRows={cardFormRows} 
@@ -50,17 +50,20 @@ const GeneratedCode: React.FC<GeneratedCodeProps> = ({
           />
         </TabsContent>
         
-        <TabsContent value="typescript" className="m-0 mt-4" forceMount={activeCodeTab === "typescript"}>
+        <TabsContent value="typescript" className="m-0 mt-4">
           <CodeHeader language="typescript" />
-          <TypeScriptCodeTab styleVariables={styleVariables} />
+          <TypeScriptCodeTab 
+            checkoutConfig={checkoutConfig}
+            styleVariables={styleVariables}
+          />
         </TabsContent>
         
-        <TabsContent value="css" className="m-0 mt-4" forceMount={activeCodeTab === "css"}>
+        <TabsContent value="css" className="m-0 mt-4">
           <CodeHeader language="css" />
           <CssCodeTab styleVariables={styleVariables} />
         </TabsContent>
         
-        <TabsContent value="guide" className="m-0 mt-4" forceMount={activeCodeTab === "guide"}>
+        <TabsContent value="guide" className="m-0 mt-4">
           <ImplementationGuide />
         </TabsContent>
       </CardContent>

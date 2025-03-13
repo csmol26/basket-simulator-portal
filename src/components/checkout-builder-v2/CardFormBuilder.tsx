@@ -6,18 +6,22 @@ import DropRow from "./card-form/DropRow";
 
 interface CardFormBuilderProps {
   rows: Row[];
-  onRemoveRow: (rowId: string) => void;
-  updateComponentConfig: (rowId: string, componentId: string, config: Partial<DragItem['config']>) => void;
   styleVariables: StyleVariables;
   cardFormLayout: CardFormLayout;
+  onRemoveRow: (rowId: string) => void;
+  updateComponentConfig: (rowId: string, componentId: string, config: Partial<DragItem['config']>) => void;
+  onChangeLayout: (layout: CardFormLayout) => void;
+  addRow: () => void;
 }
 
 const CardFormBuilder: React.FC<CardFormBuilderProps> = ({ 
   rows, 
+  styleVariables,
+  cardFormLayout,
   onRemoveRow, 
   updateComponentConfig,
-  styleVariables,
-  cardFormLayout
+  onChangeLayout,
+  addRow
 }) => {
   return (
     <Card className="h-full">

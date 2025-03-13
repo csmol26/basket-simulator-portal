@@ -3,14 +3,15 @@ import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Copy } from "lucide-react";
 import { toast } from "sonner";
-import { CheckoutConfig } from '../types';
+import { CheckoutConfig, StyleVariables } from '../types';
 import { generateTSCode } from './codeGenerationUtils';
 
 interface TypeScriptCodeTabProps {
   checkoutConfig: CheckoutConfig;
+  styleVariables: StyleVariables;
 }
 
-const TypeScriptCodeTab: React.FC<TypeScriptCodeTabProps> = ({ checkoutConfig }) => {
+const TypeScriptCodeTab: React.FC<TypeScriptCodeTabProps> = ({ checkoutConfig, styleVariables }) => {
   const copyToClipboard = () => {
     navigator.clipboard.writeText(generateTSCode(checkoutConfig));
     toast.success('TypeScript code copied to clipboard!');

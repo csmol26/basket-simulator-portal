@@ -1,4 +1,3 @@
-
 import { Row, StyleVariables, CheckoutConfig } from '../types';
 import { jsonToCssVariable } from '../StyleVarsEditor';
 
@@ -94,19 +93,15 @@ export const generateUICode = (styleVariables: StyleVariables) => {
  * Generates the Primer checkout HTML code based on the layout configuration
  */
 export const generatePrimerCode = (cardFormRows: Row[], checkoutRows: Row[], styleVariables: StyleVariables, checkoutConfig: CheckoutConfig) => {
-  // Generate the card form content based on layout configuration
   let cardFormContent = '';
   
-  // Process card form rows to build card form content
   for (const row of cardFormRows) {
     if (row.components.length === 0) continue;
     
     if (row.components.length === 1) {
-      // Single component in row
       const component = row.components[0];
       cardFormContent += `          ${formatPrimerComponent(component.originalComponent.id, component.config)}\n`;
     } else if (row.components.length === 2) {
-      // Two components side by side
       cardFormContent += `          <!-- Two components side by side -->\n`;
       cardFormContent += `          <div style="display: flex; gap: 16px;">\n`;
       cardFormContent += `            <div style="flex: 1;">\n`;
@@ -117,7 +112,6 @@ export const generatePrimerCode = (cardFormRows: Row[], checkoutRows: Row[], sty
       cardFormContent += `            </div>\n`;
       cardFormContent += `          </div>\n`;
     } else {
-      // More than two components
       cardFormContent += `          <!-- Multiple components in row -->\n`;
       cardFormContent += `          <div style="display: flex; gap: 16px;">\n`;
       for (const component of row.components) {
@@ -129,7 +123,6 @@ export const generatePrimerCode = (cardFormRows: Row[], checkoutRows: Row[], sty
     }
   }
   
-  // If no components were added, use default layout
   if (!cardFormContent) {
     cardFormContent = `          <primer-input-card-number placeholder="4444 3333 2222 1111"></primer-input-card-number>
           
@@ -147,10 +140,8 @@ export const generatePrimerCode = (cardFormRows: Row[], checkoutRows: Row[], sty
           <primer-card-form-submit style="height: 40px; width: 100%; font-weight: 500;"></primer-card-form-submit>`;
   }
   
-  // Generate APM content
   let apmContent = '';
   
-  // Find if there are any APMs in checkout rows
   const hasAPMs = checkoutRows.some(row => 
     row.components.some(component => component.originalComponent.isAPM)
   );
@@ -169,7 +160,6 @@ export const generatePrimerCode = (cardFormRows: Row[], checkoutRows: Row[], sty
       </div>`;
   }
   
-  // Generate layout-specific code
   let layoutClass = '';
   
   switch (checkoutConfig.layout) {
@@ -182,7 +172,6 @@ export const generatePrimerCode = (cardFormRows: Row[], checkoutRows: Row[], sty
       break;
   }
   
-  // Generate payment methods display code
   let paymentMethodsDisplay = '';
   
   switch (checkoutConfig.paymentMethodsDisplay) {
@@ -201,7 +190,6 @@ export const generatePrimerCode = (cardFormRows: Row[], checkoutRows: Row[], sty
       break;
   }
   
-  // Generate the complete Primer checkout code
   return `<primer-checkout 
   client-token="\${clientSession.clientToken}"
   ${layoutClass}
@@ -226,6 +214,80 @@ ${cardFormContent}
     </div>
   </primer-main>
 </primer-checkout>`;
+};
+
+/**
+ * Generates TypeScript code for Primer checkout integration
+ */
+export const generateTSCode = (checkoutConfig: CheckoutConfig) => {
+  return `import { useEffect, useRef } from 'react';
+import { createClientSession } from '@primer-io/checkout-web';
+
+export default function CheckoutContainer() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  useEffect(() => {
+    async function initializePrimer() {
+      try {
+        const response = await fetch('/api/create-session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            amount: 1000,
+            currencyCode: 'USD',
+            ${checkoutConfig.layout === "multi-step" ? "isMultiStep: true," : ""}
+            ${checkoutConfig.showCardholderName ? "showCardholderName: true," : "showCardholderName: false,"}
+            onCheckoutComplete: (result) => {
+              console.log('Payment completed!', result);
+              window.location.href = '/confirmation?orderId=' + result.orderId;
+            },
+            onCheckoutFail: (error) => {
+              console.error('Payment failed:', error);
+            },
+          }),
+        });
+        
+        const clientSession = await response.json();
+        
+        if (containerRef.current) {
+          const checkout = await createClientSession({
+            clientToken: clientSession.clientToken,
+            containerId: 'primer-payment-container',
+            ${checkoutConfig.layout === "multi-step" ? "isMultiStep: true," : ""}
+            ${checkoutConfig.showCardholderName ? "showCardholderName: true," : "showCardholderName: false,"}
+            onCheckoutComplete: (result) => {
+              console.log('Payment completed!', result);
+              window.location.href = '/confirmation?orderId=' + result.orderId;
+            },
+            onCheckoutFail: (error) => {
+              console.error('Payment failed:', error);
+            },
+          });
+          
+          console.log('Primer checkout initialized:', checkout);
+        }
+      } catch (error) {
+        console.error('Failed to initialize Primer:', error);
+      }
+    }
+    
+    initializePrimer();
+    
+    return () => {
+    };
+  }, []);
+  
+  return (
+    <div className="checkout-wrapper">
+      <div id="primer-payment-container" ref={containerRef} 
+        className="min-h-48 rounded-md border border-gray-200 p-4 transition-all">
+        {/* Primer will render the checkout UI here */}
+      </div>
+    </div>
+  );
+}`;
 };
 
 /**

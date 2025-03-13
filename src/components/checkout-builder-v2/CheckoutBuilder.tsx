@@ -56,11 +56,11 @@ const CheckoutBuilder: React.FC = () => {
               <TabsContent value="checkout-builder" className="p-0">
                 <div className="grid grid-cols-1 xl:grid-cols-[1fr_3fr] gap-6">
                   <div className="w-full space-y-6">
-                    <ComponentPalette />
+                    <ComponentPalette onAddRow={addCheckoutRow} />
                     <CheckoutLayoutConfig 
-                      checkoutConfig={checkoutConfig}
-                      onChangeLayout={(layout) => updateCheckoutConfig({ layout })}
-                      onChangePaymentDisplay={changePaymentMethodDisplay}
+                      config={checkoutConfig}
+                      onChangeCardFormLayout={changeCardFormLayout}
+                      onChangePaymentMethodDisplay={changePaymentMethodDisplay}
                       onToggleCardholderName={toggleCardholderName}
                     />
                   </div>
@@ -81,7 +81,7 @@ const CheckoutBuilder: React.FC = () => {
                   rows={cardFormRows}
                   styleVariables={styleVariables}
                   addRow={addRow}
-                  removeRow={removeRow}
+                  onRemoveRow={removeRow}
                   updateComponentConfig={updateComponentConfig}
                   onChangeLayout={changeCardFormLayout}
                   cardFormLayout={checkoutConfig.cardFormLayout}

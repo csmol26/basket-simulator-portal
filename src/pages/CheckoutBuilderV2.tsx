@@ -1,6 +1,5 @@
 
 import React, { useState } from "react";
-import { DragDropContext } from "react-beautiful-dnd";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,13 +7,8 @@ import { Download, Copy, Code, Paintbrush, LayoutGrid, CreditCard, Eye } from "l
 import { toast } from "sonner";
 
 import Navbar from "@/components/Navbar";
-import { useCheckoutBuilderV2 } from "@/hooks/useCheckoutBuilderV2";
-import CardFormBuilder from "@/components/checkout-builder-v2/CardFormBuilder";
-import StyleVarsEditor from "@/components/checkout-builder-v2/StyleVarsEditor";
 import CheckoutBuilder from "@/components/checkout-builder-v2/CheckoutBuilder";
-import GeneratedCode from "@/components/checkout-builder-v2/GeneratedCode";
-import ComponentPalette from "@/components/checkout-builder-v2/ComponentPalette";
-import CheckoutLayoutConfig from "@/components/checkout-builder-v2/CheckoutLayoutConfig";
+import { useCheckoutBuilderV2 } from "@/hooks/useCheckoutBuilderV2";
 
 const CheckoutBuilderV2: React.FC = () => {
   const {
@@ -111,61 +105,22 @@ const CheckoutBuilderV2: React.FC = () => {
             </TabsList>
             
             <TabsContent value="checkout-builder" className="mt-0">
-              <DragDropContext onDragEnd={onDragEnd}>
-                <CheckoutBuilder 
-                  rows={checkoutRows}
-                  styleVariables={styleVariables}
-                  checkoutConfig={checkoutConfig}
-                  onAddRow={addCheckoutRow}
-                  onRemoveRow={removeCheckoutRow}
-                  updateComponentConfig={updateCheckoutComponentConfig}
-                  onDragEnd={onDragEnd}
-                />
-              </DragDropContext>
+              <CheckoutBuilder />
             </TabsContent>
             
             <TabsContent value="card-form" className="mt-0">
-              <DragDropContext onDragEnd={onDragEnd}>
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                  <div className="lg:col-span-2">
-                    <CardFormBuilder 
-                      rows={rows} 
-                      onRemoveRow={removeRow} 
-                      updateComponentConfig={updateComponentConfig}
-                      styleVariables={styleVariables}
-                      cardFormLayout={checkoutConfig.cardFormLayout}
-                    />
-                  </div>
-                  
-                  <div className="lg:col-span-1">
-                    <ComponentPalette 
-                      onAddRow={addRow}
-                    />
-                  </div>
-                </div>
-              </DragDropContext>
+              {/* Main checkout builder component contains all functionality */}
+              <CheckoutBuilder />
             </TabsContent>
             
             <TabsContent value="styles" className="mt-0">
-              <Card>
-                <CardContent className="pt-6">
-                  <StyleVarsEditor 
-                    styleVariables={styleVariables}
-                    handleStyleChange={handleStyleChange}
-                    activeTheme={activeTheme}
-                    onChangeTheme={changeTheme}
-                  />
-                </CardContent>
-              </Card>
+              {/* Main checkout builder component contains all functionality */}
+              <CheckoutBuilder />
             </TabsContent>
             
             <TabsContent value="code" className="mt-0">
-              <GeneratedCode 
-                rows={rows}
-                checkoutRows={checkoutRows}
-                styleVariables={styleVariables}
-                checkoutConfig={checkoutConfig}
-              />
+              {/* Main checkout builder component contains all functionality */}
+              <CheckoutBuilder />
             </TabsContent>
           </Tabs>
         </div>

@@ -16,7 +16,7 @@ export interface ComponentConfig {
   apmType?: string;
 }
 
-// Définition des composants disponibles avec leurs configurations par défaut
+// Definition of available components with their default configurations
 export const availableComponents: ComponentConfig[] = [
   { 
     id: "card-number", 
