@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Copy, FileDown, ChevronsRight, Boxes } from "lucide-react";
+import { Copy, FileDown, ChevronsRight, Boxes, Paintbrush } from "lucide-react";
 import { toast } from "sonner";
 import { Row, StyleVariables, CheckoutConfig } from './types';
 import { jsonToCssVariable } from './StyleVarsEditor';

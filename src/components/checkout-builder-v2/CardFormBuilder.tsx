@@ -8,20 +8,22 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Settings, X } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { jsonToCssVariable } from "./StyleVarsEditor";
-import { Row, DragItem } from "./types";
+import { Row, DragItem, CardFormLayout } from "./types";
 
 interface CardFormBuilderProps {
   rows: Row[];
   onRemoveRow: (rowId: string) => void;
   updateComponentConfig: (rowId: string, componentId: string, config: Partial<DragItem['config']>) => void;
   styleVariables: Record<string, string>;
+  cardFormLayout: CardFormLayout;
 }
 
 const CardFormBuilder: React.FC<CardFormBuilderProps> = ({ 
   rows, 
   onRemoveRow, 
   updateComponentConfig,
-  styleVariables
+  styleVariables,
+  cardFormLayout
 }) => {
   // Convert pixel values to numbers for sliders
   const getSpaceValue = (value: string): number => {
