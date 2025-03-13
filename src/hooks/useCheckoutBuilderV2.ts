@@ -1,8 +1,24 @@
 
 import { useState } from "react";
-import { DragItem, Row, StyleVariables, CheckoutConfig, CardFormLayout, PaymentMethodDisplay } from "@/components/checkout-builder-v2/types";
+import { DragItem, Row, StyleVariables, CheckoutConfig, CardFormLayout, PaymentMethodDisplay, APMItem } from "@/components/checkout-builder-v2/types";
 import { availableComponents } from "@/components/checkout-builder-v2/ComponentPalette";
 import { initialStyleVariables } from "@/components/checkout-builder-v2/StyleVarsEditor";
+
+// Available APMs for the checkout
+export const availableAPMs: APMItem[] = [
+  { id: 'paypal', name: 'PayPal', type: 'PAYPAL' },
+  { id: 'applepay', name: 'Apple Pay', type: 'APPLE_PAY' },
+  { id: 'googlepay', name: 'Google Pay', type: 'GOOGLE_PAY' },
+  { id: 'klarna', name: 'Klarna', type: 'KLARNA' },
+  { id: 'ideal', name: 'iDEAL', type: 'IDEAL' },
+  { id: 'sofort', name: 'Sofort', type: 'SOFORT' },
+  { id: 'afterpay', name: 'Afterpay', type: 'AFTERPAY' },
+  { id: 'clearpay', name: 'Clearpay', type: 'CLEARPAY' },
+  { id: 'bancontact', name: 'Bancontact', type: 'BANCONTACT' },
+  { id: 'giropay', name: 'Giropay', type: 'GIROPAY' },
+  { id: 'hoolah', name: 'Hoolah', type: 'HOOLAH' },
+  { id: 'atome', name: 'Atome', type: 'ATOME' },
+];
 
 export const useCheckoutBuilderV2 = () => {
   const [styleVariables, setStyleVariables] = useState(initialStyleVariables);
@@ -11,8 +27,10 @@ export const useCheckoutBuilderV2 = () => {
     { id: "row-1", components: [] }
   ]);
 
-  // APM state - for the checkout builder
-  const [apmRows, setApmRows] = useState<any[]>([]);
+  // Checkout builder rows for APMs and card form
+  const [checkoutRows, setCheckoutRows] = useState<Row[]>([
+    { id: "checkout-row-1", components: [] }
+  ]);
 
   // New configuration state for checkout
   const [checkoutConfig, setCheckoutConfig] = useState<CheckoutConfig>({
@@ -29,9 +47,19 @@ export const useCheckoutBuilderV2 = () => {
     setRows([...rows, { id: `row-${rows.length + 1}`, components: [] }]);
   };
 
+  const addCheckoutRow = () => {
+    setCheckoutRows([...checkoutRows, { id: `checkout-row-${checkoutRows.length + 1}`, components: [] }]);
+  };
+
   const removeRow = (rowId: string) => {
     if (rows.length > 1) {
       setRows(rows.filter(row => row.id !== rowId));
+    }
+  };
+
+  const removeCheckoutRow = (rowId: string) => {
+    if (checkoutRows.length > 1) {
+      setCheckoutRows(checkoutRows.filter(row => row.id !== rowId));
     }
   };
 
@@ -61,6 +89,27 @@ export const useCheckoutBuilderV2 = () => {
       return row;
     });
     setRows(newRows);
+  };
+
+  const updateCheckoutComponentConfig = (rowId: string, componentId: string, config: Partial<DragItem['config']>) => {
+    const newRows = checkoutRows.map(row => {
+      if (row.id === rowId) {
+        return {
+          ...row,
+          components: row.components.map(comp => {
+            if (comp.id === componentId) {
+              return {
+                ...comp,
+                config: { ...comp.config, ...config }
+              };
+            }
+            return comp;
+          })
+        };
+      }
+      return row;
+    });
+    setCheckoutRows(newRows);
   };
 
   const updateCheckoutConfig = (updates: Partial<CheckoutConfig>) => {
@@ -129,7 +178,9 @@ export const useCheckoutBuilderV2 = () => {
           setRows(newRows);
         }
       }
-    } else if (source.droppableId.startsWith("row-")) {
+    } 
+    // Handle items drag within card form rows
+    else if (source.droppableId.startsWith("row-")) {
       const sourceRowIndex = rows.findIndex(row => row.id === source.droppableId);
       
       if (sourceRowIndex !== -1) {
@@ -149,30 +200,99 @@ export const useCheckoutBuilderV2 = () => {
         setRows(newRows);
       }
     } 
-    // Handle APM dragging from palette to checkout
-    else if (source.droppableId === "apm-palette" && 
-            (destination.droppableId === "checkout-apms" || destination.droppableId === "checkout-apms-mobile")) {
-      // For simplicity, this is just a placeholder to show how it would work
-      // In a full implementation, you would update the apmRows state
-      console.log(`APM dropped from palette to checkout: ${result.draggableId}`);
+    // Handle APMs drag from palette to checkout
+    else if (source.droppableId === "apm-palette") {
+      // First, find the original APM data
+      const apmId = result.draggableId.replace('palette-', '');
+      const apm = availableAPMs.find(a => a.id === apmId);
       
-      // Create or update apmRows based on the drop
-      // This would be expanded in a full implementation to handle row creation and APM configuration
+      if (apm && destination.droppableId.startsWith('checkout-row-')) {
+        const newItem: DragItem = {
+          id: `apm-${apm.id}-${Date.now()}`,
+          content: `<primer-payment-method type="${apm.type}"></primer-payment-method>`,
+          originalComponent: {
+            id: apm.id,
+            name: apm.name,
+            element: `<primer-payment-method type="${apm.type}"></primer-payment-method>`,
+            isAPM: true,
+            apmType: apm.type
+          },
+          config: {
+            displayMode: "default",
+          }
+        };
+        
+        const newRows = [...checkoutRows];
+        const rowIndex = newRows.findIndex(row => row.id === destination.droppableId);
+        
+        if (rowIndex !== -1) {
+          newRows[rowIndex].components.splice(destination.index, 0, newItem);
+          setCheckoutRows(newRows);
+        }
+      }
     }
-
-    // Handle reordering of APMs within the checkout
-    // This would need further implementation based on your APM row structure
+    // Handle card form drop to checkout builder
+    else if (source.droppableId === "card-form-component") {
+      if (destination.droppableId.startsWith('checkout-row-')) {
+        const newItem: DragItem = {
+          id: `card-form-${Date.now()}`,
+          content: `<primer-payment-method type="PAYMENT_CARD"></primer-payment-method>`,
+          originalComponent: {
+            id: 'card-form',
+            name: 'Card Form',
+            element: `<primer-payment-method type="PAYMENT_CARD"></primer-payment-method>`,
+            isCardForm: true
+          },
+          config: {
+            displayMode: "default",
+          }
+        };
+        
+        const newRows = [...checkoutRows];
+        const rowIndex = newRows.findIndex(row => row.id === destination.droppableId);
+        
+        if (rowIndex !== -1) {
+          newRows[rowIndex].components.splice(destination.index, 0, newItem);
+          setCheckoutRows(newRows);
+        }
+      }
+    }
+    // Handle reordering components within checkout rows
+    else if (source.droppableId.startsWith("checkout-row-")) {
+      const sourceRowIndex = checkoutRows.findIndex(row => row.id === source.droppableId);
+      
+      if (sourceRowIndex !== -1) {
+        const newRows = [...checkoutRows];
+        const [movedItem] = newRows[sourceRowIndex].components.splice(source.index, 1);
+        
+        if (destination.droppableId.startsWith("checkout-row-")) {
+          const destRowIndex = newRows.findIndex(row => row.id === destination.droppableId);
+          
+          if (destRowIndex !== -1) {
+            newRows[destRowIndex].components.splice(destination.index, 0, movedItem);
+          }
+        } else if (destination.droppableId === "checkout-trash") {
+          // Item dropped in trash, already removed from source
+        }
+        
+        setCheckoutRows(newRows);
+      }
+    }
   };
 
   return {
     rows,
+    checkoutRows,
     styleVariables,
     checkoutConfig,
     activeTheme,
     addRow,
+    addCheckoutRow,
     removeRow,
+    removeCheckoutRow,
     handleStyleChange,
     updateComponentConfig,
+    updateCheckoutComponentConfig,
     updateCheckoutConfig,
     changeCardFormLayout,
     changePaymentMethodDisplay,

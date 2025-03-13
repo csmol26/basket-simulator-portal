@@ -23,6 +23,12 @@ export interface Row {
   components: DragItem[];
 }
 
+export interface APMItem {
+  id: string;
+  name: string;
+  type: string;
+}
+
 export interface StyleVariables {
   primerColorBrand: string;
   primerTypographyBrand: string;

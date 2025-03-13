@@ -11,7 +11,7 @@ import Navbar from "@/components/Navbar";
 import { useCheckoutBuilderV2 } from "@/hooks/useCheckoutBuilderV2";
 import CardFormBuilder from "@/components/checkout-builder-v2/CardFormBuilder";
 import StyleVarsEditor from "@/components/checkout-builder-v2/StyleVarsEditor";
-import CheckoutPreview from "@/components/checkout-builder-v2/CheckoutPreview";
+import CheckoutBuilder from "@/components/checkout-builder-v2/CheckoutBuilder";
 import GeneratedCode from "@/components/checkout-builder-v2/GeneratedCode";
 import ComponentPalette from "@/components/checkout-builder-v2/ComponentPalette";
 import CheckoutLayoutConfig from "@/components/checkout-builder-v2/CheckoutLayoutConfig";
@@ -19,13 +19,17 @@ import CheckoutLayoutConfig from "@/components/checkout-builder-v2/CheckoutLayou
 const CheckoutBuilderV2: React.FC = () => {
   const {
     rows,
+    checkoutRows,
     styleVariables,
     checkoutConfig,
     activeTheme,
     addRow,
+    addCheckoutRow,
     removeRow,
+    removeCheckoutRow,
     handleStyleChange,
     updateComponentConfig,
+    updateCheckoutComponentConfig,
     updateCheckoutConfig,
     changeCardFormLayout,
     changePaymentMethodDisplay,
@@ -35,7 +39,7 @@ const CheckoutBuilderV2: React.FC = () => {
   } = useCheckoutBuilderV2();
 
   // State for main tab view
-  const [activeMainTab, setActiveMainTab] = useState<string>("builder");
+  const [activeMainTab, setActiveMainTab] = useState<string>("checkout-builder");
 
   // Export functionality
   const handleExportCode = () => {
@@ -43,6 +47,7 @@ const CheckoutBuilderV2: React.FC = () => {
       // In a real implementation, this would generate and download files
       const blob = new Blob([JSON.stringify({
         rows,
+        checkoutRows,
         styleVariables,
         checkoutConfig
       }, null, 2)], { type: 'application/json' });
@@ -86,22 +91,18 @@ const CheckoutBuilderV2: React.FC = () => {
           </div>
           
           <Tabs value={activeMainTab} onValueChange={setActiveMainTab} className="w-full mb-8">
-            <TabsList className="grid w-full grid-cols-5 mb-8">
-              <TabsTrigger value="builder" className="flex items-center gap-2">
+            <TabsList className="grid w-full grid-cols-4 mb-8">
+              <TabsTrigger value="checkout-builder" className="flex items-center gap-2">
+                <LayoutGrid size={16} />
+                Checkout Builder
+              </TabsTrigger>
+              <TabsTrigger value="card-form" className="flex items-center gap-2">
                 <CreditCard size={16} />
                 Card Form
-              </TabsTrigger>
-              <TabsTrigger value="layout" className="flex items-center gap-2">
-                <LayoutGrid size={16} />
-                Layout Config
               </TabsTrigger>
               <TabsTrigger value="styles" className="flex items-center gap-2">
                 <Paintbrush size={16} />
                 UI Styles
-              </TabsTrigger>
-              <TabsTrigger value="preview" className="flex items-center gap-2">
-                <Eye size={16} />
-                Checkout Builder
               </TabsTrigger>
               <TabsTrigger value="code" className="flex items-center gap-2">
                 <Code size={16} />
@@ -109,7 +110,19 @@ const CheckoutBuilderV2: React.FC = () => {
               </TabsTrigger>
             </TabsList>
             
-            <TabsContent value="builder" className="mt-0">
+            <TabsContent value="checkout-builder" className="mt-0">
+              <DragDropContext onDragEnd={onDragEnd}>
+                <CheckoutBuilder 
+                  checkoutRows={checkoutRows}
+                  styleVariables={styleVariables}
+                  onAddRow={addCheckoutRow}
+                  onRemoveRow={removeCheckoutRow}
+                  updateComponentConfig={updateCheckoutComponentConfig}
+                />
+              </DragDropContext>
+            </TabsContent>
+            
+            <TabsContent value="card-form" className="mt-0">
               <DragDropContext onDragEnd={onDragEnd}>
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                   <div className="lg:col-span-2">
@@ -131,19 +144,6 @@ const CheckoutBuilderV2: React.FC = () => {
               </DragDropContext>
             </TabsContent>
             
-            <TabsContent value="layout" className="mt-0">
-              <Card>
-                <CardContent className="pt-6">
-                  <CheckoutLayoutConfig 
-                    config={checkoutConfig}
-                    onChangeCardFormLayout={changeCardFormLayout}
-                    onChangePaymentMethodDisplay={changePaymentMethodDisplay}
-                    onToggleCardholderName={toggleCardholderName}
-                  />
-                </CardContent>
-              </Card>
-            </TabsContent>
-            
             <TabsContent value="styles" className="mt-0">
               <Card>
                 <CardContent className="pt-6">
@@ -157,20 +157,10 @@ const CheckoutBuilderV2: React.FC = () => {
               </Card>
             </TabsContent>
             
-            <TabsContent value="preview" className="mt-0">
-              <DragDropContext onDragEnd={onDragEnd}>
-                <CheckoutPreview
-                  rows={rows}
-                  styleVariables={styleVariables}
-                  checkoutConfig={checkoutConfig}
-                  onDragEnd={onDragEnd}
-                />
-              </DragDropContext>
-            </TabsContent>
-            
             <TabsContent value="code" className="mt-0">
               <GeneratedCode 
                 rows={rows}
+                checkoutRows={checkoutRows}
                 styleVariables={styleVariables}
                 checkoutConfig={checkoutConfig}
               />

@@ -3,7 +3,6 @@ import React from "react";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Trash2 } from "lucide-react";
 
 export interface ComponentConfig {
   id: string;
@@ -12,6 +11,9 @@ export interface ComponentConfig {
   defaultLabel?: string;
   defaultPlaceholder?: string;
   defaultAriaLabel?: string;
+  isAPM?: boolean;
+  isCardForm?: boolean;
+  apmType?: string;
 }
 
 // Définition des composants disponibles avec leurs configurations par défaut
@@ -89,6 +91,7 @@ const ComponentPalette: React.FC<ComponentPaletteProps> = ({ onAddRow }) => {
                       style={{
                         ...provided.draggableProps.style,
                         opacity: snapshot.isDragging ? 0.9 : 1,
+                        transform: snapshot.isDragging ? provided.draggableProps.style?.transform : 'translate(0, 0)'
                       }}
                     >
                       {component.name}
@@ -104,8 +107,7 @@ const ComponentPalette: React.FC<ComponentPaletteProps> = ({ onAddRow }) => {
         <div className="mt-8 pt-4 border-t border-gray-200">
           <p className="text-sm font-medium text-gray-700 mb-4">Row Management</p>
           <div className="flex gap-2">
-            <Button onClick={onAddRow} variant="outline" className="flex-1 gap-1">
-              <Plus size={16} />
+            <Button onClick={onAddRow} variant="outline" className="flex-1">
               Add Row
             </Button>
             <Droppable droppableId="trash">
@@ -113,10 +115,9 @@ const ComponentPalette: React.FC<ComponentPaletteProps> = ({ onAddRow }) => {
                 <div
                   {...provided.droppableProps}
                   ref={provided.innerRef}
-                  className="p-2 bg-red-50 border border-red-200 rounded-md text-center flex-1 flex items-center justify-center gap-1"
+                  className="p-2 bg-red-50 border border-red-200 rounded-md text-center flex-1 flex items-center justify-center"
                 >
-                  <Trash2 size={16} className="text-red-500" />
-                  <span className="text-red-500 text-sm">Drop to Remove</span>
+                  <span className="text-red-500 text-sm">Drop here to remove</span>
                   {provided.placeholder}
                 </div>
               )}
