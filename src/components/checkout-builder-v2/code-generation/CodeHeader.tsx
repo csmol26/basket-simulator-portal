@@ -6,7 +6,7 @@ import { CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 
 interface CodeHeaderProps {
-  downloadCode: () => void;
+  downloadCode: () => Promise<void> | void;
 }
 
 const CodeHeader: React.FC<CodeHeaderProps> = ({ downloadCode }) => {

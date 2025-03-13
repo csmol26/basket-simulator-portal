@@ -21,11 +21,20 @@ interface GeneratedCodeProps {
 const GeneratedCode: React.FC<GeneratedCodeProps> = ({ rows, styleVariables, checkoutConfig }) => {
   const [codeTab, setCodeTab] = useState("html");
 
-  const downloadCode = () => {
+  const downloadCode = async () => {
     try {
-      const htmlBlob = new Blob([generateHTMLCode()], { type: 'text/html' });
-      const cssBlob = new Blob([generateCSSCode()], { type: 'text/css' });
-      const tsBlob = new Blob([generateTSCode()], { type: 'text/typescript' });
+      // Import dynamically and await the resolved values
+      const codeGenerationUtils = await import('./code-generation/codeGenerationUtils');
+      
+      // Get the actual code strings by awaiting the promises
+      const htmlCode = codeGenerationUtils.generateHTMLCode(checkoutConfig);
+      const cssCode = codeGenerationUtils.generateCSSCode(styleVariables);
+      const tsCode = codeGenerationUtils.generateTSCode(checkoutConfig);
+      
+      // Now create blobs with the resolved string values
+      const htmlBlob = new Blob([htmlCode], { type: 'text/html' });
+      const cssBlob = new Blob([cssCode], { type: 'text/css' });
+      const tsBlob = new Blob([tsCode], { type: 'text/typescript' });
       
       const htmlUrl = URL.createObjectURL(htmlBlob);
       const cssUrl = URL.createObjectURL(cssBlob);
@@ -52,16 +61,6 @@ const GeneratedCode: React.FC<GeneratedCodeProps> = ({ rows, styleVariables, che
       console.error(error);
     }
   };
-
-  // These functions are needed for the download functionality
-  const generateHTMLCode = () => import('./code-generation/codeGenerationUtils')
-    .then(module => module.generateHTMLCode(checkoutConfig));
-  
-  const generateCSSCode = () => import('./code-generation/codeGenerationUtils')
-    .then(module => module.generateCSSCode(styleVariables));
-  
-  const generateTSCode = () => import('./code-generation/codeGenerationUtils')
-    .then(module => module.generateTSCode(checkoutConfig));
 
   return (
     <div className="space-y-6">
