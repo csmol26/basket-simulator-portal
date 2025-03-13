@@ -59,10 +59,9 @@ export const availableComponents: ComponentConfig[] = [
 
 interface ComponentPaletteProps {
   onAddRow: () => void;
-  onDragEnd: (result: any) => void;
 }
 
-const ComponentPalette: React.FC<ComponentPaletteProps> = ({ onAddRow, onDragEnd }) => {
+const ComponentPalette: React.FC<ComponentPaletteProps> = ({ onAddRow }) => {
   return (
     <Card>
       <CardHeader>

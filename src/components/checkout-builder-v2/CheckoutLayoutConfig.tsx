@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ComponentPalette from "./ComponentPalette";
 import DevicePreview from "./previews/DevicePreview";
 import { useCheckoutBuilderV2 } from "@/hooks/useCheckoutBuilderV2";
-import { Clipboard } from "lucide-react";
+import { Clipboard, PlusCircle } from "lucide-react";
 import CardFormBuilder from "./CardFormBuilder";
 import ThemeAndPreview from "./ThemeAndPreview";
 import ComposableCheckoutSlots from "./ComposableCheckoutSlots";
@@ -15,21 +15,20 @@ import { toast } from "@/hooks/use-toast";
 const CheckoutLayoutConfig: React.FC = () => {
   const { 
     rows, 
-    checkoutRows,
+    cardFormRows,
     styleVariables, 
     checkoutConfig,
-    onDragEnd,
+    handleDragEnd,
     addRow,
     removeRow,
+    addComponentToRow,
+    removeComponentFromRow,
     updateComponentConfig,
-    activeTheme,
-    handleStyleChange,
-    changeTheme
+    activeTab,
+    setActiveTab,
+    devicePreview,
+    setDevicePreview
   } = useCheckoutBuilderV2();
-
-  // State for active tab and device preview
-  const [activeTab, setActiveTab] = useState<string>("checkout-builder");
-  const [devicePreview, setDevicePreview] = useState<"desktop" | "mobile">("desktop");
 
   // State for copied code indicator
   const [copied, setCopied] = useState(false);
@@ -93,7 +92,7 @@ const CheckoutLayoutConfig: React.FC = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <ComponentPalette onAddRow={addRow} onDragEnd={onDragEnd} />
+                <ComponentPalette onDragEnd={handleDragEnd} />
               </div>
             </CardContent>
           </Card>
@@ -121,7 +120,7 @@ const CheckoutLayoutConfig: React.FC = () => {
           
           <DevicePreview 
             rows={rows} 
-            cardFormRows={rows} 
+            cardFormRows={cardFormRows} 
             styleVariables={styleVariables} 
             checkoutConfig={checkoutConfig}
             devicePreview={devicePreview}
@@ -131,32 +130,30 @@ const CheckoutLayoutConfig: React.FC = () => {
         
         <TabsContent value="card-form-builder">
           <CardFormBuilder 
-            rows={rows}
+            cardFormRows={cardFormRows}
             styleVariables={styleVariables}
-            cardFormLayout={checkoutConfig.cardFormLayout}
-            onRemoveRow={removeRow}
-            updateComponentConfig={updateComponentConfig}
-            onChangeLayout={() => {}}
+            handleDragEnd={handleDragEnd}
             addRow={addRow}
+            removeRow={removeRow}
+            addComponentToRow={addComponentToRow}
+            removeComponentFromRow={removeComponentFromRow}
+            updateComponentConfig={updateComponentConfig}
           />
         </TabsContent>
         
         <TabsContent value="theme-and-preview">
           <ThemeAndPreview 
-            rows={checkoutRows}
-            cardFormRows={rows}
+            rows={rows}
+            cardFormRows={cardFormRows}
             styleVariables={styleVariables}
             checkoutConfig={checkoutConfig}
-            activeTheme={activeTheme}
-            onStyleChange={handleStyleChange}
-            onChangeTheme={changeTheme}
           />
         </TabsContent>
         
         <TabsContent value="composable-checkout-slots">
           <ComposableCheckoutSlots 
-            rows={checkoutRows} 
-            cardFormRows={rows}
+            rows={rows} 
+            cardFormRows={cardFormRows}
             styleVariables={styleVariables} 
             checkoutConfig={checkoutConfig}
           />
