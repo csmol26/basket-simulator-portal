@@ -3,33 +3,23 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ComponentPalette from "./ComponentPalette";
-import DevicePreview from "./previews/DevicePreview";
-import { useCheckoutBuilderV2 } from "@/hooks/useCheckoutBuilderV2";
-import { Clipboard, PlusCircle } from "lucide-react";
-import CardFormBuilder from "./CardFormBuilder";
-import ThemeAndPreview from "./ThemeAndPreview";
-import ComposableCheckoutSlots from "./ComposableCheckoutSlots";
+import { Clipboard } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { CheckoutConfig, CardFormLayout, PaymentMethodDisplay } from "./types";
 
-const CheckoutLayoutConfig: React.FC = () => {
-  const { 
-    rows, 
-    cardFormRows,
-    styleVariables, 
-    checkoutConfig,
-    handleDragEnd,
-    addRow,
-    removeRow,
-    addComponentToRow,
-    removeComponentFromRow,
-    updateComponentConfig,
-    activeTab,
-    setActiveTab,
-    devicePreview,
-    setDevicePreview
-  } = useCheckoutBuilderV2();
+interface CheckoutLayoutConfigProps {
+  checkoutConfig: CheckoutConfig;
+  onChangeCardFormLayout: (layout: CardFormLayout) => void;
+  onChangePaymentMethodDisplay: (display: PaymentMethodDisplay) => void;
+  onToggleCardholderName: (show: boolean) => void;
+}
 
+const CheckoutLayoutConfig: React.FC<CheckoutLayoutConfigProps> = ({
+  checkoutConfig,
+  onChangeCardFormLayout,
+  onChangePaymentMethodDisplay,
+  onToggleCardholderName
+}) => {
   // State for copied code indicator
   const [copied, setCopied] = useState(false);
 
@@ -76,90 +66,104 @@ const CheckoutLayoutConfig: React.FC = () => {
   };
 
   return (
-    <div className="w-full p-4">
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="mb-4">
-          <TabsTrigger value="checkout-builder">Checkout Builder</TabsTrigger>
-          <TabsTrigger value="card-form-builder">Card Form Builder</TabsTrigger>
-          <TabsTrigger value="theme-and-preview">Theme and Preview</TabsTrigger>
-          <TabsTrigger value="composable-checkout-slots">Composable Checkout Slots</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="checkout-builder" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Create Checkout Layout</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <ComponentPalette onDragEnd={handleDragEnd} />
-              </div>
-            </CardContent>
-          </Card>
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle className="text-lg">Checkout Configuration</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-6">
+          <div>
+            <h3 className="text-sm font-medium mb-3">Card Form Layout</h3>
+            <div className="grid grid-cols-3 gap-2">
+              <Button 
+                variant={checkoutConfig.cardFormLayout === "single-line" ? "default" : "outline"}
+                size="sm"
+                onClick={() => onChangeCardFormLayout("single-line")}
+                className="w-full"
+              >
+                Single Line
+              </Button>
+              <Button 
+                variant={checkoutConfig.cardFormLayout === "two-line" ? "default" : "outline"}
+                size="sm"
+                onClick={() => onChangeCardFormLayout("two-line")}
+                className="w-full"
+              >
+                Two Line
+              </Button>
+              <Button 
+                variant={checkoutConfig.cardFormLayout === "three-line" ? "default" : "outline"}
+                size="sm"
+                onClick={() => onChangeCardFormLayout("three-line")}
+                className="w-full"
+              >
+                Three Line
+              </Button>
+            </div>
+          </div>
           
-          <Card className="mt-4">
-            <CardHeader>
-              <CardTitle>Generated HTML</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="bg-gray-50 p-4 rounded-md relative border">
-                <Button 
-                  className="absolute right-2 top-2 h-8 w-8 p-0" 
-                  variant="outline" 
-                  onClick={copyToClipboard}
-                >
-                  <Clipboard className="h-4 w-4" />
-                </Button>
-                <pre className="text-xs overflow-x-auto p-2 text-gray-800">
-                  {generatePaymentMethodsHtml()}
-                </pre>
-              </div>
-              <p className="text-sm text-gray-500 mt-2">This is the HTML code for the payment methods configuration. The card form is defined in the Card Form Builder tab.</p>
-            </CardContent>
-          </Card>
+          <div>
+            <h3 className="text-sm font-medium mb-3">Payment Methods Display</h3>
+            <div className="grid grid-cols-2 gap-2">
+              <Button 
+                variant={checkoutConfig.paymentMethodsDisplay === "radio" ? "default" : "outline"}
+                size="sm"
+                onClick={() => onChangePaymentMethodDisplay("radio")}
+                className="w-full"
+              >
+                Radio Buttons
+              </Button>
+              <Button 
+                variant={checkoutConfig.paymentMethodsDisplay === "dropdown" ? "default" : "outline"}
+                size="sm"
+                onClick={() => onChangePaymentMethodDisplay("dropdown")}
+                className="w-full"
+              >
+                Dropdown
+              </Button>
+              <Button 
+                variant={checkoutConfig.paymentMethodsDisplay === "buttons" ? "default" : "outline"}
+                size="sm"
+                onClick={() => onChangePaymentMethodDisplay("buttons")}
+                className="w-full"
+              >
+                Buttons
+              </Button>
+              <Button 
+                variant={checkoutConfig.paymentMethodsDisplay === "tabs" ? "default" : "outline"}
+                size="sm"
+                onClick={() => onChangePaymentMethodDisplay("tabs")}
+                className="w-full"
+              >
+                Tabs
+              </Button>
+            </div>
+          </div>
           
-          <DevicePreview 
-            rows={rows} 
-            cardFormRows={cardFormRows} 
-            styleVariables={styleVariables} 
-            checkoutConfig={checkoutConfig}
-            devicePreview={devicePreview}
-            setDevicePreview={setDevicePreview}
-          />
-        </TabsContent>
-        
-        <TabsContent value="card-form-builder">
-          <CardFormBuilder 
-            cardFormRows={cardFormRows}
-            styleVariables={styleVariables}
-            handleDragEnd={handleDragEnd}
-            addRow={addRow}
-            removeRow={removeRow}
-            addComponentToRow={addComponentToRow}
-            removeComponentFromRow={removeComponentFromRow}
-            updateComponentConfig={updateComponentConfig}
-          />
-        </TabsContent>
-        
-        <TabsContent value="theme-and-preview">
-          <ThemeAndPreview 
-            rows={rows}
-            cardFormRows={cardFormRows}
-            styleVariables={styleVariables}
-            checkoutConfig={checkoutConfig}
-          />
-        </TabsContent>
-        
-        <TabsContent value="composable-checkout-slots">
-          <ComposableCheckoutSlots 
-            rows={rows} 
-            cardFormRows={cardFormRows}
-            styleVariables={styleVariables} 
-            checkoutConfig={checkoutConfig}
-          />
-        </TabsContent>
-      </Tabs>
-    </div>
+          <div>
+            <h3 className="text-sm font-medium mb-3">Card Options</h3>
+            <div className="grid grid-cols-2 gap-2">
+              <Button 
+                variant={checkoutConfig.showCardholderName ? "default" : "outline"}
+                size="sm"
+                onClick={() => onToggleCardholderName(true)}
+                className="w-full"
+              >
+                Show Cardholder Name
+              </Button>
+              <Button 
+                variant={!checkoutConfig.showCardholderName ? "default" : "outline"}
+                size="sm"
+                onClick={() => onToggleCardholderName(false)}
+                className="w-full"
+              >
+                Hide Cardholder Name
+              </Button>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

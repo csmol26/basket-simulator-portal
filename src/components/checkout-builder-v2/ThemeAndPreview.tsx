@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { StyleVariables, Row, CheckoutConfig } from "./types";
-import { predefinedThemes } from "./StyleVarsEditor";
 import DevicePreview from "./previews/DevicePreview";
 import ThemeSelector from "./theme/ThemeSelector";
 import StyleControls from "./theme/StyleControls";

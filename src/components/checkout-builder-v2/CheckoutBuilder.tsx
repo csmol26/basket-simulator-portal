@@ -61,7 +61,7 @@ const CheckoutBuilder: React.FC = () => {
                   <div className="w-full space-y-6">
                     <ComponentPalette onAddRow={addCheckoutRow} />
                     <CheckoutLayoutConfig 
-                      config={checkoutConfig}
+                      checkoutConfig={checkoutConfig}
                       onChangeCardFormLayout={changeCardFormLayout}
                       onChangePaymentMethodDisplay={changePaymentMethodDisplay}
                       onToggleCardholderName={toggleCardholderName}
@@ -76,7 +76,7 @@ const CheckoutBuilder: React.FC = () => {
                       onDragEnd={onDragEnd}
                     />
                     
-                    {/* Ajout du code généré ici */}
+                    {/* Code preview component */}
                     <CheckoutCodePreview
                       checkoutRows={checkoutRows}
                       cardFormRows={cardFormRows}
@@ -113,7 +113,7 @@ const CheckoutBuilder: React.FC = () => {
               
               <TabsContent value="composable-slots" className="p-0">
                 <ComposableCheckoutSlots 
-                  checkoutRows={checkoutRows}
+                  rows={checkoutRows}
                   cardFormRows={cardFormRows}
                   styleVariables={styleVariables}
                   checkoutConfig={checkoutConfig}
