@@ -1,154 +1,164 @@
 
-import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { CheckoutConfig, CardFormLayout, PaymentMethodDisplay } from "../checkout-builder-v2/types";
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import ComponentPalette from "./ComponentPalette";
+import DevicePreview from "./previews/DevicePreview";
+import { useCheckoutBuilderV2 } from "@/hooks/useCheckoutBuilderV2";
+import { Clipboard, PlusCircle } from "lucide-react";
+import CardFormBuilder from "./CardFormBuilder";
+import ThemeAndPreview from "./ThemeAndPreview";
+import ComposableCheckoutSlots from "./ComposableCheckoutSlots";
+import { toast } from "@/hooks/use-toast";
 
-interface CheckoutLayoutConfigProps {
-  config: CheckoutConfig;
-  onChangeCardFormLayout: (layout: CardFormLayout) => void;
-  onChangePaymentMethodDisplay: (display: PaymentMethodDisplay) => void;
-  onToggleCardholderName: (show: boolean) => void;
-}
+const CheckoutLayoutConfig: React.FC = () => {
+  const { 
+    rows, 
+    cardFormRows,
+    styleVariables, 
+    checkoutConfig,
+    handleDragEnd,
+    addRow,
+    removeRow,
+    addComponentToRow,
+    removeComponentFromRow,
+    updateComponentConfig,
+    activeTab,
+    setActiveTab,
+    devicePreview,
+    setDevicePreview
+  } = useCheckoutBuilderV2();
 
-const CheckoutLayoutConfig: React.FC<CheckoutLayoutConfigProps> = ({
-  config,
-  onChangeCardFormLayout,
-  onChangePaymentMethodDisplay,
-  onToggleCardholderName
-}) => {
+  // State for copied code indicator
+  const [copied, setCopied] = useState(false);
+
+  const generatePaymentMethodsHtml = () => {
+    let html = `<primer-checkout client-token="\${clientSession.clientToken}">
+  <primer-main slot="main">
+    <!-- Payment methods -->
+    <div slot="payments">
+      <!-- Card payment method -->
+      <p class="text-base font-medium text-gray-700 mb-4">Card</p>
+      <primer-payment-method type="PAYMENT_CARD"></primer-payment-method>
+      
+      <!-- Alternative Payment Methods -->
+      <div class="mt-8 pt-6 border-t border-gray-200">
+        <p class="text-base font-medium text-gray-700 mb-4">Alternative Payment Methods</p>
+        <primer-payment-method type="PAYPAL"></primer-payment-method>
+        <primer-payment-method type="GOOGLE_PAY"></primer-payment-method>
+        <primer-payment-method type="APPLE_PAY"></primer-payment-method>
+      </div>
+    </div>
+    
+    <!-- Custom completion screen -->
+    <div slot="checkout-complete">
+      <h2 class="text-xl font-bold text-green-600 text-center my-4">Thank you for your purchase!</h2>
+      <p class="text-center text-gray-600">Your order has been processed successfully.</p>
+    </div>
+  </primer-main>
+</primer-checkout>`;
+
+    return html;
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(generatePaymentMethodsHtml());
+    setCopied(true);
+    toast({
+      title: "Copied to clipboard",
+      description: "The HTML code has been copied to your clipboard",
+    });
+    
+    setTimeout(() => {
+      setCopied(false);
+    }, 2000);
+  };
+
   return (
-    <div className="space-y-8">
-      <div>
-        <h2 className="text-lg font-semibold mb-4">Checkout Layout Configuration</h2>
-        <p className="text-sm text-gray-500 mb-6">
-          Configure how your checkout will appear to customers. These settings control the layout and display of payment methods and form fields.
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <Card>
-          <CardContent className="pt-6">
-            <h3 className="text-md font-medium mb-4">Card Form Layout</h3>
-            <div className="space-y-4">
-              <RadioGroup 
-                value={config.cardFormLayout} 
-                onValueChange={(value) => onChangeCardFormLayout(value as CardFormLayout)}
-                className="space-y-2"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="single-line" id="single-line" />
-                  <Label htmlFor="single-line">Single-line (compact)</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="two-line" id="two-line" />
-                  <Label htmlFor="two-line">Two-line (standard)</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="three-line" id="three-line" />
-                  <Label htmlFor="three-line">Three-line (expanded)</Label>
-                </div>
-              </RadioGroup>
-              
-              <div className="mt-6 border-t pt-4">
-                <div className="flex items-center justify-between py-2">
-                  <Label htmlFor="show-cardholder-name">Show Cardholder Name Field</Label>
-                  <Switch 
-                    id="show-cardholder-name" 
-                    checked={config.showCardholderName}
-                    onCheckedChange={onToggleCardholderName}
-                  />
-                </div>
+    <div className="w-full p-4">
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="mb-4">
+          <TabsTrigger value="checkout-builder">Checkout Builder</TabsTrigger>
+          <TabsTrigger value="card-form-builder">Card Form Builder</TabsTrigger>
+          <TabsTrigger value="theme-and-preview">Theme and Preview</TabsTrigger>
+          <TabsTrigger value="composable-checkout-slots">Composable Checkout Slots</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="checkout-builder" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Create Checkout Layout</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <ComponentPalette onDragEnd={handleDragEnd} />
               </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="pt-6">
-            <h3 className="text-md font-medium mb-4">Payment Methods Display</h3>
-            <RadioGroup 
-              value={config.paymentMethodsDisplay} 
-              onValueChange={(value) => onChangePaymentMethodDisplay(value as PaymentMethodDisplay)}
-              className="space-y-2"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="dropdown" id="dropdown" />
-                <Label htmlFor="dropdown">Dropdown Menu</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="radio" id="radio" />
-                <Label htmlFor="radio">Radio Buttons (list)</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="buttons" id="buttons" />
-                <Label htmlFor="buttons">Separate Buttons</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="tabs" id="tabs" />
-                <Label htmlFor="tabs">Tabbed Interface</Label>
-              </div>
-            </RadioGroup>
-
-            <div className="mt-6 border-t pt-4">
-              <div className="flex items-center justify-between py-2">
-                <Label htmlFor="single-page">Single Page Checkout</Label>
-                <Switch 
-                  id="single-page" 
-                  checked={config.layout === "single-page"}
-                  onCheckedChange={(checked) => 
-                    checked ? onChangePaymentMethodDisplay("radio") : onChangePaymentMethodDisplay("tabs")
-                  }
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card>
-        <CardContent className="pt-6">
-          <h3 className="text-md font-medium mb-2">Layout Preview</h3>
-          <p className="text-sm text-gray-500 mb-4">
-            This visual representation shows how your configured checkout will appear:
-          </p>
+            </CardContent>
+          </Card>
           
-          <div className="border rounded-md p-4 bg-gray-50">
-            <div className="text-center p-4 text-gray-400">
-              {config.cardFormLayout === "single-line" && (
-                <div className="mb-2">Single-line card form layout</div>
-              )}
-              {config.cardFormLayout === "two-line" && (
-                <div className="mb-2">Two-line card form layout</div>
-              )}
-              {config.cardFormLayout === "three-line" && (
-                <div className="mb-2">Three-line card form layout</div>
-              )}
-              
-              {config.paymentMethodsDisplay === "dropdown" && (
-                <div>Payment methods in dropdown menu</div>
-              )}
-              {config.paymentMethodsDisplay === "radio" && (
-                <div>Payment methods as radio buttons</div>
-              )}
-              {config.paymentMethodsDisplay === "buttons" && (
-                <div>Payment methods as separate buttons</div>
-              )}
-              {config.paymentMethodsDisplay === "tabs" && (
-                <div>Payment methods in tabs</div>
-              )}
-              
-              {config.showCardholderName ? (
-                <div className="mt-2">With cardholder name field</div>
-              ) : (
-                <div className="mt-2">Without cardholder name field</div>
-              )}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          <Card className="mt-4">
+            <CardHeader>
+              <CardTitle>Generated HTML</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="bg-gray-50 p-4 rounded-md relative border">
+                <Button 
+                  className="absolute right-2 top-2 h-8 w-8 p-0" 
+                  variant="outline" 
+                  onClick={copyToClipboard}
+                >
+                  <Clipboard className="h-4 w-4" />
+                </Button>
+                <pre className="text-xs overflow-x-auto p-2 text-gray-800">
+                  {generatePaymentMethodsHtml()}
+                </pre>
+              </div>
+              <p className="text-sm text-gray-500 mt-2">This is the HTML code for the payment methods configuration. The card form is defined in the Card Form Builder tab.</p>
+            </CardContent>
+          </Card>
+          
+          <DevicePreview 
+            rows={rows} 
+            cardFormRows={cardFormRows} 
+            styleVariables={styleVariables} 
+            checkoutConfig={checkoutConfig}
+            devicePreview={devicePreview}
+            setDevicePreview={setDevicePreview}
+          />
+        </TabsContent>
+        
+        <TabsContent value="card-form-builder">
+          <CardFormBuilder 
+            cardFormRows={cardFormRows}
+            styleVariables={styleVariables}
+            handleDragEnd={handleDragEnd}
+            addRow={addRow}
+            removeRow={removeRow}
+            addComponentToRow={addComponentToRow}
+            removeComponentFromRow={removeComponentFromRow}
+            updateComponentConfig={updateComponentConfig}
+          />
+        </TabsContent>
+        
+        <TabsContent value="theme-and-preview">
+          <ThemeAndPreview 
+            rows={rows}
+            cardFormRows={cardFormRows}
+            styleVariables={styleVariables}
+            checkoutConfig={checkoutConfig}
+          />
+        </TabsContent>
+        
+        <TabsContent value="composable-checkout-slots">
+          <ComposableCheckoutSlots 
+            rows={rows} 
+            cardFormRows={cardFormRows}
+            styleVariables={styleVariables} 
+            checkoutConfig={checkoutConfig}
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
