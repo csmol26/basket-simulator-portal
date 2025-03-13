@@ -1,314 +1,79 @@
 
 import React from "react";
-import { ComponentConfig } from "./ComponentList";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-interface DragItem {
-  id: string;
-  content: string;
-  config?: {
-    label?: string;
-    placeholder?: string;
-    ariaLabel?: string;
-    spaceSmall?: string;
-  };
-  originalComponent: ComponentConfig;
-}
-
-interface Row {
-  id: string;
-  components: DragItem[];
-}
+import { Row, StyleVariables } from "./types";
 
 interface PreviewProps {
   rows: Row[];
-  styleVariables: Record<string, string>;
+  styleVariables: StyleVariables;
 }
 
 const Preview: React.FC<PreviewProps> = ({ rows, styleVariables }) => {
-  const renderCardFormComponents = () => {
-    if (rows.length === 0 || rows.every(row => row.components.length === 0)) {
-      return (
-        <div className="text-center p-4 text-gray-400 italic">
-          Drag components here to build your card form
-        </div>
-      );
-    }
+  // Helper function to generate CSS variable style object
+  const generateCssVariables = () => {
+    const cssVars: Record<string, string> = {};
     
-    return rows.map((row) => {
-      if (row.components.length === 0) return null;
-      
-      if (row.components.length === 1) {
-        const component = row.components[0];
-        const content = component.content;
-        const config = component.config || {};
-        const label = config.label || component.originalComponent?.defaultLabel;
-        const placeholder = config.placeholder || component.originalComponent?.defaultPlaceholder;
-        const spaceSmall = config.spaceSmall || styleVariables.primerSpaceSmall;
-        
-        return (
-          <div key={row.id} className="mb-4" style={{ marginBottom: spaceSmall }}>
-            {content.includes('card-number') && (
-              <div className="mb-2">
-                {label && <label className="block text-sm mb-1">{label}</label>}
-                <div 
-                  className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3"
-                  style={{ 
-                    borderRadius: styleVariables.primerRadiusBase,
-                    backgroundColor: styleVariables.primerColorBackground || "white",
-                    marginBottom: spaceSmall
-                  }}
-                >
-                  <span className="text-gray-400">{placeholder || "•••• •••• •••• ••••"}</span>
-                </div>
-              </div>
-            )}
-            {content.includes('card-expiry') && (
-              <div className="mb-2">
-                {label && <label className="block text-sm mb-1">{label}</label>}
-                <div 
-                  className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3"
-                  style={{ 
-                    borderRadius: styleVariables.primerRadiusBase,
-                    backgroundColor: styleVariables.primerColorBackground || "white",
-                    marginBottom: spaceSmall
-                  }}
-                >
-                  <span className="text-gray-400">{placeholder || "MM/YY"}</span>
-                </div>
-              </div>
-            )}
-            {content.includes('cvv') && (
-              <div className="mb-2">
-                {label && <label className="block text-sm mb-1">{label}</label>}
-                <div 
-                  className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3"
-                  style={{ 
-                    borderRadius: styleVariables.primerRadiusBase,
-                    backgroundColor: styleVariables.primerColorBackground || "white",
-                    marginBottom: spaceSmall
-                  }}
-                >
-                  <span className="text-gray-400">{placeholder || "123"}</span>
-                </div>
-              </div>
-            )}
-            {content.includes('card-holder-name') && (
-              <div className="mb-2">
-                {label && <label className="block text-sm mb-1">{label}</label>}
-                <div 
-                  className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3"
-                  style={{ 
-                    borderRadius: styleVariables.primerRadiusBase,
-                    backgroundColor: styleVariables.primerColorBackground || "white",
-                    marginBottom: spaceSmall
-                  }}
-                >
-                  <span className="text-gray-400">{placeholder || "Cardholder Name"}</span>
-                </div>
-              </div>
-            )}
-            {content.includes('card-form-submit') && (
-              <button 
-                className="hover:opacity-90 text-white rounded-md p-2 h-10 w-full font-medium transition-colors"
-                style={{ 
-                  backgroundColor: styleVariables.primerColorBrand || "#18A94B",
-                  borderRadius: styleVariables.primerRadiusBase || "16px",
-                  marginBottom: spaceSmall
-                }}
-              >
-                Pay Now
-              </button>
-            )}
-          </div>
-        );
-      } else {
-        return (
-          <div key={row.id} className="flex gap-4 mb-4" style={{ marginBottom: styleVariables.primerSpaceBase }}>
-            {row.components.map((component) => {
-              const content = component.content;
-              const config = component.config || {};
-              const label = config.label || component.originalComponent?.defaultLabel;
-              const placeholder = config.placeholder || component.originalComponent?.defaultPlaceholder;
-              const spaceSmall = config.spaceSmall || styleVariables.primerSpaceSmall;
-              
-              return (
-                <div key={component.id} className="flex-1">
-                  {content.includes('card-number') && (
-                    <div className="mb-2">
-                      {label && <label className="block text-sm mb-1" style={{ fontFamily: styleVariables.primerTypographyBrand }}>{label}</label>}
-                      <div 
-                        className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3"
-                        style={{ 
-                          borderRadius: styleVariables.primerRadiusBase,
-                          backgroundColor: styleVariables.primerColorBackground || "white",
-                          marginBottom: spaceSmall
-                        }}
-                      >
-                        <span className="text-gray-400">{placeholder || "•••• •••• •••• ••••"}</span>
-                      </div>
-                    </div>
-                  )}
-                  {content.includes('card-expiry') && (
-                    <div className="mb-2">
-                      {label && <label className="block text-sm mb-1" style={{ fontFamily: styleVariables.primerTypographyBrand }}>{label}</label>}
-                      <div 
-                        className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3"
-                        style={{ 
-                          borderRadius: styleVariables.primerRadiusBase,
-                          backgroundColor: styleVariables.primerColorBackground || "white",
-                          marginBottom: spaceSmall
-                        }}
-                      >
-                        <span className="text-gray-400">{placeholder || "MM/YY"}</span>
-                      </div>
-                    </div>
-                  )}
-                  {content.includes('cvv') && (
-                    <div className="mb-2">
-                      {label && <label className="block text-sm mb-1" style={{ fontFamily: styleVariables.primerTypographyBrand }}>{label}</label>}
-                      <div 
-                        className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3"
-                        style={{ 
-                          borderRadius: styleVariables.primerRadiusBase,
-                          backgroundColor: styleVariables.primerColorBackground || "white",
-                          marginBottom: spaceSmall
-                        }}
-                      >
-                        <span className="text-gray-400">{placeholder || "123"}</span>
-                      </div>
-                    </div>
-                  )}
-                  {content.includes('card-holder-name') && (
-                    <div className="mb-2">
-                      {label && <label className="block text-sm mb-1" style={{ fontFamily: styleVariables.primerTypographyBrand }}>{label}</label>}
-                      <div 
-                        className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3"
-                        style={{ 
-                          borderRadius: styleVariables.primerRadiusBase,
-                          backgroundColor: styleVariables.primerColorBackground || "white",
-                          marginBottom: spaceSmall
-                        }}
-                      >
-                        <span className="text-gray-400">{placeholder || "Cardholder Name"}</span>
-                      </div>
-                    </div>
-                  )}
-                  {content.includes('card-form-submit') && (
-                    <button 
-                      className="hover:opacity-90 text-white p-2 h-10 w-full font-medium transition-colors"
-                      style={{ 
-                        backgroundColor: styleVariables.primerColorBrand || "#18A94B",
-                        borderRadius: styleVariables.primerRadiusBase || "16px",
-                        marginBottom: spaceSmall
-                      }}
-                    >
-                      Pay Now
-                    </button>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        );
-      }
+    // Convert StyleVariables to CSS variable format
+    Object.entries(styleVariables).forEach(([key, value]) => {
+      // Convert camelCase to kebab-case with primer prefix
+      const cssKey = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
+      cssVars[cssKey] = value;
     });
-  };
-
-  const previewStyle: React.CSSProperties = {
-    fontFamily: styleVariables.primerTypographyBrand || "'Poppins', sans-serif",
-    padding: `calc(${styleVariables.primerSpaceBase || "4px"} * 4)`,
-    borderRadius: styleVariables.primerRadiusBase || "16px",
-    backgroundColor: styleVariables.primerColorBackground || "transparent",
+    
+    return cssVars;
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      <Card className="h-full">
-        <CardHeader>
-          <CardTitle className="text-lg">Card Form Preview</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div 
-            className="border border-gray-200 rounded-md p-6"
-            style={{ borderRadius: styleVariables.primerRadiusBase || "16px" }}
-          >
-            <p 
-              className="text-base font-medium text-gray-700 mb-4"
-              style={{ fontFamily: styleVariables.primerTypographyBrand || "'Poppins', sans-serif" }}
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-lg">Theme Preview</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="p-4 bg-gray-100 rounded-md">
+          <p className="text-sm text-gray-600 mb-4">
+            Visualize how your theme and components will appear in the checkout.
+          </p>
+          
+          <div className="border rounded-md p-4 bg-white">
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-sm font-medium">Card Form Preview</span>
+              <span className="text-xs text-gray-500">Using your style variables</span>
+            </div>
+            
+            <div 
+              className="p-4 border border-gray-200 rounded-md"
+              style={generateCssVariables()}
             >
-              Card Payment
-            </p>
-            <div>
-              {renderCardFormComponents()}
+              {rows.length > 0 ? (
+                <div className="space-y-4">
+                  {rows.map((row, rowIndex) => (
+                    <div key={row.id} className="flex gap-4 flex-wrap">
+                      {row.components.map((component, compIndex) => (
+                        <div 
+                          key={`${row.id}-${component.id}`}
+                          className="p-3 border border-gray-200 rounded flex-1 min-w-[200px]"
+                        >
+                          <div className="text-sm font-medium mb-1">
+                            {component.originalComponent.name}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {component.config?.label || 'No label'}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="h-24 bg-gray-50 border border-dashed border-gray-300 rounded flex items-center justify-center">
+                  <span className="text-gray-400 text-sm">Add components to see preview</span>
+                </div>
+              )}
             </div>
           </div>
-        </CardContent>
-      </Card>
-      
-      <Card className="h-full">
-        <CardHeader>
-          <CardTitle className="text-lg">Full Checkout Preview</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Tabs defaultValue="cards" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-4">
-              <TabsTrigger value="cards">Card Payment</TabsTrigger>
-              <TabsTrigger value="apms">Alternative Payments</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="cards">
-              <div 
-                className="bg-white border border-gray-200 rounded-md p-6 shadow-sm"
-                style={previewStyle}
-              >
-                <div className="space-y-4">
-                  <p className="text-base font-medium" style={{ color: styleVariables.primerColorBrand || "#18A94B" }}>
-                    Card Payment
-                  </p>
-                  
-                  <div className="border border-gray-200 rounded-md p-4" style={{ borderRadius: styleVariables.primerRadiusBase }}>
-                    {renderCardFormComponents()}
-                  </div>
-                </div>
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="apms">
-              <div 
-                className="bg-white border border-gray-200 rounded-md p-6 shadow-sm"
-                style={previewStyle}
-              >
-                <div className="space-y-4">
-                  <p className="text-base font-medium" style={{ color: styleVariables.primerColorBrand || "#18A94B" }}>
-                    Alternative Payment Methods
-                  </p>
-                  
-                  <div className="p-4 border rounded-md" style={{ borderRadius: styleVariables.primerRadiusBase }}>
-                    <div 
-                      className="h-12 bg-[#0070BA] text-white rounded-md flex items-center justify-center font-medium"
-                      style={{ borderRadius: styleVariables.primerRadiusBase }}
-                    >
-                      <span>PayPal</span>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-4 p-4 border rounded-md" style={{ borderRadius: styleVariables.primerRadiusBase }}>
-                    <div 
-                      className="h-12 bg-black text-white rounded-md flex items-center justify-center font-medium" 
-                      style={{ borderRadius: styleVariables.primerRadiusBase }}
-                    >
-                      <span>Apple Pay</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
-    </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
