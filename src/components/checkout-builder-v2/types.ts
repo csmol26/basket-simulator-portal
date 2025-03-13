@@ -10,6 +10,8 @@ export interface DragItem {
     ariaLabel?: string;
     spaceSmall?: string;
     displayMode?: "default" | "compact" | "expanded";
+    buttonText?: string;
+    variant?: string;
     validation?: {
       required?: boolean;
       customErrorMessage?: string;
