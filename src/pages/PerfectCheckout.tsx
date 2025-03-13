@@ -3,12 +3,11 @@ import Navbar from "@/components/Navbar";
 import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Trash2, MoveVertical, Type, CreditCard, LayoutGrid, Palette, Code } from "lucide-react";
+import { Plus, Trash2, MoveVertical, Type, CreditCard, LayoutGrid, Palette } from "lucide-react";
 import { v4 as uuidv4 } from 'uuid';
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Slider } from "@/components/ui/slider";
-import CodeGenerator from "@/components/checkout-builder/CodeGenerator";
 
 interface PaymentMethod {
   id: string;
@@ -333,38 +332,6 @@ const PerfectCheckout: React.FC = () => {
     "--page-text-color": styleVariables.textColor,
   } as React.CSSProperties;
 
-  const convertToGeneratorRows = (): any[] => {
-    return cardFormRows.map(row => ({
-      id: row.id,
-      components: row.components.map(comp => ({
-        id: comp.id,
-        type: comp.type,
-        content: comp.name,
-        originalComponent: {
-          id: comp.type,
-          name: comp.name
-        },
-        config: {
-          placeholder: comp.placeholder,
-          label: comp.label
-        }
-      }))
-    }));
-  };
-
-  const convertToGeneratorStyleVars = (): any => {
-    return {
-      ...styleVariables,
-      primerColorBackground: styleVariables.background || "#ffffff",
-      primerSizeBase: "4px",
-      primerColorLoader: styleVariables.primerColorBrand,
-      primerColorFocus: styleVariables.primerColorBrand,
-      primerTypographyLineHeight: "1.5",
-      primerTypographyFontDefault: styleVariables.primerTypographyBrand,
-      primerTypographyFontSize: "16px"
-    };
-  };
-
   return (
     <div className="min-h-screen flex flex-col" style={themeStyles}>
       <Navbar />
@@ -384,10 +351,6 @@ const PerfectCheckout: React.FC = () => {
             <TabsTrigger value="theme-preview" className="flex items-center gap-2">
               <Palette className="h-4 w-4" />
               Theme and Preview
-            </TabsTrigger>
-            <TabsTrigger value="code-generator" className="flex items-center gap-2">
-              <Code className="h-4 w-4" />
-              Code Generator
             </TabsTrigger>
           </TabsList>
           
@@ -1009,20 +972,6 @@ const PerfectCheckout: React.FC = () => {
                 </Card>
               </div>
             </div>
-          </TabsContent>
-          
-          <TabsContent value="code-generator">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Generated Code</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CodeGenerator 
-                  rows={convertToGeneratorRows()}
-                  styleVariables={convertToGeneratorStyleVars()}
-                />
-              </CardContent>
-            </Card>
           </TabsContent>
         </Tabs>
       </div>
