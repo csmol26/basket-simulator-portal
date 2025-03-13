@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Draggable } from "react-beautiful-dnd";
-import { DragItem } from '../types';
+import { DragItem, StyleVariables } from '../types';
 import ComponentConfigPopover from './ComponentConfigPopover';
 
 interface DraggableComponentProps {
@@ -9,7 +9,7 @@ interface DraggableComponentProps {
   index: number;
   rowId: string;
   updateComponentConfig: (rowId: string, componentId: string, config: Partial<DragItem['config']>) => void;
-  styleVariables: Record<string, string>;
+  styleVariables: StyleVariables;
 }
 
 const DraggableComponent: React.FC<DraggableComponentProps> = ({ 

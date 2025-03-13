@@ -39,6 +39,7 @@ export interface StyleVariables {
   primerColorLoader: string;
   primerColorFocus: string;
   primerSpaceSmall: string;
+  [key: string]: string; // Add index signature to allow any string key
 }
 
 export interface CheckoutTheme {

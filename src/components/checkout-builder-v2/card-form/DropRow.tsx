@@ -2,14 +2,14 @@
 import React from 'react';
 import { Droppable } from "react-beautiful-dnd";
 import { X } from "lucide-react";
-import { Row, DragItem } from '../types';
+import { Row, DragItem, StyleVariables } from '../types';
 import DraggableComponent from './DraggableComponent';
 
 interface DropRowProps {
   row: Row;
   onRemoveRow: (rowId: string) => void;
   updateComponentConfig: (rowId: string, componentId: string, config: Partial<DragItem['config']>) => void;
-  styleVariables: Record<string, string>;
+  styleVariables: StyleVariables;
   canRemove: boolean;
 }
 
