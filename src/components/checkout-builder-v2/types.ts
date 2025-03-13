@@ -9,6 +9,11 @@ export interface DragItem {
     placeholder?: string;
     ariaLabel?: string;
     spaceSmall?: string;
+    displayMode?: "default" | "compact" | "expanded";
+    validation?: {
+      required?: boolean;
+      customErrorMessage?: string;
+    };
   };
   originalComponent: ComponentConfig;
 }
@@ -28,4 +33,21 @@ export interface StyleVariables {
   primerColorLoader: string;
   primerColorFocus: string;
   primerSpaceSmall: string;
+}
+
+export interface CheckoutTheme {
+  id: string;
+  name: string;
+  variables: Partial<StyleVariables>;
+}
+
+export type CardFormLayout = "single-line" | "two-line" | "three-line";
+
+export type PaymentMethodDisplay = "dropdown" | "radio" | "buttons" | "tabs";
+
+export interface CheckoutConfig {
+  layout: "single-page" | "multi-step";
+  cardFormLayout: CardFormLayout;
+  paymentMethodsDisplay: PaymentMethodDisplay;
+  showCardholderName: boolean;
 }

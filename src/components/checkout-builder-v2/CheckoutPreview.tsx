@@ -1,295 +1,296 @@
 
-import React from "react";
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Row, StyleVariables } from "./types";
+import { Row, StyleVariables, CheckoutConfig } from './types';
 
 interface CheckoutPreviewProps {
   rows: Row[];
   styleVariables: StyleVariables;
+  checkoutConfig: CheckoutConfig;
 }
 
-const CheckoutPreview: React.FC<CheckoutPreviewProps> = ({ rows, styleVariables }) => {
-  const renderCardFormComponents = () => {
-    if (rows.length === 0 || rows.every(row => row.components.length === 0)) {
+const CheckoutPreview: React.FC<CheckoutPreviewProps> = ({ rows, styleVariables, checkoutConfig }) => {
+  // Helper to render custom card form layout
+  const renderCardForm = () => {
+    const cardNumberComponent = rows.flatMap(row => row.components).find(c => c.originalComponent.id === 'card-number');
+    const cardExpiryComponent = rows.flatMap(row => row.components).find(c => c.originalComponent.id === 'card-expiry');
+    const cardCvvComponent = rows.flatMap(row => row.components).find(c => c.originalComponent.id === 'card-cvv');
+    const cardHolderComponent = rows.flatMap(row => row.components).find(c => c.originalComponent.id === 'card-holder');
+    const submitComponent = rows.flatMap(row => row.components).find(c => c.originalComponent.id === 'card-submit');
+    
+    const layout = checkoutConfig.cardFormLayout;
+    
+    if (layout === 'single-line') {
       return (
-        <div className="text-center p-4 text-gray-400 italic">
-          Add components in the Card Form Builder tab to preview your form
+        <div className="space-y-4">
+          <div className="flex flex-wrap md:flex-nowrap gap-4">
+            <div className="flex-grow min-w-[40%]">
+              <div className="h-12 bg-gray-100 rounded-md px-4 py-3 text-gray-400 text-sm">
+                {cardNumberComponent?.config?.placeholder || 'Card number'}
+              </div>
+            </div>
+            <div className="w-24 md:w-32">
+              <div className="h-12 bg-gray-100 rounded-md px-4 py-3 text-gray-400 text-sm">
+                {cardExpiryComponent?.config?.placeholder || 'MM/YY'}
+              </div>
+            </div>
+            <div className="w-24 md:w-32">
+              <div className="h-12 bg-gray-100 rounded-md px-4 py-3 text-gray-400 text-sm">
+                {cardCvvComponent?.config?.placeholder || 'CVV'}
+              </div>
+            </div>
+          </div>
+          
+          {checkoutConfig.showCardholderName && (
+            <div className="h-12 bg-gray-100 rounded-md px-4 py-3 text-gray-400 text-sm">
+              {cardHolderComponent?.config?.placeholder || 'Cardholder name'}
+            </div>
+          )}
+          
+          <button 
+            className="w-full h-12 px-4 py-3 rounded-md text-white"
+            style={{ 
+              backgroundColor: styleVariables.primerColorBrand || '#18A94B',
+              borderRadius: styleVariables.primerRadiusBase
+            }}
+          >
+            Pay Now
+          </button>
+        </div>
+      );
+    } else if (layout === 'two-line') {
+      return (
+        <div className="space-y-4">
+          <div className="h-12 bg-gray-100 rounded-md px-4 py-3 text-gray-400 text-sm">
+            {cardNumberComponent?.config?.placeholder || 'Card number'}
+          </div>
+          
+          <div className="flex gap-4">
+            <div className="flex-1 h-12 bg-gray-100 rounded-md px-4 py-3 text-gray-400 text-sm">
+              {cardExpiryComponent?.config?.placeholder || 'MM/YY'}
+            </div>
+            <div className="flex-1 h-12 bg-gray-100 rounded-md px-4 py-3 text-gray-400 text-sm">
+              {cardCvvComponent?.config?.placeholder || 'CVV'}
+            </div>
+          </div>
+          
+          {checkoutConfig.showCardholderName && (
+            <div className="h-12 bg-gray-100 rounded-md px-4 py-3 text-gray-400 text-sm">
+              {cardHolderComponent?.config?.placeholder || 'Cardholder name'}
+            </div>
+          )}
+          
+          <button 
+            className="w-full h-12 px-4 py-3 rounded-md text-white"
+            style={{ 
+              backgroundColor: styleVariables.primerColorBrand || '#18A94B',
+              borderRadius: styleVariables.primerRadiusBase
+            }}
+          >
+            Pay Now
+          </button>
+        </div>
+      );
+    } else {
+      // Default to three-line layout
+      return (
+        <div className="space-y-4">
+          <div className="h-12 bg-gray-100 rounded-md px-4 py-3 text-gray-400 text-sm">
+            {cardNumberComponent?.config?.placeholder || 'Card number'}
+          </div>
+          
+          <div className="h-12 bg-gray-100 rounded-md px-4 py-3 text-gray-400 text-sm">
+            {cardExpiryComponent?.config?.placeholder || 'MM/YY'}
+          </div>
+          
+          <div className="h-12 bg-gray-100 rounded-md px-4 py-3 text-gray-400 text-sm">
+            {cardCvvComponent?.config?.placeholder || 'CVV'}
+          </div>
+          
+          {checkoutConfig.showCardholderName && (
+            <div className="h-12 bg-gray-100 rounded-md px-4 py-3 text-gray-400 text-sm">
+              {cardHolderComponent?.config?.placeholder || 'Cardholder name'}
+            </div>
+          )}
+          
+          <button 
+            className="w-full h-12 px-4 py-3 rounded-md text-white"
+            style={{ 
+              backgroundColor: styleVariables.primerColorBrand || '#18A94B',
+              borderRadius: styleVariables.primerRadiusBase
+            }}
+          >
+            Pay Now
+          </button>
         </div>
       );
     }
+  };
+
+  // Render payment methods based on display preference
+  const renderPaymentMethods = () => {
+    const display = checkoutConfig.paymentMethodsDisplay;
     
-    return rows.map((row) => {
-      if (row.components.length === 0) return null;
-      
-      if (row.components.length === 1) {
-        const component = row.components[0];
-        const content = component.content;
-        const config = component.config || {};
-        const label = config.label || component.originalComponent?.defaultLabel;
-        const placeholder = config.placeholder || component.originalComponent?.defaultPlaceholder;
-        const spaceSmall = config.spaceSmall || styleVariables.primerSpaceSmall;
-        
-        return (
-          <div key={row.id} className="mb-4" style={{ marginBottom: spaceSmall }}>
-            {content.includes('card-number') && (
-              <div className="mb-2">
-                {label && <label className="block text-sm mb-1">{label}</label>}
-                <div 
-                  className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3"
-                  style={{ 
-                    borderRadius: styleVariables.primerRadiusBase,
-                    backgroundColor: styleVariables.primerColorBackground || "white",
-                    marginBottom: spaceSmall
-                  }}
-                >
-                  <span className="text-gray-400">{placeholder || "•••• •••• •••• ••••"}</span>
-                </div>
-              </div>
-            )}
-            {content.includes('card-expiry') && (
-              <div className="mb-2">
-                {label && <label className="block text-sm mb-1">{label}</label>}
-                <div 
-                  className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3"
-                  style={{ 
-                    borderRadius: styleVariables.primerRadiusBase,
-                    backgroundColor: styleVariables.primerColorBackground || "white",
-                    marginBottom: spaceSmall
-                  }}
-                >
-                  <span className="text-gray-400">{placeholder || "MM/YY"}</span>
-                </div>
-              </div>
-            )}
-            {content.includes('cvv') && (
-              <div className="mb-2">
-                {label && <label className="block text-sm mb-1">{label}</label>}
-                <div 
-                  className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3"
-                  style={{ 
-                    borderRadius: styleVariables.primerRadiusBase,
-                    backgroundColor: styleVariables.primerColorBackground || "white",
-                    marginBottom: spaceSmall
-                  }}
-                >
-                  <span className="text-gray-400">{placeholder || "123"}</span>
-                </div>
-              </div>
-            )}
-            {content.includes('card-holder-name') && (
-              <div className="mb-2">
-                {label && <label className="block text-sm mb-1">{label}</label>}
-                <div 
-                  className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3"
-                  style={{ 
-                    borderRadius: styleVariables.primerRadiusBase,
-                    backgroundColor: styleVariables.primerColorBackground || "white",
-                    marginBottom: spaceSmall
-                  }}
-                >
-                  <span className="text-gray-400">{placeholder || "Cardholder Name"}</span>
-                </div>
-              </div>
-            )}
-            {content.includes('card-form-submit') && (
-              <button 
-                className="hover:opacity-90 text-white rounded-md p-2 h-10 w-full font-medium transition-colors"
-                style={{ 
-                  backgroundColor: styleVariables.primerColorBrand || "#18A94B",
-                  borderRadius: styleVariables.primerRadiusBase || "16px",
-                  marginBottom: spaceSmall
-                }}
+    if (display === 'radio') {
+      return (
+        <div className="space-y-4">
+          <div className="p-4 border rounded-md flex items-center gap-3 bg-white">
+            <div className="w-4 h-4 rounded-full border-2 border-gray-500 flex items-center justify-center">
+              <div className="w-2 h-2 rounded-full bg-gray-500"></div>
+            </div>
+            <span className="text-sm font-medium">Card Payment</span>
+          </div>
+          
+          <div className="p-4 border rounded-md flex items-center gap-3 bg-white">
+            <div className="w-4 h-4 rounded-full border-2 border-gray-300"></div>
+            <span className="text-sm font-medium">PayPal</span>
+          </div>
+          
+          <div className="p-4 border rounded-md flex items-center gap-3 bg-white">
+            <div className="w-4 h-4 rounded-full border-2 border-gray-300"></div>
+            <span className="text-sm font-medium">Apple Pay</span>
+          </div>
+        </div>
+      );
+    } else if (display === 'dropdown') {
+      return (
+        <div className="space-y-6">
+          <div>
+            <select className="w-full p-3 border rounded-md bg-white">
+              <option>Card Payment</option>
+              <option>PayPal</option>
+              <option>Apple Pay</option>
+            </select>
+          </div>
+          
+          {renderCardForm()}
+        </div>
+      );
+    } else if (display === 'buttons') {
+      return (
+        <div className="space-y-6">
+          <div className="flex flex-wrap gap-2">
+            <button 
+              className={`px-4 py-2 rounded-md text-white`}
+              style={{ 
+                backgroundColor: styleVariables.primerColorBrand || '#18A94B',
+                borderRadius: styleVariables.primerRadiusBase
+              }}
+            >
+              Card Payment
+            </button>
+            <button className="px-4 py-2 rounded-md bg-gray-100 text-gray-700">
+              PayPal
+            </button>
+            <button className="px-4 py-2 rounded-md bg-gray-100 text-gray-700">
+              Apple Pay
+            </button>
+          </div>
+          
+          {renderCardForm()}
+        </div>
+      );
+    } else {
+      // Tabs
+      return (
+        <div className="space-y-6">
+          <div className="border-b">
+            <div className="flex">
+              <div 
+                className="px-4 py-2 border-b-2 font-medium text-sm"
+                style={{ borderColor: styleVariables.primerColorBrand || '#18A94B' }}
               >
-                Pay Now
-              </button>
-            )}
+                Card Payment
+              </div>
+              <div className="px-4 py-2 text-gray-500 text-sm">
+                PayPal
+              </div>
+              <div className="px-4 py-2 text-gray-500 text-sm">
+                Apple Pay
+              </div>
+            </div>
           </div>
-        );
-      } else {
-        return (
-          <div key={row.id} className="flex gap-4 mb-4" style={{ marginBottom: styleVariables.primerSpaceBase }}>
-            {row.components.map((component) => {
-              const content = component.content;
-              const config = component.config || {};
-              const label = config.label || component.originalComponent?.defaultLabel;
-              const placeholder = config.placeholder || component.originalComponent?.defaultPlaceholder;
-              const spaceSmall = config.spaceSmall || styleVariables.primerSpaceSmall;
-              
-              return (
-                <div key={component.id} className="flex-1">
-                  {content.includes('card-number') && (
-                    <div className="mb-2">
-                      {label && <label className="block text-sm mb-1" style={{ fontFamily: styleVariables.primerTypographyBrand }}>{label}</label>}
-                      <div 
-                        className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3"
-                        style={{ 
-                          borderRadius: styleVariables.primerRadiusBase,
-                          backgroundColor: styleVariables.primerColorBackground || "white",
-                          marginBottom: spaceSmall
-                        }}
-                      >
-                        <span className="text-gray-400">{placeholder || "•••• •••• •••• ••••"}</span>
-                      </div>
-                    </div>
-                  )}
-                  {content.includes('card-expiry') && (
-                    <div className="mb-2">
-                      {label && <label className="block text-sm mb-1" style={{ fontFamily: styleVariables.primerTypographyBrand }}>{label}</label>}
-                      <div 
-                        className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3"
-                        style={{ 
-                          borderRadius: styleVariables.primerRadiusBase,
-                          backgroundColor: styleVariables.primerColorBackground || "white",
-                          marginBottom: spaceSmall
-                        }}
-                      >
-                        <span className="text-gray-400">{placeholder || "MM/YY"}</span>
-                      </div>
-                    </div>
-                  )}
-                  {content.includes('cvv') && (
-                    <div className="mb-2">
-                      {label && <label className="block text-sm mb-1" style={{ fontFamily: styleVariables.primerTypographyBrand }}>{label}</label>}
-                      <div 
-                        className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3"
-                        style={{ 
-                          borderRadius: styleVariables.primerRadiusBase,
-                          backgroundColor: styleVariables.primerColorBackground || "white",
-                          marginBottom: spaceSmall
-                        }}
-                      >
-                        <span className="text-gray-400">{placeholder || "123"}</span>
-                      </div>
-                    </div>
-                  )}
-                  {content.includes('card-holder-name') && (
-                    <div className="mb-2">
-                      {label && <label className="block text-sm mb-1" style={{ fontFamily: styleVariables.primerTypographyBrand }}>{label}</label>}
-                      <div 
-                        className="bg-white border border-gray-300 rounded-md p-2 h-10 flex items-center px-3"
-                        style={{ 
-                          borderRadius: styleVariables.primerRadiusBase,
-                          backgroundColor: styleVariables.primerColorBackground || "white",
-                          marginBottom: spaceSmall
-                        }}
-                      >
-                        <span className="text-gray-400">{placeholder || "Cardholder Name"}</span>
-                      </div>
-                    </div>
-                  )}
-                  {content.includes('card-form-submit') && (
-                    <button 
-                      className="hover:opacity-90 text-white p-2 h-10 w-full font-medium transition-colors"
-                      style={{ 
-                        backgroundColor: styleVariables.primerColorBrand || "#18A94B",
-                        borderRadius: styleVariables.primerRadiusBase || "16px",
-                        marginBottom: spaceSmall
-                      }}
-                    >
-                      Pay Now
-                    </button>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        );
-      }
-    });
+          
+          {renderCardForm()}
+        </div>
+      );
+    }
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      <Card className="h-full">
-        <CardHeader>
-          <CardTitle className="text-lg">Card Form Preview</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div 
-            className="border border-gray-200 rounded-md p-6"
-            style={{ borderRadius: styleVariables.primerRadiusBase || "16px" }}
-          >
-            <p 
-              className="text-base font-medium text-gray-700 mb-4"
-              style={{ fontFamily: styleVariables.primerTypographyBrand || "'Poppins', sans-serif" }}
-            >
-              Card Payment
-            </p>
-            <div>
-              {renderCardFormComponents()}
+    <div className="space-y-8">
+      <Tabs defaultValue="desktop">
+        <Card>
+          <CardHeader className="pb-2">
+            <div className="flex justify-between items-center">
+              <CardTitle className="text-lg">Checkout Preview</CardTitle>
+              <TabsList>
+                <TabsTrigger value="desktop">Desktop</TabsTrigger>
+                <TabsTrigger value="mobile">Mobile</TabsTrigger>
+              </TabsList>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardHeader>
+          
+          <CardContent className="pt-4">
+            <TabsContent value="desktop">
+              <div
+                className="p-8 border rounded-lg shadow-sm"
+                style={{
+                  backgroundColor: styleVariables.primerColorBackground || 'white',
+                  fontFamily: styleVariables.primerTypographyBrand,
+                  borderRadius: styleVariables.primerRadiusBase
+                }}
+              >
+                <div className="max-w-2xl mx-auto">
+                  <h2 className="text-2xl font-semibold mb-6 text-center">Complete Your Purchase</h2>
+                  
+                  <div className="bg-gray-50 rounded-lg p-6">
+                    {renderPaymentMethods()}
+                  </div>
+                  
+                  <div className="mt-8 text-center text-xs text-gray-500">
+                    <p>Secured by Primer</p>
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="mobile">
+              <div className="mx-auto" style={{ maxWidth: '375px' }}>
+                <div
+                  className="p-4 border rounded-lg shadow-sm"
+                  style={{
+                    backgroundColor: styleVariables.primerColorBackground || 'white',
+                    fontFamily: styleVariables.primerTypographyBrand,
+                    borderRadius: styleVariables.primerRadiusBase
+                  }}
+                >
+                  <h2 className="text-xl font-semibold mb-4 text-center">Complete Your Purchase</h2>
+                  
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    {renderPaymentMethods()}
+                  </div>
+                  
+                  <div className="mt-6 text-center text-xs text-gray-500">
+                    <p>Secured by Primer</p>
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+          </CardContent>
+        </Card>
+      </Tabs>
       
-      <Card className="h-full">
-        <CardHeader>
-          <CardTitle className="text-lg">Full Checkout Preview</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Tabs defaultValue="cards" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-4">
-              <TabsTrigger value="cards">Card Payment</TabsTrigger>
-              <TabsTrigger value="apms">Alternative Payments</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="cards">
-              <div 
-                className="bg-white border border-gray-200 rounded-md p-6 shadow-sm"
-                style={{ 
-                  fontFamily: styleVariables.primerTypographyBrand || "'Poppins', sans-serif",
-                  borderRadius: styleVariables.primerRadiusBase || "16px",
-                  backgroundColor: styleVariables.primerColorBackground || "transparent",
-                }}
-              >
-                <div className="space-y-4">
-                  <p className="text-base font-medium" style={{ color: styleVariables.primerColorBrand || "#18A94B" }}>
-                    Card Payment
-                  </p>
-                  
-                  <div className="border border-gray-200 rounded-md p-4" style={{ borderRadius: styleVariables.primerRadiusBase }}>
-                    {renderCardFormComponents()}
-                  </div>
-                </div>
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="apms">
-              <div 
-                className="bg-white border border-gray-200 rounded-md p-6 shadow-sm"
-                style={{ 
-                  fontFamily: styleVariables.primerTypographyBrand || "'Poppins', sans-serif",
-                  borderRadius: styleVariables.primerRadiusBase || "16px",
-                  backgroundColor: styleVariables.primerColorBackground || "transparent",
-                }}
-              >
-                <div className="space-y-4">
-                  <p className="text-base font-medium" style={{ color: styleVariables.primerColorBrand || "#18A94B" }}>
-                    Alternative Payment Methods
-                  </p>
-                  
-                  <div className="p-4 border rounded-md" style={{ borderRadius: styleVariables.primerRadiusBase }}>
-                    <div 
-                      className="h-12 bg-[#0070BA] text-white rounded-md flex items-center justify-center font-medium"
-                      style={{ borderRadius: styleVariables.primerRadiusBase }}
-                    >
-                      <span>PayPal</span>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-4 p-4 border rounded-md" style={{ borderRadius: styleVariables.primerRadiusBase }}>
-                    <div 
-                      className="h-12 bg-black text-white rounded-md flex items-center justify-center font-medium" 
-                      style={{ borderRadius: styleVariables.primerRadiusBase }}
-                    >
-                      <span>Apple Pay</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </TabsContent>
-          </Tabs>
+      <Card>
+        <CardContent className="pt-6">
+          <h3 className="text-md font-medium mb-4">Preview Notes</h3>
+          <ul className="list-disc list-inside text-sm text-gray-600 space-y-2">
+            <li>This is a visual representation of how your checkout may appear.</li>
+            <li>The actual appearance might vary slightly based on the browser and device.</li>
+            <li>Interactions like switching between payment methods are not functional in this preview.</li>
+            <li>For the complete experience, download and implement the generated code.</li>
+          </ul>
         </CardContent>
       </Card>
     </div>

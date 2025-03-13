@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Card, CardContent } from "@/components/ui/card";
 
 // Style variables with default values
 export const initialStyleVariables = {
@@ -62,12 +64,32 @@ const fontOptions = [
   { value: "'Work Sans', sans-serif", label: "Work Sans" },
 ];
 
+// Predefined themes
+export const predefinedThemes = [
+  { id: "light", name: "Light Theme" },
+  { id: "dark", name: "Dark Theme" },
+  { id: "minimal", name: "Minimal" },
+  { id: "high-contrast", name: "High Contrast" },
+  { id: "kawaii", name: "Kawaii" },
+  { id: "retro-90s", name: "90's Retro" },
+  { id: "national-park", name: "National Park" },
+  { id: "brutalist", name: "Brutalist" },
+  { id: "custom", name: "Custom" },
+];
+
 interface StyleVarsEditorProps {
   styleVariables: typeof initialStyleVariables;
   handleStyleChange: (variableName: string, value: string) => void;
+  activeTheme?: string;
+  onChangeTheme?: (themeId: string) => void;
 }
 
-const StyleVarsEditor: React.FC<StyleVarsEditorProps> = ({ styleVariables, handleStyleChange }) => {
+const StyleVarsEditor: React.FC<StyleVarsEditorProps> = ({ 
+  styleVariables, 
+  handleStyleChange,
+  activeTheme = "light",
+  onChangeTheme = () => {} 
+}) => {
   // Convert pixel values to numbers for sliders
   const getSizeValue = (value: string): number => {
     const numValue = parseInt(value);
@@ -81,7 +103,50 @@ const StyleVarsEditor: React.FC<StyleVarsEditorProps> = ({ styleVariables, handl
 
   return (
     <div className="space-y-6">
-      <h2 className="text-lg font-semibold">Style Variables</h2>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+        <div>
+          <h2 className="text-lg font-semibold">Style Variables</h2>
+          <p className="text-sm text-gray-500">Customize the appearance of your checkout</p>
+        </div>
+        
+        <div className="min-w-[200px]">
+          <Label htmlFor="theme-select" className="mb-2 block">
+            Select Theme
+          </Label>
+          <Select 
+            value={activeTheme} 
+            onValueChange={onChangeTheme}
+          >
+            <SelectTrigger id="theme-select">
+              <SelectValue placeholder="Select a theme" />
+            </SelectTrigger>
+            <SelectContent>
+              {predefinedThemes.map((theme) => (
+                <SelectItem key={theme.id} value={theme.id}>
+                  {theme.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        {predefinedThemes.slice(0, 6).map((theme) => (
+          <Card 
+            key={theme.id}
+            className={`cursor-pointer transition-all hover:shadow-md ${activeTheme === theme.id ? 'ring-2 ring-primary' : ''}`}
+            onClick={() => onChangeTheme(theme.id)}
+          >
+            <CardContent className="p-4 flex items-center gap-3">
+              <RadioGroupItem id={`theme-${theme.id}`} value={theme.id} checked={activeTheme === theme.id} />
+              <Label htmlFor={`theme-${theme.id}`} className="cursor-pointer">
+                {theme.name}
+              </Label>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
       
       <Accordion type="multiple" className="w-full">
         <AccordionItem value="colors">

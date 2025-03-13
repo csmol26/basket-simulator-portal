@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { DragItem, Row } from "@/components/checkout-builder-v2/types";
+import { DragItem, Row, StyleVariables, CheckoutConfig, CardFormLayout, PaymentMethodDisplay } from "@/components/checkout-builder-v2/types";
 import { availableComponents } from "@/components/checkout-builder-v2/ComponentPalette";
 import { initialStyleVariables } from "@/components/checkout-builder-v2/StyleVarsEditor";
 
@@ -10,6 +10,17 @@ export const useCheckoutBuilderV2 = () => {
   const [rows, setRows] = useState<Row[]>([
     { id: "row-1", components: [] }
   ]);
+
+  // New configuration state for checkout
+  const [checkoutConfig, setCheckoutConfig] = useState<CheckoutConfig>({
+    layout: "single-page",
+    cardFormLayout: "three-line",
+    paymentMethodsDisplay: "radio",
+    showCardholderName: true
+  });
+
+  // Current active theme name
+  const [activeTheme, setActiveTheme] = useState<string>("light");
 
   const addRow = () => {
     setRows([...rows, { id: `row-${rows.length + 1}`, components: [] }]);
@@ -49,6 +60,31 @@ export const useCheckoutBuilderV2 = () => {
     setRows(newRows);
   };
 
+  const updateCheckoutConfig = (updates: Partial<CheckoutConfig>) => {
+    setCheckoutConfig({
+      ...checkoutConfig,
+      ...updates
+    });
+  };
+
+  const changeCardFormLayout = (layout: CardFormLayout) => {
+    updateCheckoutConfig({ cardFormLayout: layout });
+  };
+
+  const changePaymentMethodDisplay = (display: PaymentMethodDisplay) => {
+    updateCheckoutConfig({ paymentMethodsDisplay: display });
+  };
+
+  const toggleCardholderName = (show: boolean) => {
+    updateCheckoutConfig({ showCardholderName: show });
+  };
+
+  const changeTheme = (themeId: string) => {
+    setActiveTheme(themeId);
+    // In a real implementation, this would also update style variables
+    // based on the selected theme
+  };
+
   const onDragEnd = (result: any) => {
     const { source, destination } = result;
     
@@ -73,6 +109,11 @@ export const useCheckoutBuilderV2 = () => {
             placeholder: component.defaultPlaceholder,
             ariaLabel: component.defaultAriaLabel,
             spaceSmall: styleVariables.primerSpaceSmall,
+            displayMode: "default",
+            validation: {
+              required: true,
+              customErrorMessage: ""
+            }
           }
         };
         
@@ -109,10 +150,17 @@ export const useCheckoutBuilderV2 = () => {
   return {
     rows,
     styleVariables,
+    checkoutConfig,
+    activeTheme,
     addRow,
     removeRow,
     handleStyleChange,
     updateComponentConfig,
+    updateCheckoutConfig,
+    changeCardFormLayout,
+    changePaymentMethodDisplay,
+    toggleCardholderName,
+    changeTheme,
     onDragEnd
   };
 };
