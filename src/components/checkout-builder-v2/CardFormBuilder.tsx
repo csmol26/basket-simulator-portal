@@ -1,14 +1,14 @@
 
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Row, DragItem, CardFormLayout } from "./types";
+import { Row, DragItem, CardFormLayout, StyleVariables } from "./types";
 import DropRow from "./card-form/DropRow";
 
 interface CardFormBuilderProps {
   rows: Row[];
   onRemoveRow: (rowId: string) => void;
   updateComponentConfig: (rowId: string, componentId: string, config: Partial<DragItem['config']>) => void;
-  styleVariables: Record<string, string>;
+  styleVariables: StyleVariables;
   cardFormLayout: CardFormLayout;
 }
 
