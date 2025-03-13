@@ -1,6 +1,8 @@
 
 import React from "react";
 import { ComponentConfig } from "./ComponentList";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface DragItem {
   id: string;
@@ -222,33 +224,90 @@ const Preview: React.FC<PreviewProps> = ({ rows, styleVariables }) => {
   };
 
   return (
-    <div 
-      className="bg-white border border-gray-200 rounded-md p-6 shadow-sm"
-      style={previewStyle}
-    >
-      <h3 
-        className="text-lg font-medium mb-4"
-        style={{ fontFamily: styleVariables.primerTypographyBrand || "'Poppins', sans-serif" }}
-      >
-        Checkout Preview
-      </h3>
-      
-      <div 
-        className="border border-gray-200 rounded-md p-6"
-        style={{ borderRadius: styleVariables.primerRadiusBase || "16px" }}
-      >
-        <div className="mb-6">
-          <p 
-            className="text-base font-medium text-gray-700 mb-4"
-            style={{ fontFamily: styleVariables.primerTypographyBrand || "'Poppins', sans-serif" }}
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <Card className="h-full">
+        <CardHeader>
+          <CardTitle className="text-lg">Card Form Preview</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div 
+            className="border border-gray-200 rounded-md p-6"
+            style={{ borderRadius: styleVariables.primerRadiusBase || "16px" }}
           >
-            Card Payment
-          </p>
-          <div>
-            {renderCardFormComponents()}
+            <p 
+              className="text-base font-medium text-gray-700 mb-4"
+              style={{ fontFamily: styleVariables.primerTypographyBrand || "'Poppins', sans-serif" }}
+            >
+              Card Payment
+            </p>
+            <div>
+              {renderCardFormComponents()}
+            </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
+      
+      <Card className="h-full">
+        <CardHeader>
+          <CardTitle className="text-lg">Full Checkout Preview</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Tabs defaultValue="cards" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-4">
+              <TabsTrigger value="cards">Card Payment</TabsTrigger>
+              <TabsTrigger value="apms">Alternative Payments</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="cards">
+              <div 
+                className="bg-white border border-gray-200 rounded-md p-6 shadow-sm"
+                style={previewStyle}
+              >
+                <div className="space-y-4">
+                  <p className="text-base font-medium" style={{ color: styleVariables.primerColorBrand || "#18A94B" }}>
+                    Card Payment
+                  </p>
+                  
+                  <div className="border border-gray-200 rounded-md p-4" style={{ borderRadius: styleVariables.primerRadiusBase }}>
+                    {renderCardFormComponents()}
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="apms">
+              <div 
+                className="bg-white border border-gray-200 rounded-md p-6 shadow-sm"
+                style={previewStyle}
+              >
+                <div className="space-y-4">
+                  <p className="text-base font-medium" style={{ color: styleVariables.primerColorBrand || "#18A94B" }}>
+                    Alternative Payment Methods
+                  </p>
+                  
+                  <div className="p-4 border rounded-md" style={{ borderRadius: styleVariables.primerRadiusBase }}>
+                    <div 
+                      className="h-12 bg-[#0070BA] text-white rounded-md flex items-center justify-center font-medium"
+                      style={{ borderRadius: styleVariables.primerRadiusBase }}
+                    >
+                      <span>PayPal</span>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-4 p-4 border rounded-md" style={{ borderRadius: styleVariables.primerRadiusBase }}>
+                    <div 
+                      className="h-12 bg-black text-white rounded-md flex items-center justify-center font-medium" 
+                      style={{ borderRadius: styleVariables.primerRadiusBase }}
+                    >
+                      <span>Apple Pay</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
     </div>
   );
 };

@@ -133,8 +133,22 @@ ${cardFormContent}
 };
 
 /**
- * Apply syntax highlighting to the code - removed for now as it was causing issues
+ * Generates specialized theme code for custom styling
+ */
+export const generateThemeStyles = (styleVariables: StyleVariables) => {
+  const cssVariables = Object.entries(styleVariables)
+    .filter(([_, value]) => value !== '')
+    .map(([key, value]) => `  ${jsonToCssVariable[key as keyof typeof jsonToCssVariable]}: ${value};`)
+    .join('\n');
+  
+  return `:root {
+${cssVariables}
+}`;
+};
+
+/**
+ * Apply syntax highlighting to the code
  */
 export const applyHighlighting = (code: string) => {
-  return code; // Return raw code without highlighting
+  return code.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 };
