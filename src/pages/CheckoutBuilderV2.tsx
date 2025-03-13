@@ -101,7 +101,7 @@ const CheckoutBuilderV2: React.FC = () => {
               </TabsTrigger>
               <TabsTrigger value="preview" className="flex items-center gap-2">
                 <Eye size={16} />
-                Preview
+                Checkout Builder
               </TabsTrigger>
               <TabsTrigger value="code" className="flex items-center gap-2">
                 <Code size={16} />
@@ -158,11 +158,14 @@ const CheckoutBuilderV2: React.FC = () => {
             </TabsContent>
             
             <TabsContent value="preview" className="mt-0">
-              <CheckoutPreview
-                rows={rows}
-                styleVariables={styleVariables}
-                checkoutConfig={checkoutConfig}
-              />
+              <DragDropContext onDragEnd={onDragEnd}>
+                <CheckoutPreview
+                  rows={rows}
+                  styleVariables={styleVariables}
+                  checkoutConfig={checkoutConfig}
+                  onDragEnd={onDragEnd}
+                />
+              </DragDropContext>
             </TabsContent>
             
             <TabsContent value="code" className="mt-0">

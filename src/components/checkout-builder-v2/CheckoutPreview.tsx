@@ -2,221 +2,113 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { Plus, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Row, StyleVariables, CheckoutConfig } from './types';
 
 interface CheckoutPreviewProps {
   rows: Row[];
   styleVariables: StyleVariables;
   checkoutConfig: CheckoutConfig;
+  onDragEnd: (result: any) => void;
 }
 
-const CheckoutPreview: React.FC<CheckoutPreviewProps> = ({ rows, styleVariables, checkoutConfig }) => {
-  // Helper to render custom card form layout
-  const renderCardForm = () => {
-    const cardNumberComponent = rows.flatMap(row => row.components).find(c => c.originalComponent.id === 'card-number');
-    const cardExpiryComponent = rows.flatMap(row => row.components).find(c => c.originalComponent.id === 'card-expiry');
-    const cardCvvComponent = rows.flatMap(row => row.components).find(c => c.originalComponent.id === 'card-cvv');
-    const cardHolderComponent = rows.flatMap(row => row.components).find(c => c.originalComponent.id === 'card-holder');
-    const submitComponent = rows.flatMap(row => row.components).find(c => c.originalComponent.id === 'card-submit');
-    
-    const layout = checkoutConfig.cardFormLayout;
-    
-    if (layout === 'single-line') {
-      return (
-        <div className="space-y-4">
-          <div className="flex flex-wrap md:flex-nowrap gap-4">
-            <div className="flex-grow min-w-[40%]">
-              <div className="h-12 bg-gray-100 rounded-md px-4 py-3 text-gray-400 text-sm">
-                {cardNumberComponent?.config?.placeholder || 'Card number'}
-              </div>
-            </div>
-            <div className="w-24 md:w-32">
-              <div className="h-12 bg-gray-100 rounded-md px-4 py-3 text-gray-400 text-sm">
-                {cardExpiryComponent?.config?.placeholder || 'MM/YY'}
-              </div>
-            </div>
-            <div className="w-24 md:w-32">
-              <div className="h-12 bg-gray-100 rounded-md px-4 py-3 text-gray-400 text-sm">
-                {cardCvvComponent?.config?.placeholder || 'CVV'}
-              </div>
-            </div>
-          </div>
-          
-          {checkoutConfig.showCardholderName && (
-            <div className="h-12 bg-gray-100 rounded-md px-4 py-3 text-gray-400 text-sm">
-              {cardHolderComponent?.config?.placeholder || 'Cardholder name'}
-            </div>
-          )}
-          
-          <button 
-            className="w-full h-12 px-4 py-3 rounded-md text-white"
-            style={{ 
-              backgroundColor: styleVariables.primerColorBrand || '#18A94B',
-              borderRadius: styleVariables.primerRadiusBase
-            }}
-          >
-            Pay Now
-          </button>
-        </div>
-      );
-    } else if (layout === 'two-line') {
-      return (
-        <div className="space-y-4">
-          <div className="h-12 bg-gray-100 rounded-md px-4 py-3 text-gray-400 text-sm">
-            {cardNumberComponent?.config?.placeholder || 'Card number'}
-          </div>
-          
-          <div className="flex gap-4">
-            <div className="flex-1 h-12 bg-gray-100 rounded-md px-4 py-3 text-gray-400 text-sm">
-              {cardExpiryComponent?.config?.placeholder || 'MM/YY'}
-            </div>
-            <div className="flex-1 h-12 bg-gray-100 rounded-md px-4 py-3 text-gray-400 text-sm">
-              {cardCvvComponent?.config?.placeholder || 'CVV'}
-            </div>
-          </div>
-          
-          {checkoutConfig.showCardholderName && (
-            <div className="h-12 bg-gray-100 rounded-md px-4 py-3 text-gray-400 text-sm">
-              {cardHolderComponent?.config?.placeholder || 'Cardholder name'}
-            </div>
-          )}
-          
-          <button 
-            className="w-full h-12 px-4 py-3 rounded-md text-white"
-            style={{ 
-              backgroundColor: styleVariables.primerColorBrand || '#18A94B',
-              borderRadius: styleVariables.primerRadiusBase
-            }}
-          >
-            Pay Now
-          </button>
-        </div>
-      );
-    } else {
-      // Default to three-line layout
-      return (
-        <div className="space-y-4">
-          <div className="h-12 bg-gray-100 rounded-md px-4 py-3 text-gray-400 text-sm">
-            {cardNumberComponent?.config?.placeholder || 'Card number'}
-          </div>
-          
-          <div className="h-12 bg-gray-100 rounded-md px-4 py-3 text-gray-400 text-sm">
-            {cardExpiryComponent?.config?.placeholder || 'MM/YY'}
-          </div>
-          
-          <div className="h-12 bg-gray-100 rounded-md px-4 py-3 text-gray-400 text-sm">
-            {cardCvvComponent?.config?.placeholder || 'CVV'}
-          </div>
-          
-          {checkoutConfig.showCardholderName && (
-            <div className="h-12 bg-gray-100 rounded-md px-4 py-3 text-gray-400 text-sm">
-              {cardHolderComponent?.config?.placeholder || 'Cardholder name'}
-            </div>
-          )}
-          
-          <button 
-            className="w-full h-12 px-4 py-3 rounded-md text-white"
-            style={{ 
-              backgroundColor: styleVariables.primerColorBrand || '#18A94B',
-              borderRadius: styleVariables.primerRadiusBase
-            }}
-          >
-            Pay Now
-          </button>
-        </div>
-      );
-    }
-  };
+// Available APMs for the checkout
+const availableAPMs = [
+  { id: 'paypal', name: 'PayPal', type: 'PAYPAL' },
+  { id: 'applepay', name: 'Apple Pay', type: 'APPLE_PAY' },
+  { id: 'googlepay', name: 'Google Pay', type: 'GOOGLE_PAY' },
+  { id: 'klarna', name: 'Klarna', type: 'KLARNA' },
+  { id: 'ideal', name: 'iDEAL', type: 'IDEAL' },
+  { id: 'sofort', name: 'Sofort', type: 'SOFORT' },
+  { id: 'afterpay', name: 'Afterpay', type: 'AFTERPAY' },
+];
 
-  // Render payment methods based on display preference
-  const renderPaymentMethods = () => {
-    const display = checkoutConfig.paymentMethodsDisplay;
-    
-    if (display === 'radio') {
-      return (
-        <div className="space-y-4">
-          <div className="p-4 border rounded-md flex items-center gap-3 bg-white">
-            <div className="w-4 h-4 rounded-full border-2 border-gray-500 flex items-center justify-center">
-              <div className="w-2 h-2 rounded-full bg-gray-500"></div>
+const CheckoutPreview: React.FC<CheckoutPreviewProps> = ({ 
+  rows, 
+  styleVariables, 
+  checkoutConfig,
+  onDragEnd
+}) => {
+  // Simple placeholder for the card form
+  const renderCardFormPlaceholder = () => (
+    <div 
+      className="bg-gray-100 rounded-md p-4 text-center border-2 border-dashed border-gray-300"
+      style={{ borderRadius: styleVariables.primerRadiusBase }}
+    >
+      <div className="text-gray-500">Card Form</div>
+      <div className="text-xs text-gray-400 mt-1">
+        (Configured in Card Form Builder tab)
+      </div>
+    </div>
+  );
+
+  // Render a generic APM component
+  const renderAPM = (apm: any, index: number) => (
+    <Draggable draggableId={`apm-${apm.id}`} index={index} key={`apm-${apm.id}`}>
+      {(provided) => (
+        <div
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+          className="bg-white p-3 rounded-md border shadow-sm mb-3 cursor-move"
+          style={{ 
+            borderRadius: styleVariables.primerRadiusBase,
+            ...provided.draggableProps.style
+          }}
+        >
+          <div className="flex items-center justify-between">
+            <span className="font-medium">{apm.name}</span>
+            <div className="text-xs text-gray-500">
+              <code>{`<primer-payment-method type="${apm.type}"></primer-payment-method>`}</code>
             </div>
-            <span className="text-sm font-medium">Card Payment</span>
-          </div>
-          
-          <div className="p-4 border rounded-md flex items-center gap-3 bg-white">
-            <div className="w-4 h-4 rounded-full border-2 border-gray-300"></div>
-            <span className="text-sm font-medium">PayPal</span>
-          </div>
-          
-          <div className="p-4 border rounded-md flex items-center gap-3 bg-white">
-            <div className="w-4 h-4 rounded-full border-2 border-gray-300"></div>
-            <span className="text-sm font-medium">Apple Pay</span>
           </div>
         </div>
-      );
-    } else if (display === 'dropdown') {
-      return (
-        <div className="space-y-6">
-          <div>
-            <select className="w-full p-3 border rounded-md bg-white">
-              <option>Card Payment</option>
-              <option>PayPal</option>
-              <option>Apple Pay</option>
-            </select>
-          </div>
-          
-          {renderCardForm()}
-        </div>
-      );
-    } else if (display === 'buttons') {
-      return (
-        <div className="space-y-6">
-          <div className="flex flex-wrap gap-2">
-            <button 
-              className={`px-4 py-2 rounded-md text-white`}
-              style={{ 
-                backgroundColor: styleVariables.primerColorBrand || '#18A94B',
-                borderRadius: styleVariables.primerRadiusBase
-              }}
-            >
-              Card Payment
-            </button>
-            <button className="px-4 py-2 rounded-md bg-gray-100 text-gray-700">
-              PayPal
-            </button>
-            <button className="px-4 py-2 rounded-md bg-gray-100 text-gray-700">
-              Apple Pay
-            </button>
-          </div>
-          
-          {renderCardForm()}
-        </div>
-      );
-    } else {
-      // Tabs
-      return (
-        <div className="space-y-6">
-          <div className="border-b">
-            <div className="flex">
-              <div 
-                className="px-4 py-2 border-b-2 font-medium text-sm"
-                style={{ borderColor: styleVariables.primerColorBrand || '#18A94B' }}
+      )}
+    </Draggable>
+  );
+
+  // Render APMs available for drag and drop
+  const renderAPMPalette = () => (
+    <div className="bg-gray-50 p-4 rounded-md">
+      <h3 className="text-sm font-medium mb-3">Available Payment Methods</h3>
+      <Droppable droppableId="apm-palette" isDropDisabled={true}>
+        {(provided) => (
+          <div
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+            className="space-y-2"
+          >
+            {availableAPMs.map((apm, index) => (
+              <Draggable
+                key={`palette-${apm.id}`}
+                draggableId={`palette-${apm.id}`}
+                index={index}
               >
-                Card Payment
-              </div>
-              <div className="px-4 py-2 text-gray-500 text-sm">
-                PayPal
-              </div>
-              <div className="px-4 py-2 text-gray-500 text-sm">
-                Apple Pay
-              </div>
-            </div>
+                {(provided, snapshot) => (
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                    className={`p-2 bg-white rounded-md border border-gray-200 shadow-sm cursor-move transition-all duration-200
+                      ${snapshot.isDragging ? 'scale-105 shadow-lg border-primary' : 'hover:border-accent hover:shadow-md'}`}
+                    style={{
+                      ...provided.draggableProps.style,
+                      opacity: snapshot.isDragging ? 0.9 : 1,
+                    }}
+                  >
+                    {apm.name}
+                  </div>
+                )}
+              </Draggable>
+            ))}
+            {provided.placeholder}
           </div>
-          
-          {renderCardForm()}
-        </div>
-      );
-    }
-  };
+        )}
+      </Droppable>
+    </div>
+  );
 
   return (
     <div className="space-y-8">
@@ -224,7 +116,7 @@ const CheckoutPreview: React.FC<CheckoutPreviewProps> = ({ rows, styleVariables,
         <Card>
           <CardHeader className="pb-2">
             <div className="flex justify-between items-center">
-              <CardTitle className="text-lg">Checkout Preview</CardTitle>
+              <CardTitle className="text-lg">Checkout Builder</CardTitle>
               <TabsList>
                 <TabsTrigger value="desktop">Desktop</TabsTrigger>
                 <TabsTrigger value="mobile">Mobile</TabsTrigger>
@@ -233,63 +125,109 @@ const CheckoutPreview: React.FC<CheckoutPreviewProps> = ({ rows, styleVariables,
           </CardHeader>
           
           <CardContent className="pt-4">
-            <TabsContent value="desktop">
-              <div
-                className="p-8 border rounded-lg shadow-sm"
-                style={{
-                  backgroundColor: styleVariables.primerColorBackground || 'white',
-                  fontFamily: styleVariables.primerTypographyBrand,
-                  borderRadius: styleVariables.primerRadiusBase
-                }}
-              >
-                <div className="max-w-2xl mx-auto">
-                  <h2 className="text-2xl font-semibold mb-6 text-center">Complete Your Purchase</h2>
-                  
-                  <div className="bg-gray-50 rounded-lg p-6">
-                    {renderPaymentMethods()}
-                  </div>
-                  
-                  <div className="mt-8 text-center text-xs text-gray-500">
-                    <p>Secured by Primer</p>
-                  </div>
-                </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Left column for available payment methods */}
+              <div className="lg:col-span-1">
+                {renderAPMPalette()}
               </div>
-            </TabsContent>
-            
-            <TabsContent value="mobile">
-              <div className="mx-auto" style={{ maxWidth: '375px' }}>
-                <div
-                  className="p-4 border rounded-lg shadow-sm"
-                  style={{
-                    backgroundColor: styleVariables.primerColorBackground || 'white',
-                    fontFamily: styleVariables.primerTypographyBrand,
-                    borderRadius: styleVariables.primerRadiusBase
-                  }}
-                >
-                  <h2 className="text-xl font-semibold mb-4 text-center">Complete Your Purchase</h2>
-                  
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    {renderPaymentMethods()}
+              
+              {/* Center and right columns for preview */}
+              <div className="lg:col-span-2">
+                <TabsContent value="desktop">
+                  <div
+                    className="p-8 border rounded-lg shadow-sm"
+                    style={{
+                      backgroundColor: styleVariables.primerColorBackground || 'white',
+                      fontFamily: styleVariables.primerTypographyBrand,
+                      borderRadius: styleVariables.primerRadiusBase
+                    }}
+                  >
+                    <div className="max-w-2xl mx-auto">
+                      <h2 className="text-2xl font-semibold mb-6 text-center">Complete Your Purchase</h2>
+                      
+                      <div className="bg-gray-50 rounded-lg p-6">
+                        {/* Card Form Placeholder */}
+                        {renderCardFormPlaceholder()}
+                        
+                        {/* Drop zones for APMs */}
+                        <div className="mt-6">
+                          <h3 className="text-sm font-medium mb-3">Alternative Payment Methods</h3>
+                          <Droppable droppableId="checkout-apms" direction="vertical">
+                            {(provided) => (
+                              <div
+                                ref={provided.innerRef}
+                                {...provided.droppableProps}
+                                className="min-h-[100px] border-2 border-dashed border-gray-300 rounded-md p-4"
+                              >
+                                {/* This will be populated with dragged APMs */}
+                                {provided.placeholder}
+                              </div>
+                            )}
+                          </Droppable>
+                        </div>
+                      </div>
+                      
+                      <div className="mt-8 text-center text-xs text-gray-500">
+                        <p>Secured by Primer</p>
+                      </div>
+                    </div>
                   </div>
-                  
-                  <div className="mt-6 text-center text-xs text-gray-500">
-                    <p>Secured by Primer</p>
+                </TabsContent>
+                
+                <TabsContent value="mobile">
+                  <div className="mx-auto" style={{ maxWidth: '375px' }}>
+                    <div
+                      className="p-4 border rounded-lg shadow-sm"
+                      style={{
+                        backgroundColor: styleVariables.primerColorBackground || 'white',
+                        fontFamily: styleVariables.primerTypographyBrand,
+                        borderRadius: styleVariables.primerRadiusBase
+                      }}
+                    >
+                      <h2 className="text-xl font-semibold mb-4 text-center">Complete Your Purchase</h2>
+                      
+                      <div className="bg-gray-50 rounded-lg p-4">
+                        {/* Card Form Placeholder */}
+                        {renderCardFormPlaceholder()}
+                        
+                        {/* Drop zones for APMs */}
+                        <div className="mt-4">
+                          <h3 className="text-sm font-medium mb-2">Alternative Payment Methods</h3>
+                          <Droppable droppableId="checkout-apms-mobile" direction="vertical">
+                            {(provided) => (
+                              <div
+                                ref={provided.innerRef}
+                                {...provided.droppableProps}
+                                className="min-h-[100px] border-2 border-dashed border-gray-300 rounded-md p-3"
+                              >
+                                {/* This will be populated with dragged APMs */}
+                                {provided.placeholder}
+                              </div>
+                            )}
+                          </Droppable>
+                        </div>
+                      </div>
+                      
+                      <div className="mt-6 text-center text-xs text-gray-500">
+                        <p>Secured by Primer</p>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                </TabsContent>
               </div>
-            </TabsContent>
+            </div>
           </CardContent>
         </Card>
       </Tabs>
       
       <Card>
         <CardContent className="pt-6">
-          <h3 className="text-md font-medium mb-4">Preview Notes</h3>
+          <h3 className="text-md font-medium mb-4">Usage Notes</h3>
           <ul className="list-disc list-inside text-sm text-gray-600 space-y-2">
-            <li>This is a visual representation of how your checkout may appear.</li>
-            <li>The actual appearance might vary slightly based on the browser and device.</li>
-            <li>Interactions like switching between payment methods are not functional in this preview.</li>
-            <li>For the complete experience, download and implement the generated code.</li>
+            <li>Drag payment methods from the left panel into the checkout area.</li>
+            <li>You can arrange APMs into rows or display them individually.</li>
+            <li>In the generated code, APMs can be rendered generically (using a map) or individually for specific styling.</li>
+            <li>Card form details are configured in the "Card Form" tab.</li>
           </ul>
         </CardContent>
       </Card>

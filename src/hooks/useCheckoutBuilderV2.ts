@@ -11,6 +11,9 @@ export const useCheckoutBuilderV2 = () => {
     { id: "row-1", components: [] }
   ]);
 
+  // APM state - for the checkout builder
+  const [apmRows, setApmRows] = useState<any[]>([]);
+
   // New configuration state for checkout
   const [checkoutConfig, setCheckoutConfig] = useState<CheckoutConfig>({
     layout: "single-page",
@@ -95,6 +98,7 @@ export const useCheckoutBuilderV2 = () => {
       source.index === destination.index
     ) return;
     
+    // Handle card form components drop
     if (source.droppableId === "components") {
       const componentId = result.draggableId;
       const component = availableComponents.find(c => c.id === componentId);
@@ -144,7 +148,20 @@ export const useCheckoutBuilderV2 = () => {
         
         setRows(newRows);
       }
+    } 
+    // Handle APM dragging from palette to checkout
+    else if (source.droppableId === "apm-palette" && 
+            (destination.droppableId === "checkout-apms" || destination.droppableId === "checkout-apms-mobile")) {
+      // For simplicity, this is just a placeholder to show how it would work
+      // In a full implementation, you would update the apmRows state
+      console.log(`APM dropped from palette to checkout: ${result.draggableId}`);
+      
+      // Create or update apmRows based on the drop
+      // This would be expanded in a full implementation to handle row creation and APM configuration
     }
+
+    // Handle reordering of APMs within the checkout
+    // This would need further implementation based on your APM row structure
   };
 
   return {
