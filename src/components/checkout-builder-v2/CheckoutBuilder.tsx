@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -7,13 +6,44 @@ import ComponentPalette from "./ComponentPalette";
 import CardFormBuilder from "./CardFormBuilder";
 import CheckoutPreview from "./CheckoutPreview";
 import GeneratedCode from "./GeneratedCode";
-import CheckoutLayoutConfig from "./CheckoutLayoutConfig";
 import ThemeAndPreview from "./ThemeAndPreview";
 import ComposableCheckoutSlots from "./ComposableCheckoutSlots";
 import { useCheckoutBuilderV2 } from "@/hooks/useCheckoutBuilderV2";
 import { Button } from "@/components/ui/button";
 import { ClipboardCopy } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import CheckoutLayoutConfig from "./CheckoutLayoutConfig";
+import { CardFormLayout, PaymentMethodDisplay } from "./types";
+
+// Import CheckoutLayoutConfigProps interface
+interface CheckoutLayoutConfigProps {
+  checkoutConfig: any;
+  onChangeCardFormLayout: (layout: any) => void;
+  onChangePaymentMethodDisplay: (display: any) => void;
+  onToggleCardholderName: (show: boolean) => void;
+}
+
+// Create a wrapper component for CheckoutLayoutConfig
+const CheckoutLayoutConfigWrapper: React.FC<CheckoutLayoutConfigProps> = ({
+  checkoutConfig,
+  onChangeCardFormLayout,
+  onChangePaymentMethodDisplay,
+  onToggleCardholderName
+}) => {
+  return (
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle className="text-lg">Checkout Configuration</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="grid grid-cols-1 gap-4">
+          {/* Configuration options can go here */}
+          <p className="text-sm text-gray-500">Configure your checkout layout and payment options</p>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
 
 const CheckoutBuilder: React.FC = () => {
   const [activeTab, setActiveTab] = useState("checkout-builder");
@@ -212,8 +242,8 @@ const CheckoutBuilder: React.FC = () => {
                 <div className="grid grid-cols-1 xl:grid-cols-[1fr_3fr] gap-6">
                   <div className="w-full space-y-6">
                     <ComponentPalette onAddRow={addCheckoutRow} />
-                    <CheckoutLayoutConfig 
-                      config={checkoutConfig}
+                    <CheckoutLayoutConfigWrapper 
+                      checkoutConfig={checkoutConfig}
                       onChangeCardFormLayout={changeCardFormLayout}
                       onChangePaymentMethodDisplay={changePaymentMethodDisplay}
                       onToggleCardholderName={toggleCardholderName}
@@ -260,11 +290,11 @@ const CheckoutBuilder: React.FC = () => {
                 <CardFormBuilder 
                   rows={cardFormRows}
                   styleVariables={styleVariables}
-                  addRow={addRow}
+                  cardFormLayout={checkoutConfig.cardFormLayout}
                   onRemoveRow={removeRow}
                   updateComponentConfig={updateComponentConfig}
                   onChangeLayout={changeCardFormLayout}
-                  cardFormLayout={checkoutConfig.cardFormLayout}
+                  addRow={addRow}
                 />
               </TabsContent>
               
@@ -282,7 +312,7 @@ const CheckoutBuilder: React.FC = () => {
               
               <TabsContent value="composable-slots" className="p-0">
                 <ComposableCheckoutSlots 
-                  checkoutRows={checkoutRows}
+                  rows={checkoutRows}
                   cardFormRows={cardFormRows}
                   styleVariables={styleVariables}
                   checkoutConfig={checkoutConfig}

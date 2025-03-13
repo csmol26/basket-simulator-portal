@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -7,7 +6,7 @@ import { Row, StyleVariables, CheckoutConfig } from "./types";
 import { Clipboard } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
-interface ComposableCheckoutSlotsProps {
+export interface ComposableCheckoutSlotsProps {
   rows: Row[];
   cardFormRows: Row[];
   styleVariables: StyleVariables;
@@ -27,7 +26,6 @@ const ComposableCheckoutSlots: React.FC<ComposableCheckoutSlotsProps> = ({
     react: false
   });
 
-  // Generate HTML code
   const generateHtmlCode = () => {
     return `<primer-checkout client-token="\${clientSession.clientToken}">
   <primer-main slot="main">
@@ -55,7 +53,6 @@ const ComposableCheckoutSlots: React.FC<ComposableCheckoutSlotsProps> = ({
 </primer-checkout>`;
   };
 
-  // Generate JavaScript code
   const generateJsCode = () => {
     return `// 1. Initialize Primer with a client token from your server
 const initPrimerCheckout = async () => {
@@ -137,7 +134,6 @@ const initPrimerCheckout = async () => {
 document.addEventListener('DOMContentLoaded', initPrimerCheckout);`;
   };
 
-  // Generate React code
   const generateReactCode = () => {
     return `import React, { useEffect, useRef } from 'react';
 import { loadPrimer } from '@primer-io/primer-js';

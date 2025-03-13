@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Row, DragItem, CardFormLayout, StyleVariables } from "./types";
 import DropRow from "./card-form/DropRow";
 
-interface CardFormBuilderProps {
+export interface CardFormBuilderProps {
   rows: Row[];
   styleVariables: StyleVariables;
   cardFormLayout: CardFormLayout;
