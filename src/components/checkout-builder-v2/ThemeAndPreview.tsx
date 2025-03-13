@@ -217,8 +217,18 @@ const ThemeAndPreview: React.FC<ThemeAndPreviewProps> = ({
     );
   };
 
-  // Generate APM preview
-  const renderAPMPreview = () => {
+  // Helper to check if there's a card payment component in the rows
+  const hasCardPaymentInCheckout = () => {
+    return rows.some(row => 
+      row.components.some(component => 
+        component.originalComponent.isCardForm || 
+        component.originalComponent.id === 'card-form'
+      )
+    );
+  };
+
+  // Generate APM preview with integrated card form
+  const renderCheckoutPreview = () => {
     if (rows.length === 0 || rows.every(row => row.components.length === 0)) {
       return (
         <div className="bg-gray-100 border border-gray-200 rounded-md p-4 text-center">
@@ -235,8 +245,8 @@ const ThemeAndPreview: React.FC<ThemeAndPreviewProps> = ({
           return (
             <div key={`apm-row-${rowIndex}`} className="mb-4">
               {row.components.map((component, compIndex) => {
+                // For APM payment methods
                 if (component.originalComponent.isAPM) {
-                  const apmType = component.originalComponent.apmType;
                   return (
                     <div key={`apm-${compIndex}`} className="mb-3">
                       <button
@@ -249,6 +259,7 @@ const ThemeAndPreview: React.FC<ThemeAndPreviewProps> = ({
                   );
                 }
                 
+                // For card form, display the card form components
                 if (component.originalComponent.isCardForm) {
                   return (
                     <div key={`card-form-${compIndex}`} className="mb-3 p-4 border border-gray-200 rounded-md">
@@ -263,6 +274,15 @@ const ThemeAndPreview: React.FC<ThemeAndPreviewProps> = ({
             </div>
           );
         })}
+
+        {/* If no card form is added in checkout but we have card form components, 
+            display placeholder message */}
+        {!hasCardPaymentInCheckout() && cardFormRows.length > 0 && (
+          <div className="p-4 bg-gray-50 border border-dashed border-gray-300 rounded-md text-sm text-gray-600 mt-4">
+            <p>Note: You've configured a card form but haven't added it to the checkout. 
+            Add the Card Payment component in the Checkout Builder tab to see it here.</p>
+          </div>
+        )}
       </div>
     );
   };
@@ -339,7 +359,7 @@ const ThemeAndPreview: React.FC<ThemeAndPreviewProps> = ({
                   {/* Payment Methods */}
                   <div className="space-y-4">
                     <h3 className="font-medium">Payment Method</h3>
-                    {renderAPMPreview()}
+                    {renderCheckoutPreview()}
                   </div>
                 </div>
                 

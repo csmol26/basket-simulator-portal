@@ -5,6 +5,7 @@ import ComponentList from "./ComponentList";
 import StyleEditor from "./StyleEditor";
 import LayoutBuilder from "./LayoutBuilder";
 import { Row, StyleVariables } from "./types";
+import Preview from "./Preview";
 
 interface BuilderTabsProps {
   rows: Row[];
@@ -44,21 +45,7 @@ const BuilderTabs: React.FC<BuilderTabsProps> = ({
         </TabsContent>
         
         <TabsContent value="preview" className="mt-4">
-          <div className="p-4 bg-gray-100 rounded-md">
-            <h3 className="text-md font-medium mb-3">Theme Preview</h3>
-            <p className="text-sm text-gray-600 mb-4">
-              Visualize how your theme and components will appear in the checkout.
-            </p>
-            <div className="border rounded-md p-4 bg-white">
-              <div className="flex justify-between items-center mb-3">
-                <span className="text-sm font-medium">Card Form Preview</span>
-                <span className="text-xs text-gray-500">Using your style variables</span>
-              </div>
-              <div className="h-24 bg-gray-50 border border-dashed border-gray-300 rounded flex items-center justify-center">
-                <span className="text-gray-400 text-sm">Preview will be shown here</span>
-              </div>
-            </div>
-          </div>
+          <Preview rows={rows} styleVariables={styleVariables} />
         </TabsContent>
       </Tabs>
     </div>
