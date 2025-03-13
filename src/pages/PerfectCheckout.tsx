@@ -333,6 +333,38 @@ const PerfectCheckout: React.FC = () => {
     "--page-text-color": styleVariables.textColor,
   } as React.CSSProperties;
 
+  const convertToGeneratorRows = (): any[] => {
+    return cardFormRows.map(row => ({
+      id: row.id,
+      components: row.components.map(comp => ({
+        id: comp.id,
+        type: comp.type,
+        content: comp.name,
+        originalComponent: {
+          id: comp.type,
+          name: comp.name
+        },
+        config: {
+          placeholder: comp.placeholder,
+          label: comp.label
+        }
+      }))
+    }));
+  };
+
+  const convertToGeneratorStyleVars = (): any => {
+    return {
+      ...styleVariables,
+      primerColorBackground: styleVariables.background || "#ffffff",
+      primerSizeBase: "4px",
+      primerColorLoader: styleVariables.primerColorBrand,
+      primerColorFocus: styleVariables.primerColorBrand,
+      primerTypographyLineHeight: "1.5",
+      primerTypographyFontDefault: styleVariables.primerTypographyBrand,
+      primerTypographyFontSize: "16px"
+    };
+  };
+
   return (
     <div className="min-h-screen flex flex-col" style={themeStyles}>
       <Navbar />
@@ -986,8 +1018,8 @@ const PerfectCheckout: React.FC = () => {
               </CardHeader>
               <CardContent>
                 <CodeGenerator 
-                  rows={cardFormRows}
-                  styleVariables={styleVariables}
+                  rows={convertToGeneratorRows()}
+                  styleVariables={convertToGeneratorStyleVars()}
                 />
               </CardContent>
             </Card>

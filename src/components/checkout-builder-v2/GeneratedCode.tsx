@@ -7,7 +7,6 @@ import HtmlCodeTab from "./code-generation/HtmlCodeTab";
 import TypeScriptCodeTab from "./code-generation/TypeScriptCodeTab";
 import CssCodeTab from "./code-generation/CssCodeTab";
 import ImplementationGuide from "./code-generation/ImplementationGuide";
-import UICodeTab from "./code-generation/UICodeTab";
 import UXCodeTab from "./code-generation/UXCodeTab";
 import { Row, StyleVariables, CheckoutConfig } from "./types";
 
@@ -73,11 +72,6 @@ const GeneratedCode: React.FC<GeneratedCodeProps> = ({
         <TabsContent value="code-generator" className="m-0 mt-4">
           <div className="space-y-6">
             <div>
-              <h3 className="text-lg font-medium mb-2">UI Styles (CSS Variables)</h3>
-              <UICodeTab styleVariables={styleVariables} />
-            </div>
-            
-            <div>
               <h3 className="text-lg font-medium mb-2">UX Code (Primer Checkout Markup)</h3>
               <UXCodeTab 
                 cardFormRows={cardFormRows}
@@ -85,6 +79,11 @@ const GeneratedCode: React.FC<GeneratedCodeProps> = ({
                 styleVariables={styleVariables}
                 checkoutConfig={checkoutConfig}
               />
+            </div>
+            
+            <div>
+              <h3 className="text-lg font-medium mb-2">Theme Code (CSS Variables)</h3>
+              <CssCodeTab styleVariables={styleVariables} />
             </div>
           </div>
         </TabsContent>
