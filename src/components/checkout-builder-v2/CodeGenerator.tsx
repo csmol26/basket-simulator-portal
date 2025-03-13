@@ -14,29 +14,7 @@ export const generatePaymentMethodsHtml = (
   checkoutRows: Row[],
   checkoutConfig: CheckoutConfig
 ): string => {
-  // Generate layout class based on config
-  let layoutAttribute = '';
-  if (checkoutConfig.layout === "multi-step") {
-    layoutAttribute = ' data-layout="stepped"';
-  }
-  
-  // Generate payment method display attribute
-  let displayAttribute = '';
-  switch (checkoutConfig.paymentMethodsDisplay) {
-    case "radio":
-      displayAttribute = ' data-payment-method-display="radio"';
-      break;
-    case "tabs":
-      displayAttribute = ' data-payment-method-display="tabs"';
-      break;
-    case "buttons":
-      displayAttribute = ' data-payment-method-display="buttons"';
-      break;
-    default:
-      displayAttribute = ' data-payment-method-display="dropdown"';
-  }
-  
-  let html = `<primer-checkout client-token="\${clientSession.clientToken}"${layoutAttribute}${displayAttribute}>\n`;
+  let html = '<primer-checkout client-token="${clientSession.clientToken}">\n';
   html += '  <primer-main slot="main">\n';
   html += '    <!-- Payment methods -->\n';
   html += '    <div slot="payments">\n';
@@ -44,30 +22,22 @@ export const generatePaymentMethodsHtml = (
   const hasComponents = checkoutRows.some(row => row.components.length > 0);
   
   if (hasComponents) {
-    // Iterate over all checkout slots/rows
     checkoutRows.forEach((row, rowIndex) => {
       if (row.components.length > 0) {
         html += `      <!-- Slot ${rowIndex + 1} -->\n`;
         
-        // Generate code for each component in the row
         row.components.forEach(component => {
           if (component.originalComponent.isAPM) {
-            // For Alternative Payment Methods
-            html += `      <primer-payment-method type="${component.originalComponent.apmType || 'PAYPAL'}">\n`;
-            html += '        <!-- APM content will be rendered automatically -->\n';
-            html += '      </primer-payment-method>\n';
+            html += `      <primer-payment-method type="${component.originalComponent.apmType}"></primer-payment-method>\n`;
           } else if (component.originalComponent.isCardForm) {
-            // For Card Form
             html += '      <!-- Card Form Payment Method -->\n';
             html += '      <primer-payment-method type="PAYMENT_CARD">\n';
             html += '        <primer-card-form>\n';
             html += '          <div slot="card-form-content" style="--primer-input-height: 40px; --primer-space-medium: 16px; display: flex; flex-direction: column; gap: 16px;">\n';
             
-            // Generate card form components
             if (cardFormRows.length > 0) {
               cardFormRows.forEach(cardRow => {
                 if (cardRow.components.length === 1) {
-                  // Single component in row
                   const cardComp = cardRow.components[0];
                   const componentId = cardComp.originalComponent.id;
                   const label = cardComp.config?.label ? ` label="${cardComp.config.label}"` : '';
@@ -87,7 +57,6 @@ export const generatePaymentMethodsHtml = (
                     html += `            <primer-card-form-submit${btnText}${variant} style="height: 40px; width: 100%; font-weight: 500;"></primer-card-form-submit>\n`;
                   }
                 } else if (cardRow.components.length > 1) {
-                  // Multiple components in row
                   html += '            <div style="display: flex; gap: 16px;">\n';
                   
                   cardRow.components.forEach(cardComp => {
@@ -118,7 +87,6 @@ export const generatePaymentMethodsHtml = (
                 }
               });
             } else {
-              // Default card form if no components are defined
               html += '            <primer-input-card-number label="Card Number" placeholder="4444 3333 2222 1111"></primer-input-card-number>\n';
               html += '            <div style="display: flex; gap: 16px;">\n';
               html += '              <div style="flex: 1;">\n';
@@ -142,7 +110,6 @@ export const generatePaymentMethodsHtml = (
       }
     });
   } else {
-    // Default payment methods if no components are defined
     html += '      <!-- Default Payment Methods -->\n';
     html += '      <primer-payment-method type="PAYMENT_CARD">\n';
     html += '        <primer-card-form>\n';

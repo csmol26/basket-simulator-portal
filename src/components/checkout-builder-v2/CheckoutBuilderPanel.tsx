@@ -6,7 +6,6 @@ import ComponentPalette from "./ComponentPalette";
 import CheckoutLayoutConfigPanel from "./CheckoutLayoutConfigPanel";
 import CodePreviewPanel from "./CodePreviewPanel";
 import { generatePaymentMethodsHtml } from "./CodeGenerator";
-import GeneratedCode from "./GeneratedCode";
 
 interface CheckoutBuilderPanelProps {
   checkoutRows: Row[];
@@ -58,13 +57,6 @@ const CheckoutBuilderPanel: React.FC<CheckoutBuilderPanelProps> = ({
           cardFormRows={cardFormRows}
           checkoutConfig={checkoutConfig}
           generateCode={() => generatePaymentMethodsHtml(cardFormRows, checkoutRows, checkoutConfig)} 
-        />
-        
-        <GeneratedCode
-          cardFormRows={cardFormRows}
-          checkoutRows={checkoutRows}
-          styleVariables={styleVariables}
-          checkoutConfig={checkoutConfig}
         />
       </div>
     </div>
