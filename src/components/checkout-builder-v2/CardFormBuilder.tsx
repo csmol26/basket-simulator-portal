@@ -3,6 +3,7 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Row, DragItem, CardFormLayout, StyleVariables } from "./types";
 import DropRow from "./card-form/DropRow";
+import { Button } from "@/components/ui/button";
 
 interface CardFormBuilderProps {
   rows: Row[];
@@ -40,6 +41,14 @@ const CardFormBuilder: React.FC<CardFormBuilderProps> = ({
               canRemove={rows.length > 1}
             />
           ))}
+          
+          <Button 
+            onClick={addRow} 
+            variant="outline" 
+            className="w-full mt-4"
+          >
+            Add Row
+          </Button>
         </div>
       </CardContent>
     </Card>
