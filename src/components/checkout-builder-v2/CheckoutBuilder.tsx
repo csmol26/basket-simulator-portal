@@ -47,10 +47,11 @@ const CheckoutBuilder: React.FC = () => {
           </CardHeader>
           <CardContent>
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-3 mb-8">
+              <TabsList className="grid w-full grid-cols-4 mb-8">
                 <TabsTrigger value="checkout-builder">Checkout Builder</TabsTrigger>
                 <TabsTrigger value="card-form-builder">Card Form Builder</TabsTrigger>
                 <TabsTrigger value="theme-preview">Theme & Preview</TabsTrigger>
+                <TabsTrigger value="code-generator">Code Generator</TabsTrigger>
               </TabsList>
               
               <TabsContent value="checkout-builder" className="p-0">
@@ -98,6 +99,17 @@ const CheckoutBuilder: React.FC = () => {
                   onStyleChange={handleStyleChange}
                   onChangeTheme={changeTheme}
                 />
+              </TabsContent>
+              
+              <TabsContent value="code-generator" className="p-0">
+                <div className="space-y-6">
+                  <GeneratedCode 
+                    cardFormRows={cardFormRows}
+                    checkoutRows={checkoutRows}
+                    styleVariables={styleVariables}
+                    checkoutConfig={checkoutConfig}
+                  />
+                </div>
               </TabsContent>
             </Tabs>
           </CardContent>
