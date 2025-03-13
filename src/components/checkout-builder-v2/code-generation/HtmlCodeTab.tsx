@@ -4,18 +4,23 @@ import { Button } from "@/components/ui/button";
 import { Copy } from "lucide-react";
 import { toast } from "sonner";
 import { Row, StyleVariables, CheckoutConfig } from '../types';
-import { generateHTMLCode } from './codeGenerationUtils';
+import { generatePrimerCode } from './codeGenerationUtils';
 
 interface HtmlCodeTabProps {
-  rows: Row[];
-  checkoutRows: Row[];  // Add checkoutRows prop
+  cardFormRows: Row[];
+  checkoutRows: Row[];
   styleVariables: StyleVariables;
   checkoutConfig: CheckoutConfig;
 }
 
-const HtmlCodeTab: React.FC<HtmlCodeTabProps> = ({ rows, checkoutRows, styleVariables, checkoutConfig }) => {
+const HtmlCodeTab: React.FC<HtmlCodeTabProps> = ({ 
+  cardFormRows,
+  checkoutRows,
+  styleVariables,
+  checkoutConfig
+}) => {
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(generateHTMLCode(checkoutConfig));
+    navigator.clipboard.writeText(generatePrimerCode(cardFormRows, checkoutRows, styleVariables, checkoutConfig));
     toast.success('HTML code copied to clipboard!');
   };
 
@@ -30,7 +35,7 @@ const HtmlCodeTab: React.FC<HtmlCodeTabProps> = ({ rows, checkoutRows, styleVari
         <Copy size={16} />
       </Button>
       <pre className="text-sm">
-        <code>{generateHTMLCode(checkoutConfig)}</code>
+        <code>{generatePrimerCode(cardFormRows, checkoutRows, styleVariables, checkoutConfig)}</code>
       </pre>
     </div>
   );
