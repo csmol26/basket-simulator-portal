@@ -9,6 +9,7 @@ import CheckoutPreview from "./CheckoutPreview";
 import GeneratedCode from "./GeneratedCode";
 import CheckoutLayoutConfig from "./CheckoutLayoutConfig";
 import ThemeAndPreview from "./ThemeAndPreview";
+import ComposableCheckoutSlots from "./ComposableCheckoutSlots";
 import { useCheckoutBuilderV2 } from "@/hooks/useCheckoutBuilderV2";
 
 const CheckoutBuilder: React.FC = () => {
@@ -47,10 +48,11 @@ const CheckoutBuilder: React.FC = () => {
           </CardHeader>
           <CardContent>
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-3 mb-8">
+              <TabsList className="grid w-full grid-cols-4 mb-8">
                 <TabsTrigger value="checkout-builder">Checkout Builder</TabsTrigger>
                 <TabsTrigger value="card-form-builder">Card Form Builder</TabsTrigger>
                 <TabsTrigger value="theme-preview">Theme & Preview</TabsTrigger>
+                <TabsTrigger value="composable-slots">Composable Checkout Slots</TabsTrigger>
               </TabsList>
               
               <TabsContent value="checkout-builder" className="p-0">
@@ -97,6 +99,15 @@ const CheckoutBuilder: React.FC = () => {
                   activeTheme={activeTheme}
                   onStyleChange={handleStyleChange}
                   onChangeTheme={changeTheme}
+                />
+              </TabsContent>
+              
+              <TabsContent value="composable-slots" className="p-0">
+                <ComposableCheckoutSlots 
+                  checkoutRows={checkoutRows}
+                  cardFormRows={cardFormRows}
+                  styleVariables={styleVariables}
+                  checkoutConfig={checkoutConfig}
                 />
               </TabsContent>
             </Tabs>
