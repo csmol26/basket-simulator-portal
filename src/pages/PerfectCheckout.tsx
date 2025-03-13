@@ -4,8 +4,9 @@ import Navbar from "@/components/Navbar";
 import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Trash2, MoveVertical } from "lucide-react";
+import { Plus, Trash2, MoveVertical, Type } from "lucide-react";
 import { v4 as uuidv4 } from 'uuid';
+import { Input } from "@/components/ui/input";
 
 // Define types for our drag and drop items
 interface PaymentMethod {
@@ -16,6 +17,7 @@ interface PaymentMethod {
 
 interface CheckoutSlot {
   id: string;
+  name: string;
   items: PaymentMethod[];
 }
 
@@ -33,12 +35,12 @@ const PerfectCheckout: React.FC = () => {
 
   // State for checkout slots
   const [slots, setSlots] = useState<CheckoutSlot[]>([
-    { id: 'slot-1', items: [] }
+    { id: 'slot-1', name: 'Card Payment', items: [] }
   ]);
 
   // Handle adding a new slot
   const addSlot = () => {
-    setSlots([...slots, { id: `slot-${uuidv4()}`, items: [] }]);
+    setSlots([...slots, { id: `slot-${uuidv4()}`, name: `Payment Option ${slots.length + 1}`, items: [] }]);
   };
 
   // Handle removing a slot
@@ -46,6 +48,13 @@ const PerfectCheckout: React.FC = () => {
     if (slots.length > 1) {
       setSlots(slots.filter(slot => slot.id !== slotId));
     }
+  };
+
+  // Handle slot name change
+  const handleSlotNameChange = (slotId: string, newName: string) => {
+    setSlots(slots.map(slot => 
+      slot.id === slotId ? { ...slot, name: newName } : slot
+    ));
   };
 
   // Handle drag end
@@ -162,16 +171,27 @@ const PerfectCheckout: React.FC = () => {
                             <MoveVertical className="h-4 w-4 text-gray-500" />
                             <span className="text-sm font-medium text-gray-600">Slot {index + 1}</span>
                           </div>
-                          {slots.length > 1 && (
-                            <Button 
-                              variant="ghost" 
-                              size="icon" 
-                              className="h-6 w-6 text-red-500 hover:text-red-700 hover:bg-red-50"
-                              onClick={() => removeSlot(slot.id)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          )}
+                          <div className="flex items-center space-x-2">
+                            <div className="flex items-center space-x-1">
+                              <Type className="h-4 w-4 text-gray-500" />
+                              <Input
+                                value={slot.name}
+                                onChange={(e) => handleSlotNameChange(slot.id, e.target.value)}
+                                className="h-7 px-2 text-sm max-w-[200px]"
+                                placeholder="Slot name"
+                              />
+                            </div>
+                            {slots.length > 1 && (
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-6 w-6 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                onClick={() => removeSlot(slot.id)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            )}
+                          </div>
                         </div>
                         
                         <Droppable droppableId={slot.id} direction="horizontal">
@@ -216,6 +236,33 @@ const PerfectCheckout: React.FC = () => {
                       <Plus className="h-4 w-4" />
                       Add Slot
                     </Button>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              {/* Preview Section */}
+              <Card className="mb-6">
+                <CardHeader>
+                  <CardTitle className="text-lg">Checkout Preview</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="border border-gray-200 rounded-md p-6">
+                    {slots.map((slot, index) => (
+                      <div key={slot.id} className="mb-6 last:mb-0">
+                        <h2 className="text-xl font-semibold mb-4">{slot.name}</h2>
+                        <div className="space-y-3">
+                          {slot.items.length === 0 ? (
+                            <p className="text-gray-400 text-sm italic">No payment methods added</p>
+                          ) : (
+                            slot.items.map((item) => (
+                              <div key={item.id} className="p-3 bg-gray-50 border border-gray-200 rounded-md">
+                                {item.name}
+                              </div>
+                            ))
+                          )}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </CardContent>
               </Card>
